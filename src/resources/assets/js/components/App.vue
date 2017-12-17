@@ -1,6 +1,5 @@
 <template>
-  <div class="message">
-    {{ message }}
+  <div class="main">
     <ul>
       <li v-for="card in cards" :key="card.id">
         <card :card="card"></card>
@@ -15,9 +14,7 @@
 </template>
 
 <style scoped>
-.message {
-  color: red;
-}
+
 </style>
 
 <script>
