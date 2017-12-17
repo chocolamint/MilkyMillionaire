@@ -1,10 +1,10 @@
 <template>
-    <div class="player">
+    <div class="computer">
         <div class="name">
             {{ character.name }}
         </div>
-        <div v-for="card in character.cards" :key="card.id">
-          <card :card="card"></card>
+        <div class="card-count">
+            {{ character.cards.length }}
         </div>
     </div>
 </template>

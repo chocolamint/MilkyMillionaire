@@ -1,13 +1,11 @@
 <template>
   <div class="main">
     <ul>
-      <li v-for="player in players" :key="player.name">
-        <player :player="player"></player>
-        <div v-for="card in player.cards" :key="card.id">
-          <card :card="card"></card>
-        </div>
+      <li v-for="computer in computers" :key="computer.name">
+        <computer :character="computer"></computer>
       </li>
     </ul>
+    <player :character="player"></player>
   </div>
 </template>
 
@@ -16,12 +14,16 @@
 </style>
 
 <script>
-class Player {
+class Character {
   constructor(name) {
     this.name = name;
     this.cards = [];
   }
 }
+
+class Player extends Character {}
+
+class Computer extends Character {}
 
 class Card {
   constructor(suit, rank, isJoker) {
@@ -31,16 +33,16 @@ class Card {
   }
 }
 
-var players = [
+var characters = [
   new Player("シャーロック"),
-  new Player("ネロ"),
-  new Player("エリー"),
-  new Player("コーデリア"),
-  new Player("かまぼこ")
+  new Computer("ネロ"),
+  new Computer("エリー"),
+  new Computer("コーデリア"),
+  new Computer("かまぼこ")
 ];
 
 var range = n => [...Array(n).keys()].map(x => Number(x));
-var shuffle = function (arr) {
+var shuffle = function(arr) {
   var i, j, temp;
   arr = arr.slice();
   i = arr.length;
@@ -62,15 +64,20 @@ var cards = range(13)
   .reduce((a, b) => a.concat(b))
   .concat(new Card(null, null, true), new Card(null, null, true));
 
-var i = 0;
-for (var card of shuffle(cards)) {
-  players[i++ % 5].cards.push(card);
-}
+var deal = (characters, cards) => {
+  var i = 0;
+  for (var card of shuffle(cards)) {
+    characters[i++ % 5].cards.push(card);
+  }
+};
+
+deal(characters, cards);
 
 export default {
   data() {
     return {
-      players,
+      computers: characters.filter(x => x instanceof Computer),
+      player: characters.filter(x => x instanceof Player)[0],
       cards
     };
   }
