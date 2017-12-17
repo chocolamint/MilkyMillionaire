@@ -2,10 +2,10 @@
   <div class="main">
     <ul class="computers">
       <li v-for="computer in computers" :key="computer.name">
-        <computer :character="computer"></computer>
+        <computer v-bind="computer"></computer>
       </li>
     </ul>
-    <player :character="player"></player>
+    <player v-bind="player"></player>
   </div>
 </template>
 

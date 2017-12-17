@@ -1,10 +1,10 @@
 <template>
     <div class="computer">
         <div class="name">
-            {{ character.name }}
+            {{ name }}
         </div>
         <div class="card-count">
-            {{ character.cards.length }}
+            {{ cards.length }}
         </div>
     </div>
 </template>
@@ -12,6 +12,6 @@
 
 <script>
 export default {
-  props: ["character"]
+  props: ["name", "cards"]
 };
 </script>

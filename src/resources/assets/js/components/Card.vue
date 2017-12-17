@@ -1,19 +1,19 @@
 <template>
     <div class="card">
-        <div v-if="card.isJoker">
+        <div v-if="isJoker">
             <span>Joker</span>
         </div>
         <div v-else>
             <span class="suit">
-                {{ card.suit }}
+                {{ suit }}
             </span>
             <span class="rank">
                 {{
-                    card.rank == 1 ? 'A' : 
-                    card.rank == 11 ? 'J' : 
-                    card.rank == 12 ? 'Q' :
-                    card.rank == 13 ? 'K' :
-                    card.rank
+                    rank == 1 ? 'A' : 
+                    rank == 11 ? 'J' : 
+                    rank == 12 ? 'Q' :
+                    rank == 13 ? 'K' :
+                    rank
                 }}
             </span>
         </div>
@@ -25,12 +25,12 @@
   border: solid 1px #909090;
   border-radius: 3px;
   height: 40px;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 </style>
 
 <script>
 export default {
-  props: ["card"]
+  props: ["isJoker", "suit", "rank"]
 };
 </script>
