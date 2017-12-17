@@ -25,6 +25,14 @@ class Player {
   }
 }
 
+class Card {
+  constructor(suit, rank, isJoker) {
+    this.suit = suit;
+    this.rank = rank;
+    this.isJoker = isJoker;
+  }
+}
+
 var players = [
   new Player("シャーロック"),
   new Player("ネロ"),
@@ -33,11 +41,18 @@ var players = [
   new Player("かまぼこ")
 ];
 
+var range = n => [...Array(n).keys()].map(x => Number(x));
+var suits = ["♥", "♦", "♠", "♣"];
+var cards = range(13)
+  .map(r => suits.map(s => new Card(s, r + 1)))
+  .reduce((a, b) => a.concat(b))
+  .concat(new Card(null, null, true), new Card(null, null, true));
+
 export default {
   data() {
     return {
       players,
-      cards: [{ id: "h-3", isJoker: false, suit: "♥", rank: 3 }]
+      cards
     };
   }
 };

@@ -8,17 +8,23 @@
                 {{ card.suit }}
             </span>
             <span class="rank">
-                {{ card.rank }}
+                {{
+                    card.rank == 1 ? 'A' : 
+                    card.rank == 11 ? 'J' : 
+                    card.rank == 12 ? 'Q' :
+                    card.rank == 13 ? 'K' :
+                    card.rank
+                }}
             </span>
         </div>
     </div>
 </template>
 
 <style scoped>
-    .card {
-        border: solid 1px #909090;
-        border-radius: 3px;
-    }
+.card {
+  border: solid 1px #909090;
+  border-radius: 3px;
+}
 </style>
 
 <script>
