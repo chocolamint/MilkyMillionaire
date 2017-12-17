@@ -1,17 +1,23 @@
 <template>
     <div class="computer">
-        <div class="name">
-            {{ name }}
+        <div class="name" :class="{ 'turn': computer.isMyTurn }">
+            {{ computer.name }}
         </div>
         <div class="card-count">
-            {{ cards.length }}
+            {{ computer.cards.length }}
         </div>
     </div>
 </template>
 
+<style scoped>
+.turn {
+  background: red;
+  color: white;
+}
+</style>
 
 <script>
 export default {
-  props: ["name", "cards"]
+  props: ["computer"]
 };
 </script>

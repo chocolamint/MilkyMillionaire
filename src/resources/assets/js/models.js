@@ -1,8 +1,25 @@
 class Field {
     constructor() {
         this.cards = [];
+        this._passCount = 0;
+        this._lastDiscard = null;
     }
-    discard(cards) {
+    pass(character) {
+
+        console.log(`${character.name}がパスしました`);
+
+        this._passCount++;
+        if (this._passCount == 5) {
+            this.cards.splice(0, this.cards.length);
+        }
+    }
+    discard(character, cards) {
+
+        console.log(`${character.name}が${cards.map(x => x.toString()).join(',')}を捨てました`);
+
+        this._lastDiscard = character;
+        this._passCount = 0;
+
         cards.id = 'discards-' + String(discardId++);
         for (const card of cards) {
             card.id += '-discard';
@@ -35,24 +52,31 @@ export class Character {
     }
     turn() {
         return new Promise(resolve => {
+            this._resolveTurn = resolve;
             console.log(`${this.name}のターン`);
             this.isMyTurn = true;
-            setTimeout(() => {
-                const discardable = this.cards.filter(x => field.canDiscard([x]))[0];
-                console.dir(discardable);
-                field.discard([discardable]);
-                this.isMyTurn = false;
-                console.log(`${this.name}のターン終わり`);
-                resolve();
-            }, 500);
+            this.turnCore();
         });
+    }
+    turnCore() {
+        
+    }
+    turnEnd() {
+        this.isMyTurn = false;
+        console.log(`${this.name}のターン終わり`);
+        this._resolveTurn();
+    }
+    pass() {
+        field.pass(this);
+        this.turnEnd();
     }
     discard(cards) {
         for (const card of cards) {
             const index = this.cards.findIndex(x => x == card);
             this.cards.splice(index, 1);
         }
-        field.discard(cards);
+        field.discard(this, cards);
+        this.turnEnd();
     }
 }
 
@@ -70,13 +94,21 @@ export class Player extends Character {
         var stagings = this.stagings();
         this.discard(stagings);
     }
-    discard(cards) {
-        super.discard(cards);
-        this._resolveTurn();
-    }
 }
 
-export class Computer extends Character { }
+export class Computer extends Character {
+    turnCore(){
+        setTimeout(() => {
+            const discardable = this.cards.filter(x => field.canDiscard([x]))[0];
+            console.dir(discardable);
+            if (discardable == null) {
+                this.pass();
+            } else {
+                this.discard([discardable]);
+            }
+        }, 500);
+    }
+ }
 
 export class Card {
     constructor(id, suit, rank, isJoker) {
@@ -115,5 +147,10 @@ export class Card {
         if (b.isJoker) return -1;
         const numberRanks = n => (n == 2 ? 15 : n == 1 ? 14 : n);
         return numberRanks(a.rank) - numberRanks(b.rank);
+    }
+    toString() {
+        if (this.isJoker) return 'Joker';
+        return this.suit +
+            (this.rank == 1 ? 'A' : this.rank == 11 ? 'J' : this.rank == 12 ? 'Q' : this.rank == 13 ? 'K' : this.rank);
     }
 }

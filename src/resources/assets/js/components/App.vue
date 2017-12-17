@@ -2,7 +2,7 @@
   <div class="main">
     <ul class="computers">
       <li v-for="computer in computers" :key="computer.name">
-        <computer v-bind="computer"></computer>
+        <computer :computer="computer"></computer>
       </li>
     </ul>
     <div class="field">

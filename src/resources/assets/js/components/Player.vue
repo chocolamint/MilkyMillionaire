@@ -1,9 +1,10 @@
 <template>
     <div class="player">
-        <div class="name">
+        <div class="name" :class="{ 'turn': player.isMyTurn }">
             {{ player.name }}
         </div>
         <div>
+          <div v-on:click="pass(player)">パス</div>
           <div v-on:click="discardStaging(player)">カードを捨てる</div>
         </div>
         <div class="players-cards">
@@ -17,6 +18,11 @@
 </template>
 
 <style scoped>
+.turn {
+  background: red;
+  color: white;
+}
+
 .players-cards {
   display: flex;
   flex-wrap: wrap;
@@ -46,6 +52,9 @@ export default {
     toggleCardStaging: function(card) {
       card.isStaged = !card.isStaged;
       console.log(card.isStaged);
+    },
+    pass: function(player) {
+      player.pass();
     },
     discardStaging: function(player) {
       player.discardStaging();
