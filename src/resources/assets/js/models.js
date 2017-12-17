@@ -3,6 +3,10 @@ class Field {
         this.cards = [];
     }
     discard(cards) {
+        cards.id = 'discards-' + String(discardId++);
+        for (const card of cards) {
+            card.id += '-discard';
+        }
         this.cards.push(cards);
     }
     canDiscard(cards) {
@@ -10,7 +14,7 @@ class Field {
         var c = cards[0];
         if (cards.some(x => !x.isJoker && c.rank != x.rank)) return false;
         const top = this.top();
-        if (compareCard(c, top[0]) <= 0) return false;
+        if (Card.compareRank(c, top[0]) <= 0) return false;
         return cards.length == top.length;
     }
     top() {
@@ -20,6 +24,8 @@ class Field {
 }
 
 export const field = new Field();
+
+let discardId = 0;
 
 export class Character {
     constructor(name) {
@@ -32,10 +38,13 @@ export class Character {
             console.log(`${this.name}のターン`);
             this.isMyTurn = true;
             setTimeout(() => {
-                console.log(`${this.name}のターン終わり`);
+                const discardable = this.cards.filter(x => field.canDiscard([x]))[0];
+                console.dir(discardable);
+                field.discard([discardable]);
                 this.isMyTurn = false;
+                console.log(`${this.name}のターン終わり`);
                 resolve();
-            }, 1500);
+            }, 500);
         });
     }
     discard(cards) {
@@ -70,10 +79,11 @@ export class Player extends Character {
 export class Computer extends Character { }
 
 export class Card {
-    constructor(suit, rank, isJoker) {
+    constructor(id, suit, rank, isJoker) {
+        this.id = id;
         this.suit = suit;
         this.rank = rank;
-        this.isJoker = isJoker;
+        this.isJoker = Boolean(isJoker);
         this.isStaged = false;
     }
     /**

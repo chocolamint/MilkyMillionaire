@@ -6,7 +6,7 @@
       </li>
     </ul>
     <div class="field">
-      <div v-for="cards in field.cards" :key="cards">
+      <div v-for="cards in field.cards" :key="cards.id">
         <div v-for="card in cards" :key="card.id">
           <card v-bind="card"></card>
         </div>
@@ -68,9 +68,13 @@ const shuffle = arr => {
 
 const suits = ["♥", "♦", "♠", "♣"];
 const cards = range(13)
-  .map(r => suits.map(s => new Card(s, r + 1)))
+  .map(x => x + 1)
+  .map(rank => suits.map(suit => new Card("s-" + rank, suit, rank)))
   .reduce((a, b) => a.concat(b))
-  .concat(new Card(null, null, true), new Card(null, null, true));
+  .concat(
+    new Card("joker1", null, null, true),
+    new Card("joker2", null, null, true)
+  );
 
 /**
  * @param {Character[]} characters  
