@@ -24,6 +24,8 @@
 .card {
   border: solid 1px #909090;
   border-radius: 3px;
+  height: 40px;
+  background: #FFFFFF;
 }
 </style>
 

@@ -40,6 +40,7 @@ class Card {
     this.suit = suit;
     this.rank = rank;
     this.isJoker = isJoker;
+    this.isStaged = false;
   }
 }
 
