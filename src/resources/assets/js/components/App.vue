@@ -5,7 +5,14 @@
         <computer v-bind="computer"></computer>
       </li>
     </ul>
-    <player :player="player"></player>
+    <div class="field">
+      <div v-for="cards in field.cards" :key="cards">
+        <div v-for="card in cards" :key="card.id">
+          <card v-bind="card"></card>
+        </div>
+      </div>
+    </div>
+    <player :player="player" :field="field"></player>
   </div>
 </template>
 
@@ -24,70 +31,7 @@
 </style>
 
 <script>
-class Field {
-  constructor() {
-    this.cards = [];
-  }
-  discard(cards) {
-    this.cards.push(cards);
-  }
-}
-
-const field = new Field();
-
-class Character {
-  constructor(name) {
-    this.name = name;
-    this.cards = [];
-    this.isMyTurn = false;
-  }
-  turn() {
-    return new Promise(resolve => {
-      console.log(`${this.name}のターン`);
-      this.isMyTurn = true;
-      setTimeout(() => {
-        console.log(`${this.name}のターン終わり`);
-        this.isMyTurn = false;
-        resolve();
-      }, 1500);
-    });
-  }
-  discard(cards) {
-    for (const card of cards) {
-      const index = this.cards.findIndex(x => x == card);
-      this.cards.splice(index, 1);
-    }
-    field.discard(cards);
-  }
-}
-
-class Player extends Character {
-  turn() {
-    this.isMyTurn = true;
-    return new Promise(resolve => {
-      this._resolveTurn = resolve;
-    });
-  }
-  discardStaging() {
-    var staging = this.cards.filter(x => x.isStaged);
-    player.discard(staging);
-  }
-  discard(cards) {
-    super.discard(cards);
-    this._resolveTurn();
-  }
-}
-
-class Computer extends Character {}
-
-class Card {
-  constructor(suit, rank, isJoker) {
-    this.suit = suit;
-    this.rank = rank;
-    this.isJoker = isJoker;
-    this.isStaged = false;
-  }
-}
+import { field, Player, Computer, Card } from "../models.js";
 
 var characters = [
   new Player("シャーロック"),
@@ -144,28 +88,7 @@ deal(characters, cards);
 const computers = characters.filter(x => x instanceof Computer);
 const player = characters.filter(x => x instanceof Player)[0];
 
-/**
- * @param {Card} a
- * @param {Card} b
- */
-const compareCard = (a, b) => {
-  if (a.isJoker && b.isJoker) return 0;
-  if (a.isJoker) return 1;
-  if (b.isJoker) return -1;
-  const numberRanks = n => (n == 2 ? 15 : n == 1 ? 14 : n);
-  if (a.rank != b.rank) {
-    return numberRanks(a.rank) - numberRanks(b.rank);
-  }
-  const suitRanks = {
-    "♥": 0,
-    "♦": 1,
-    "♠": 2,
-    "♣": 3
-  };
-  return suitRanks[a.suit] - suitRanks[b.suit];
-};
-
-player.cards.sort(compareCard);
+player.cards.sort(Card.compareSort);
 
 const beginGame = async function() {
   while (true) {
@@ -182,7 +105,8 @@ export default {
     return {
       computers,
       player,
-      cards
+      cards,
+      field
     };
   }
 };
