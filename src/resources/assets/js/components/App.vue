@@ -5,7 +5,7 @@
         <computer v-bind="computer"></computer>
       </li>
     </ul>
-    <player v-bind="player"></player>
+    <player :player="player"></player>
   </div>
 </template>
 
@@ -24,23 +24,59 @@
 </style>
 
 <script>
+class Field {
+  constructor() {
+    this.cards = [];
+  }
+  discard(cards) {
+    this.cards.push(cards);
+  }
+}
+
+const field = new Field();
+
 class Character {
   constructor(name) {
     this.name = name;
     this.cards = [];
+    this.isMyTurn = false;
   }
   turn() {
     return new Promise(resolve => {
       console.log(`${this.name}のターン`);
+      this.isMyTurn = true;
       setTimeout(() => {
         console.log(`${this.name}のターン終わり`);
+        this.isMyTurn = false;
         resolve();
       }, 1500);
     });
   }
+  discard(cards) {
+    for (const card of cards) {
+      const index = this.cards.findIndex(x => x == card);
+      this.cards.splice(index, 1);
+    }
+    field.discard(cards);
+  }
 }
 
-class Player extends Character {}
+class Player extends Character {
+  turn() {
+    this.isMyTurn = true;
+    return new Promise(resolve => {
+      this._resolveTurn = resolve;
+    });
+  }
+  discardStaging() {
+    var staging = this.cards.filter(x => x.isStaged);
+    player.discard(staging);
+  }
+  discard(cards) {
+    super.discard(cards);
+    this._resolveTurn();
+  }
+}
 
 class Computer extends Character {}
 

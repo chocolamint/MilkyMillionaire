@@ -1,10 +1,13 @@
 <template>
     <div class="player">
         <div class="name">
-            {{ name }}
+            {{ player.name }}
+        </div>
+        <div>
+          <div v-on:click="discardStaging(player)">カードを捨てる</div>
         </div>
         <div class="players-cards">
-            <div v-for="card in cards" :key="card.id" class="card-container">
+            <div v-for="card in player.cards" :key="card.id" class="card-container">
                 <card v-bind="card" v-bind:class="{ 'staging': card.isStaged }" v-on:click.native="toggleCardStaging(card)"></card>
             </div>
         </div>
@@ -30,11 +33,14 @@
 
 <script>
 export default {
-  props: ["name", "cards"],
+  props: ["player"],
   methods: {
     toggleCardStaging: function(card) {
       card.isStaged = !card.isStaged;
       console.log(card.isStaged);
+    },
+    discardStaging: function(player) {
+      player.discardStaging();
     }
   }
 };
