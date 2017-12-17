@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <ul>
+    <ul class="computers">
       <li v-for="computer in computers" :key="computer.name">
         <computer :character="computer"></computer>
       </li>
@@ -10,7 +10,17 @@
 </template>
 
 <style scoped>
-
+  .computers {
+    display: flex;
+    flex-wrap: nowrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .computers li {
+    width: 25%;
+    background: #FFF0F0;
+  }
 </style>
 
 <script>
@@ -41,8 +51,16 @@ var characters = [
   new Computer("かまぼこ")
 ];
 
-var range = n => [...Array(n).keys()].map(x => Number(x));
-var shuffle = function(arr) {
+/**
+ * @param {Number} n
+ */
+const range = n => [...Array(n).keys()].map(x => Number(x));
+
+/**
+ * @param {T[]} arr 
+ * @returns {T[]}
+*/
+const shuffle = arr => {
   var i, j, temp;
   arr = arr.slice();
   i = arr.length;
@@ -58,15 +76,19 @@ var shuffle = function(arr) {
   return arr;
 };
 
-var suits = ["♥", "♦", "♠", "♣"];
-var cards = range(13)
+const suits = ["♥", "♦", "♠", "♣"];
+const cards = range(13)
   .map(r => suits.map(s => new Card(s, r + 1)))
   .reduce((a, b) => a.concat(b))
   .concat(new Card(null, null, true), new Card(null, null, true));
 
-var deal = (characters, cards) => {
-  var i = 0;
-  for (var card of shuffle(cards)) {
+/**
+ * @param {Character[]} characters  
+ * @param {Card[]} cards
+*/
+const deal = (characters, cards) => {
+  let i = 0;
+  for (const card of shuffle(cards)) {
     characters[i++ % 5].cards.push(card);
   }
 };
