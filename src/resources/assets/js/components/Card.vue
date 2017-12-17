@@ -1,18 +1,25 @@
 <template>
     <div class="card">
         <div v-if="card.isJoker">
-            <div>Joker</div>
+            <span>Joker</span>
         </div>
         <div v-else>
-            <div class="suit">
+            <span class="suit">
                 {{ card.suit }}
-            </div>
-            <div class="rank">
+            </span>
+            <span class="rank">
                 {{ card.rank }}
-            </div>
+            </span>
         </div>
     </div>
 </template>
+
+<style scoped>
+    .card {
+        border: solid 1px #909090;
+        border-radius: 3px;
+    }
+</style>
 
 <script>
 export default {
