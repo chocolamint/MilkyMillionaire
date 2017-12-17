@@ -18,16 +18,25 @@
 </style>
 
 <script>
+class Player {
+  constructor(name) {
+    this.name = name;
+    this.cards = [];
+  }
+}
+
+var players = [
+  new Player("シャーロック"),
+  new Player("ネロ"),
+  new Player("エリー"),
+  new Player("コーデリア"),
+  new Player("かまぼこ")
+];
+
 export default {
   data() {
     return {
-      message: "hello world",
-      players: [
-        {
-          cards: [{ id: "h-3", isJoker: false, suit: "♥", rank: 3 }],
-          name: "シャーロック"
-        }
-      ],
+      players,
       cards: [{ id: "h-3", isJoker: false, suit: "♥", rank: 3 }]
     };
   }
