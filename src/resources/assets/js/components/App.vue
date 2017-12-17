@@ -29,6 +29,15 @@ class Character {
     this.name = name;
     this.cards = [];
   }
+  turn() {
+    return new Promise(resolve => {
+      console.log(`${this.name}のターン`);
+      setTimeout(() => {
+        console.log(`${this.name}のターン終わり`);
+        resolve();
+      }, 1500);
+    });
+  }
 }
 
 class Player extends Character {}
@@ -121,6 +130,16 @@ const compareCard = (a, b) => {
 };
 
 player.cards.sort(compareCard);
+
+const beginGame = async function() {
+  while (true) {
+    for (const character of characters) {
+      await character.turn();
+    }
+  }
+};
+
+beginGame();
 
 export default {
   data() {
