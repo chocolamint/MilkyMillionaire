@@ -33,12 +33,12 @@
 }
 
 .card.disable-stage {
-  background: #C0C0C0;
+  background: #c0c0c0;
 }
 </style>
 
 <script>
-import { Card } from '../models.js';
+import { Card } from "../models.js";
 
 export default {
   props: ["player", "field"],
@@ -51,9 +51,14 @@ export default {
       player.discardStaging();
     },
     canStage(card, player, field) {
-      const top = field.top();
-      if (top == null) return true;
-      return Card.compareRank(card, top[0]) > 0;
+      const stagings = player.stagings();
+      if (stagings.length == 0) {
+        const top = field.top();
+        if (top == null) return true;
+        return Card.compareRank(card, top[0]) > 0;
+      } else {
+        return stagings[0].rank == card.rank;
+      }
     }
   }
 };

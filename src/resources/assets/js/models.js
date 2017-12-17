@@ -54,9 +54,12 @@ export class Player extends Character {
             this._resolveTurn = resolve;
         });
     }
+    stagings() {
+        return this.cards.filter(x => x.isStaged);
+    }
     discardStaging() {
-        var staging = this.cards.filter(x => x.isStaged);
-        this.discard(staging);
+        var stagings = this.stagings();
+        this.discard(stagings);
     }
     discard(cards) {
         super.discard(cards);
@@ -93,7 +96,7 @@ export class Card {
      * @param {Card} a
      * @param {Card} b
      */
-    static compareRank(a, b){
+    static compareRank(a, b) {
         if (!(a instanceof Card)) throw 'Not a card.';
         if (!(b instanceof Card)) throw 'Not a card.';
 
