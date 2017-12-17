@@ -10,17 +10,17 @@
 </template>
 
 <style scoped>
-  .computers {
-    display: flex;
-    flex-wrap: nowrap;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .computers li {
-    width: 25%;
-    background: #FFF0F0;
-  }
+.computers {
+  display: flex;
+  flex-wrap: nowrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.computers li {
+  width: 25%;
+  background: #fff0f0;
+}
 </style>
 
 <script>
@@ -95,11 +95,37 @@ const deal = (characters, cards) => {
 
 deal(characters, cards);
 
+const computers = characters.filter(x => x instanceof Computer);
+const player = characters.filter(x => x instanceof Player)[0];
+
+/**
+ * @param {Card} a
+ * @param {Card} b
+ */
+const compareCard = (a, b) => {
+  if (a.isJoker && b.isJoker) return 0;
+  if (a.isJoker) return 1;
+  if (b.isJoker) return -1;
+  const numberRanks = n => (n == 2 ? 15 : n == 1 ? 14 : n);
+  if (a.rank != b.rank) {
+    return numberRanks(a.rank) - numberRanks(b.rank);
+  }
+  const suitRanks = {
+    "♥": 0,
+    "♦": 1,
+    "♠": 2,
+    "♣": 3
+  };
+  return suitRanks[a.suit] - suitRanks[b.suit];
+};
+
+player.cards.sort(compareCard);
+
 export default {
   data() {
     return {
-      computers: characters.filter(x => x instanceof Computer),
-      player: characters.filter(x => x instanceof Player)[0],
+      computers,
+      player,
       cards
     };
   }
