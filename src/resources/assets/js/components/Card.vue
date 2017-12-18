@@ -11,12 +11,12 @@
 
 <style scoped>
 .card {
-  border: solid 1px #909090;
-  border-radius: 3px;
+  border: solid 0.2vw #909090;
+  border-radius: 1vw;
   background: #ffffff;
   position: relative;
-  width: 95%;
   height: auto;
+  box-sizing: border-box;
 }
 .card:before {
   content: "";
@@ -32,6 +32,7 @@
   font-size: 5vw;
   line-height: 1.2em;
   text-align: center;
+  box-sizing: border-box;
 }
 .card.joker > div {
   font-size: 3.5vw;

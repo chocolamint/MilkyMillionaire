@@ -26,16 +26,18 @@
 .players-cards {
   display: flex;
   flex-wrap: wrap;
+  margin: 1vw 0.5vw;
 }
 
-.players-cards > * {
-  width: calc(100% / 8);
+.card-container {
+  width: calc(100% / 8 - 0.5vw);
+  margin: 0.5vw 0.5vw 0 0;
+  box-sizing: border-box;
 }
 
 .staging {
-  /*transform: translateY(-10px);*/
   position: relative;
-  top: -10px;
+  top: -2vw;
 }
 
 .card.disable-stage {
