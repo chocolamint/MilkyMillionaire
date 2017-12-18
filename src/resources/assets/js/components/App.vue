@@ -144,15 +144,24 @@ const player = characters.filter(x => x instanceof Player)[0];
 
 player.cards.sort(Card.compareSort);
 
-const beginGame = async function() {
+/** @param {Character[]} characters */
+const beginGame = async function(characters) {
+  let nextDealer = characters[Math.floor(Math.random() * 5)];
+  console.log(`${nextDealer.name}の親ではじめます`);
   while (true) {
     for (const character of characters) {
-      await character.turn();
+      if (nextDealer != null && nextDealer != character) continue;
+      nextDealer = null;
+      nextDealer = await character.turn();
+      if (nextDealer != null) {
+        console.log(`${nextDealer.name}の親ではじめます`);
+        break;
+      }
     }
   }
 };
 
-beginGame();
+beginGame(characters);
 
 export default {
   data() {

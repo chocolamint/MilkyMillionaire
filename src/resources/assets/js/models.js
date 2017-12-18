@@ -9,8 +9,16 @@ class Field {
         console.log(`${character.name}がパスしました`);
 
         this._passCount++;
-        if (this._passCount == 5) {
+        console.log(`パス${this._passCount}連続`);
+        if (this._passCount == 4) {
+
+            console.log(`パスが4回続いたので最後にカードを捨てた${this._lastDiscard.name}が次の親になります`);
             this.cards.splice(0, this.cards.length);
+
+            const lastDiscard = this._lastDiscard;
+            this._lastDiscard = null;
+
+            return lastDiscard;
         }
     }
     discard(character, cards) {
@@ -31,6 +39,7 @@ class Field {
         var c = cards[0];
         if (cards.some(x => !x.isJoker && c.rank != x.rank)) return false;
         const top = this.top();
+        if (top == null) return true;
         if (Card.compareRank(c, top[0]) <= 0) return false;
         return cards.length == top.length;
     }
@@ -61,22 +70,22 @@ export class Character {
     turnCore() {
         
     }
-    turnEnd() {
+    turnEnd(nextDealer) {
         this.isMyTurn = false;
         console.log(`${this.name}のターン終わり`);
-        this._resolveTurn();
+        this._resolveTurn(nextDealer);
     }
     pass() {
-        field.pass(this);
-        this.turnEnd();
+        const nextDealer = field.pass(this, this._resolveTurn);
+        this.turnEnd(nextDealer);
     }
     discard(cards) {
         for (const card of cards) {
             const index = this.cards.findIndex(x => x == card);
             this.cards.splice(index, 1);
         }
-        field.discard(this, cards);
-        this.turnEnd();
+        const nextDealer = field.discard(this, cards);
+        this.turnEnd(nextDealer);
     }
 }
 
@@ -100,7 +109,6 @@ export class Computer extends Character {
     turnCore(){
         setTimeout(() => {
             const discardable = this.cards.filter(x => field.canDiscard([x]))[0];
-            console.dir(discardable);
             if (discardable == null) {
                 this.pass();
             } else {
