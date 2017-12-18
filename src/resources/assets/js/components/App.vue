@@ -8,7 +8,7 @@
     <div class="field">
       <div v-for="cards in field.cards" :key="cards.id">
         <div v-for="card in cards" :key="card.id">
-          <card v-bind="card"></card>
+          <card :card="card"></card>
         </div>
       </div>
     </div>

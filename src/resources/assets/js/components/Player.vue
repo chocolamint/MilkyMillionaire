@@ -9,7 +9,7 @@
         </div>
         <div class="players-cards">
             <div v-for="card in player.cards" :key="card.id" class="card-container">
-                <card v-bind="card" 
+                <card :card="card" 
                   :class="{ 'staging': card.isStaged, 'disable-stage': !canStage(card, player, field) }"
                   v-on:click.native="canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
             </div>
