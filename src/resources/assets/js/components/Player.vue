@@ -15,7 +15,7 @@
             <div v-for="card in player.cards" :key="card.id" class="card-container">
                 <card :card="card" 
                   :class="{ 'staging': card.isStaged, 'disable-stage': player.isMyTurn && !canStage(card, player, field) }"
-                  v-on:click.native="canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
+                  v-on:click.native="player.isMyTurn && canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
             </div>
         </div>
     </div>
