@@ -75,16 +75,6 @@ class Field {
 
         this._passCount++;
         console.log(`パス${this._passCount}連続`);
-        if (this._passCount == 4) {
-
-            console.log(`パスが4回続いたので最後にカードを捨てた${this._lastDiscard.name}が次の親になります`);
-            this.cards.splice(0, this.cards.length);
-
-            const lastDiscard = this._lastDiscard;
-            this._lastDiscard = null;
-
-            return lastDiscard;
-        }
     }
     discard(character, cards) {
 
@@ -104,7 +94,7 @@ class Field {
         let c;
         if (cards.every(x => x.isJoker)) {
             c = cards[0];
-        }else {
+        } else {
             c = cards.filter(x => !x.isJoker)[0];
             if (cards.some(x => !x.isJoker && c.rank != x.rank)) return false;
         }
@@ -117,6 +107,51 @@ class Field {
         if (this.cards.length == 0) return null;
         return this.cards.slice(this.cards.length - 1, this.cards.length)[0];
     }
+    notifyClear(character) {
+
+    }
+    /**
+     * @param {Character[]} characters  
+     * @param {Card[]} cards
+    */
+    static deal(characters, cards) {
+        let i = 0;
+        for (const card of ArrayEx.shuffle(cards)) {
+            characters[i++ % 5].cards.push(card);
+        }
+    }
+    async beginGame(characters, cards) {
+
+        Field.deal(characters, cards);
+
+        for (const character of characters) {
+            character.cards.sort(Card.compareSort);
+        }
+
+        let nextDealer = ArrayEx.random(characters);
+        console.log(`${nextDealer.name}の親ではじめます`);
+        while (true) {
+            for (const character of characters) {
+                if (nextDealer != null && character != nextDealer) continue;
+                nextDealer = null;
+                if (character.isCleared) continue;
+                await character.turn();
+                if (this._passCount == 4) {
+                    console.log(`パスが4回続いたので最後にカードを捨てた${this._lastDiscard.name}が次の親になります`);
+                    this.cards.splice(0, this.cards.length);
+                    nextDealer = this._lastDiscard;
+                    this._passCount = 0;
+                    this._lastDiscard = null;
+                }
+            }
+            if (characters.every(x => x.isCleared)) {
+                field.endGame();
+            }
+        }
+    }
+    endGame() {
+
+    }
 }
 
 export const field = new Field();
@@ -128,6 +163,7 @@ export class Character {
         this.name = name;
         this.cards = [];
         this.isMyTurn = false;
+        this.isCleared = false;
     }
     turn() {
         return new Promise(resolve => {
@@ -143,19 +179,23 @@ export class Character {
     turnEnd(nextDealer) {
         this.isMyTurn = false;
         console.log(`${this.name}のターン終わり`);
+        if (this.cards.length == 0) {
+            this.isCleared = true;
+            console.log(`${this.name}があがりました`);
+            field.notifyClear(this);
+        }
         this._resolveTurn(nextDealer);
     }
     pass() {
-        const nextDealer = field.pass(this, this._resolveTurn);
-        this.turnEnd(nextDealer);
+        field.pass(this, this._resolveTurn);
+        this.turnEnd();
     }
     discard(cards) {
         for (const card of cards) {
-            const index = this.cards.findIndex(x => x == card);
-            this.cards.splice(index, 1);
+            this.cards.splice(this.cards.indexOf(card), 1);
         }
-        const nextDealer = field.discard(this, cards);
-        this.turnEnd(nextDealer);
+        field.discard(this, cards);
+        this.turnEnd();
     }
 }
 
@@ -188,7 +228,6 @@ export class Computer extends Character {
                 console.dir(discardables.map(x => x.join(',')));
                 discardable = ArrayEx.random(discardables);
             } else {
-                // TODO: 2枚以上を出すケースも用意
                 const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => ArrayEx.combination(this.cards, x))
                     .filter(x => field.canDiscard(x));
                 console.log('捨てられるのは以下の組み合わせです');

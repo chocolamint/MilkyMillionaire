@@ -91,46 +91,12 @@ var characters = [
   new Computer("かまぼこ")
 ];
 
-const cards = Card.allCards();
-
-/**
- * @param {Character[]} characters  
- * @param {Card[]} cards
-*/
-const deal = (characters, cards) => {
-  let i = 0;
-  for (const card of ArrayEx.shuffle(cards)) {
-    characters[i++ % 5].cards.push(card);
-  }
-};
-
-deal(characters, cards);
-
-for (const character of characters) {
-  character.cards.sort(Card.compareSort);
-}
-
 const computers = characters.filter(x => x instanceof Computer);
 const player = characters.filter(x => x instanceof Player)[0];
 
-/** @param {Character[]} characters */
-const beginGame = async function(characters) {
-  let nextDealer = ArrayEx.random(characters);
-  console.log(`${nextDealer.name}の親ではじめます`);
-  while (true) {
-    for (const character of characters) {
-      if (nextDealer != null && nextDealer != character) continue;
-      nextDealer = null;
-      nextDealer = await character.turn();
-      if (nextDealer != null) {
-        console.log(`${nextDealer.name}の親ではじめます`);
-        break;
-      }
-    }
-  }
-};
+const cards = Card.allCards();
 
-beginGame(characters);
+field.beginGame(characters, cards);
 
 export default {
   data() {
