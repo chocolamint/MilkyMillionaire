@@ -6,7 +6,7 @@
       </li>
     </ul>
     <div class="field">
-      <div v-for="cards in field.cards" :key="cards.id" class="card-set" :class="[cardCountClass(field.cards)]">
+      <div v-for="cards in field.cards" :key="cards.id" class="card-set">
         <div v-for="card in cards" :key="card.id" class="card-container">
           <card :card="card"></card>
         </div>
@@ -106,16 +106,6 @@ export default {
       cards,
       field
     };
-  },
-  methods: {
-    cardCountClass: function(cards) {
-      switch (cards.length) {
-        case 1:
-          return "single";
-        case 2:
-          return "double";
-      }
-    }
   }
 };
 </script>
