@@ -1,11 +1,5 @@
 <template>
     <div class="player">
-        <div class="name" :class="{ 'turn': player.isMyTurn }">
-            {{ player.name }}
-        </div>
-          <div v-if="player.isCleared">
-            あがり
-          </div>
         <div class="player-buttons">
           <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
             パス
@@ -13,6 +7,12 @@
           <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null">
             カードを捨てる
           </div>
+        </div>
+        <div class="name" :class="{ 'turn': player.isMyTurn }">
+          {{ player.name }}
+        </div>
+        <div v-if="player.isCleared" class="cleared">
+          あがり
         </div>
         <div class="players-cards">
             <div v-for="card in player.cards" :key="card.id" class="card-container">
@@ -26,22 +26,23 @@
 
 <style scoped>
 .turn {
-  background: red;
+  background: #cc1160;
   color: white;
 }
 
 .player-buttons {
   display: flex;
+  margin: 0 4vw 4vw;
 }
 
 .player-button {
   background: rgba(32, 32, 32, 0.8);
   border-width: 0.8vw;
-  margin: 0.5vw;
+  margin: 1vw;
   border-radius: 1.4vw;
   text-align: center;
   font-weight: bold;
-  padding: 1.8vw;
+  padding: 2.4vw 0;
   position: relative;
   color: #909090;
 }
@@ -64,7 +65,7 @@
 .pass-button.enabled:after {
   border-style: solid;
   border-color: #ffffff;
-  box-shadow: #06425a 0 0 1vw;
+  box-shadow: #06425a 0 0 2vw, #06425a 0 0 2vw inset;
   content: "";
   position: absolute;
   top: 0;
@@ -86,7 +87,7 @@
 .discard-button.enabled:after {
   border-style: solid;
   border-color: #ffffff;
-  box-shadow: #640970 0 0 1vw;
+  box-shadow: #640970 0 0 2vw, #640970 0 0 2vw inset;
   content: "";
   position: absolute;
   top: 0;
@@ -100,7 +101,7 @@
 .players-cards {
   display: flex;
   flex-wrap: wrap;
-  margin: 1vw 0.5vw;
+  margin: 1vw 4vw;
 }
 
 .card-container {

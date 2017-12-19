@@ -235,6 +235,10 @@ export class Player extends Character {
 }
 
 export class Computer extends Character {
+    constructor(name, color, image) {
+        super(name, color);
+        this.image = image;
+    }
     turnCore(turnCount) {
 
         setTimeout(() => {

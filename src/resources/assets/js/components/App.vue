@@ -73,22 +73,17 @@
   width: 100%;
   background: #f0fff0;
 }
-.player:before {
-  content: "";
-  display: block;
-  padding-top: 10%;
-}
 </style>
 
 <script>
 import { field, Player, Computer, Card, ArrayEx } from "../models.js";
 
 var characters = [
-  new Player("シャーロック", "#F189C8"),
-  new Computer("ネロ", "#F1A15B"),
-  new Computer("エリー", "#34BD67"),
-  new Computer("コーデリア", "#26C4F0"),
-  new Computer("かまぼこ", "#C97842")
+  new Computer("パクチー", "#F189C8", 'vegetable_pakuchi_coriander.png'),
+  new Player("台湾まぜそば", "#F1A15B"),
+  new Computer("日本酒", "#34BD67", 'masu_nihonsyu.png'),
+  new Computer("餃子", "#26C4F0", 'food_gyouza_mise.png'),
+  new Computer("かまぼこ", "#C97842", 'kamaboko_red.png')
 ];
 
 const computers = characters.filter(x => x instanceof Computer);

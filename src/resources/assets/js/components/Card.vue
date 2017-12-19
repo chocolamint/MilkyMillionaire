@@ -21,7 +21,7 @@
 .card:before {
   content: "";
   display: block;
-  padding-top: 141.4%;
+  padding-top: 141.3%;
 }
 .card > div {
   position: absolute;
@@ -33,6 +33,7 @@
   line-height: 1.2em;
   text-align: center;
   box-sizing: border-box;
+  padding-top: 1vw;
 }
 .card.joker > div {
   font-size: 3.5vw;
