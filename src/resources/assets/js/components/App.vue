@@ -82,10 +82,10 @@ import { field, Player, Computer, Card, ArrayEx } from "../models.js";
 
 var characters = [
   new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png"),
-  new Player("台湾まぜそば", "#F1A15B"),
   new Computer("日本酒", "#34BD67", "masu_nihonsyu.png"),
   new Computer("餃子", "#26C4F0", "food_gyouza_mise.png"),
-  new Computer("かまぼこ", "#C97842", "kamaboko_red.png")
+  new Computer("かまぼこ", "#C97842", "kamaboko_red.png"),
+  new Player("台湾まぜそば", "#F1A15B"),
 ];
 
 const computers = characters.filter(x => x instanceof Computer);
