@@ -34,6 +34,33 @@ export class ArrayEx {
     static flatMap(xs, f) {
         return xs.map(f).reduce((a, b) => a.concat(b));
     }
+
+    /**
+     * @param {T[]} xs 
+     * @param {Number} k 
+     */
+    static combination(xs, k) {
+
+        /**
+         * @param {T[]} xs 
+         * @param {Number} i 
+         * @param {Number} k 
+         */
+        const temp = (xs, i, k) => {
+            if (k == 0) {
+                return xs.slice(i).map(x => [x]);
+            }
+            const ret = [];
+            for (let j = i; j < xs.length; j++) {
+                const ys = temp(xs, j + 1, k - 1);
+                for (const y of ys) {
+                    ret.push([xs[j]].concat(y));
+                }
+            }
+            return ret;
+        };
+        return temp(xs, 0, k - 1);
+    }
 }
 
 class Field {
@@ -73,9 +100,14 @@ class Field {
         this.cards.push(cards);
     }
     canDiscard(cards) {
-        if (cards.length < 1) return false;
-        var c = cards[0];
-        if (cards.some(x => !x.isJoker && c.rank != x.rank)) return false;
+        if (cards.length == 0) return false;
+        let c;
+        if (cards.every(x => x.isJoker)) {
+            c = cards[0];
+        }else {
+            c = cards.filter(x => !x.isJoker)[0];
+            if (cards.some(x => !x.isJoker && c.rank != x.rank)) return false;
+        }
         const top = this.top();
         if (top == null) return true;
         if (Card.compareRank(c, top[0]) <= 0) return false;
@@ -146,45 +178,18 @@ export class Player extends Character {
 export class Computer extends Character {
     turnCore() {
 
-        /**
-         * @param {T[]} xs 
-         * @param {Number} k 
-         */
-        const combination = (xs, k) => {
-
-            /**
-             * @param {T[]} xs 
-             * @param {Number} i 
-             * @param {Number} k 
-             */
-            const temp = (xs, i, k) => {
-                if (k == 0) {
-                    return xs.slice(i).map(x => [x]);
-                }
-                const ret = [];
-                for (let j = i; j < xs.length; j++) {
-                    const ys = temp(xs, j + 1, k - 1);
-                    for (const y of ys) {
-                        ret.push([xs[j]].concat(y));
-                    }
-                }
-                return ret;
-            };
-            return temp(xs, 0, k - 1);
-        };
-
         setTimeout(() => {
             const top = field.top();
             let discardable;
             if (top != null) {
                 const fieldCardCount = top.length;
-                const discardables = combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
+                const discardables = ArrayEx.combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
                 console.log('捨てられるのは以下の組み合わせです');
                 console.dir(discardables.map(x => x.join(',')));
                 discardable = ArrayEx.random(discardables);
             } else {
                 // TODO: 2枚以上を出すケースも用意
-                const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => combination(this.cards, x))
+                const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => ArrayEx.combination(this.cards, x))
                     .filter(x => field.canDiscard(x));
                 console.log('捨てられるのは以下の組み合わせです');
                 console.dir(discardables.map(x => x.join(',')));

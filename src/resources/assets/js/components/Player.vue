@@ -46,14 +46,13 @@
 </style>
 
 <script>
-import { Card } from "../models.js";
+import { Card, ArrayEx } from "../models.js";
 
 export default {
   props: ["player", "field"],
   methods: {
     toggleCardStaging: function(card) {
       card.isStaged = !card.isStaged;
-      console.log(card.isStaged);
     },
     pass: function(player) {
       player.pass();
@@ -63,12 +62,14 @@ export default {
     },
     canStage(card, player, field) {
       const stagings = player.stagings();
+      const top = field.top();
       if (stagings.length == 0) {
-        const top = field.top();
         if (top == null) return true;
-        return Card.compareRank(card, top[0]) > 0;
+        const discardables = ArrayEx.combination(player.cards, top.length).filter(xs => field.canDiscard(xs));
+        return discardables.some(xs => xs.indexOf(card) != -1);
       } else {
-        return stagings[0].rank == card.rank;
+        console.log(stagings.concat(card).join(',') + ' -> ' + field.canDiscard(stagings.concat(card)));
+        return field.canDiscard(stagings.concat(card)) || stagings.indexOf(card) != -1;
       }
     }
   }
