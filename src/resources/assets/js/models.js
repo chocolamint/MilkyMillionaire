@@ -80,6 +80,7 @@ class Field {
         this._lastDiscard = character;
         this._passCount = 0;
 
+        cards.discardedBy = this._computers.indexOf(character);
         cards.id = 'discards-' + String(discardId++);
         for (const card of cards) {
             card.id += '-discard';
@@ -121,6 +122,10 @@ class Field {
 
         const doGame = async () => {
 
+            const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            this._computers = characters.filter(x => x instanceof Character);
+
             Field.deal(characters, cards);
 
             for (const character of characters) {
@@ -137,6 +142,7 @@ class Field {
                         console.log(`最後にカードを捨てた${this._lastDiscard.name}の番が回ってきたので次の親になります`);
                         this.cards.splice(0, this.cards.length);
                         this._lastDiscard = null;
+                        await delay(500);
                     }
                     if (nextDealer != null && character != nextDealer) continue;
                     nextDealer = null;
@@ -182,16 +188,16 @@ export class Character {
     }
     turn(turnCount) {
         return new Promise(resolve => {
-            this._resolveTurn = resolve;
             this.say(`私のターンです！`);
             this.isMyTurn = true;
+            this._resolveTurn = resolve;
             this.turnCore(turnCount);
         });
     }
     turnCore(turnCount) {
 
     }
-    turnEnd(nextDealer) {
+    turnEnd() {
         this.isMyTurn = false;
         this.say(`ターン終了です！`);
         if (this.cards.length == 0) {
@@ -199,18 +205,16 @@ export class Character {
             this.say(`あがりです！`);
             field.notifyClear(this);
         }
-        this._resolveTurn(nextDealer);
+        this._resolveTurn();
     }
     pass() {
-        field.pass(this, this._resolveTurn);
-        this.turnEnd();
+        field.pass(this);
     }
     discard(cards) {
         for (const card of cards) {
             this.cards.splice(this.cards.indexOf(card), 1);
         }
         field.discard(this, cards);
-        this.turnEnd();
     }
     endGame() {
         this.cards.splice(0, this.cards.length);
@@ -232,10 +236,12 @@ export class Player extends Character {
             card.isStaged = false;
         }
         this.discard(stagings);
+        this.turnEnd();
     }
     pass() {
         this.stagings().forEach(x => x.isStaged = false);
         super.pass();
+        this.turnEnd();
     }
 }
 
@@ -279,15 +285,14 @@ export class Computer extends Character {
 
         if (discardable == null) {
             this.passing = true;
+            this.pass();
+        } else {
+            this.discard(discardable);
         }
 
         setTimeout(() => {
-            if (discardable == null) {
-                this.passing = false;
-                this.pass();
-            } else {
-                this.discard(discardable);
-            }
+            this.passing = false;
+            this.turnEnd();
         }, 500);
     }
 }
