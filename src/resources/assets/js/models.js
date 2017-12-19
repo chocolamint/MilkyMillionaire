@@ -1,3 +1,41 @@
+export class ArrayEx {
+    /**
+     * @param {Number} n
+     */
+    static range(start, count) {
+        return [...Array(count).keys()].map(x => start + x);
+    }
+
+    /**
+     * @param {T[]} arr 
+     * @returns {T[]}
+    */
+    static shuffle(arr) {
+        var i, j, temp;
+        arr = arr.slice();
+        i = arr.length;
+        if (i === 0) {
+            return arr;
+        }
+        while (--i) {
+            j = Math.floor(Math.random() * (i + 1));
+            temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+        return arr;
+    }
+
+    static random(arr) {
+        if (arr.length == 0) return void 0;
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    static flatMap(xs, f) {
+        return xs.map(f).reduce((a, b) => a.concat(b));
+    }
+}
+
 class Field {
     constructor() {
         this.cards = [];
@@ -68,7 +106,7 @@ export class Character {
         });
     }
     turnCore() {
-        
+
     }
     turnEnd(nextDealer) {
         this.isMyTurn = false;
@@ -106,17 +144,60 @@ export class Player extends Character {
 }
 
 export class Computer extends Character {
-    turnCore(){
+    turnCore() {
+
+        /**
+         * @param {T[]} xs 
+         * @param {Number} k 
+         */
+        const combination = (xs, k) => {
+
+            /**
+             * @param {T[]} xs 
+             * @param {Number} i 
+             * @param {Number} k 
+             */
+            const temp = (xs, i, k) => {
+                if (k == 0) {
+                    return xs.slice(i).map(x => [x]);
+                }
+                const ret = [];
+                for (let j = i; j < xs.length; j++) {
+                    const ys = temp(xs, j + 1, k - 1);
+                    for (const y of ys) {
+                        ret.push([xs[j]].concat(y));
+                    }
+                }
+                return ret;
+            };
+            return temp(xs, 0, k - 1);
+        };
+
         setTimeout(() => {
-            const discardable = this.cards.filter(x => field.canDiscard([x]))[0];
+            const top = field.top();
+            let discardable;
+            if (top != null) {
+                const fieldCardCount = top.length;
+                const discardables = combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
+                console.log('捨てられるのは以下の組み合わせです');
+                console.dir(discardables.map(x => x.join(',')));
+                discardable = ArrayEx.random(discardables);
+            } else {
+                // TODO: 2枚以上を出すケースも用意
+                const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => combination(this.cards, x))
+                    .filter(x => field.canDiscard(x));
+                console.log('捨てられるのは以下の組み合わせです');
+                console.dir(discardables.map(x => x.join(',')));
+                discardable = ArrayEx.random(discardables);
+            }
             if (discardable == null) {
                 this.pass();
             } else {
-                this.discard([discardable]);
+                this.discard(discardable);
             }
         }, 500);
     }
- }
+}
 
 export class Card {
     constructor(id, suit, rank, isJoker) {
@@ -155,6 +236,17 @@ export class Card {
         if (b.isJoker) return -1;
         const numberRanks = n => (n == 2 ? 15 : n == 1 ? 14 : n);
         return numberRanks(a.rank) - numberRanks(b.rank);
+    }
+    static allCards() {
+        const suits = ["♥", "♦", "♠", "♣"];
+        const ranks = ArrayEx.range(1, 13);
+        const cards = ArrayEx.flatMap(ranks, rank =>
+            suits.map(suit => new Card(suit + "-" + rank, suit, rank))
+        ).concat(
+            new Card("joker1", null, null, true),
+            new Card("joker2", null, null, true)
+            );
+        return cards;
     }
     toString() {
         if (this.isJoker) return 'Joker';

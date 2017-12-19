@@ -81,7 +81,7 @@
 </style>
 
 <script>
-import { field, Player, Computer, Card } from "../models.js";
+import { field, Player, Computer, Card, ArrayEx } from "../models.js";
 
 var characters = [
   new Player("シャーロック"),
@@ -91,40 +91,7 @@ var characters = [
   new Computer("かまぼこ")
 ];
 
-/**
- * @param {Number} n
- */
-const range = n => [...Array(n).keys()].map(x => Number(x));
-
-/**
- * @param {T[]} arr 
- * @returns {T[]}
-*/
-const shuffle = arr => {
-  var i, j, temp;
-  arr = arr.slice();
-  i = arr.length;
-  if (i === 0) {
-    return arr;
-  }
-  while (--i) {
-    j = Math.floor(Math.random() * (i + 1));
-    temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-  }
-  return arr;
-};
-
-const suits = ["♥", "♦", "♠", "♣"];
-const cards = range(13)
-  .map(x => x + 1)
-  .map(rank => suits.map(suit => new Card("s-" + rank, suit, rank)))
-  .reduce((a, b) => a.concat(b))
-  .concat(
-    new Card("joker1", null, null, true),
-    new Card("joker2", null, null, true)
-  );
+const cards = Card.allCards();
 
 /**
  * @param {Character[]} characters  
@@ -132,21 +99,23 @@ const cards = range(13)
 */
 const deal = (characters, cards) => {
   let i = 0;
-  for (const card of shuffle(cards)) {
+  for (const card of ArrayEx.shuffle(cards)) {
     characters[i++ % 5].cards.push(card);
   }
 };
 
 deal(characters, cards);
 
+for (const character of characters) {
+  character.cards.sort(Card.compareSort);
+}
+
 const computers = characters.filter(x => x instanceof Computer);
 const player = characters.filter(x => x instanceof Player)[0];
 
-player.cards.sort(Card.compareSort);
-
 /** @param {Character[]} characters */
 const beginGame = async function(characters) {
-  let nextDealer = characters[Math.floor(Math.random() * 5)];
+  let nextDealer = ArrayEx.random(characters);
   console.log(`${nextDealer.name}の親ではじめます`);
   while (true) {
     for (const character of characters) {
