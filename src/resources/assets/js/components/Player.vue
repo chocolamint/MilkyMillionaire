@@ -3,12 +3,16 @@
         <div class="name" :class="{ 'turn': player.isMyTurn }">
             {{ player.name }}
         </div>
-        <div>
           <div v-if="player.isCleared">
             あがり
           </div>
-          <div v-on:click="pass(player)">パス</div>
-          <div v-on:click="discardStaging(player)">カードを捨てる</div>
+        <div class="player-buttons">
+          <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
+            パス
+          </div>
+          <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null">
+            カードを捨てる
+          </div>
         </div>
         <div class="players-cards">
             <div v-for="card in player.cards" :key="card.id" class="card-container">
@@ -24,6 +28,73 @@
 .turn {
   background: red;
   color: white;
+}
+
+.player-buttons {
+  display: flex;
+}
+
+.player-button {
+  background: rgba(32, 32, 32, 0.8);
+  border-width: 0.8vw;
+  margin: 0.5vw;
+  border-radius: 1.4vw;
+  text-align: center;
+  font-weight: bold;
+  padding: 1.8vw;
+  position: relative;
+  color: #909090;
+}
+.player-button.enabled {
+  color: #ffffff;
+}
+
+.pass-button {
+  flex-grow: 5;
+}
+
+.pass-button.enabled {
+  text-shadow: #06425a;
+}
+
+.pass-button:before {
+  content: "× ";
+}
+
+.pass-button.enabled:after {
+  border-style: solid;
+  border-color: #ffffff;
+  box-shadow: #06425a 0 0 1vw;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  border-radius: 1.4vw;
+}
+
+.discard-button {
+  flex-grow: 8;
+}
+
+.discard-button:before {
+  content: "↑ ";
+}
+
+.discard-button.enabled:after {
+  border-style: solid;
+  border-color: #ffffff;
+  box-shadow: #640970 0 0 1vw;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  border-radius: 1.4vw;
 }
 
 .players-cards {
@@ -54,14 +125,17 @@ import { Card, ArrayEx } from "../models.js";
 export default {
   props: ["player", "field"],
   methods: {
-    toggleCardStaging: function(card) {
+    toggleCardStaging(card) {
       card.isStaged = !card.isStaged;
     },
-    pass: function(player) {
+    pass(player) {
       player.pass();
     },
-    discardStaging: function(player) {
+    discardStaging(player) {
       player.discardStaging();
+    },
+    canDiscard(field, player) {
+      return field.canDiscard(player.stagings());
     },
     canStage(card, player, field) {
       const stagings = player.stagings();
@@ -79,6 +153,9 @@ export default {
           stagings.indexOf(card) != -1
         );
       }
+    },
+    canPass(player) {
+      return player.isMyTurn;
     }
   }
 };
