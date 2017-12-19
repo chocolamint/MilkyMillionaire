@@ -146,7 +146,7 @@ class Field {
                     }
 
                     await character.turn(turnCount);
-                    
+
                     isGameEnd = characters.filter(x => x.isCleared).length == 4;
                     if (isGameEnd) break;
                 }
@@ -229,6 +229,10 @@ export class Player extends Character {
     discardStaging() {
         var stagings = this.stagings();
         this.discard(stagings);
+    }
+    pass() {
+        this.stagings().forEach(x => x.isStaged = false);
+        super.pass();
     }
 }
 
