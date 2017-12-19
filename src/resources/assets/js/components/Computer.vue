@@ -1,13 +1,10 @@
 <template>
-    <div class="computer">
+    <div class="computer" :class="{ 'cleared': computer.isCleared }">
         <div class="name" :class="{ 'turn': computer.isMyTurn }">
             {{ computer.name }}
         </div>
         <div class="image" :style="{ borderColor: computer.color, 'background-color': bgColor(computer.color) }">
             <img :src="imagePath(computer)" alt="">
-        </div>
-        <div v-if="computer.isCleared">
-            あがり
         </div>
         <div class="cards" :data-card-count="computer.cards.length">
             <div v-for="card in computer.cards" :key="card.id" class="card"></div>
@@ -16,8 +13,74 @@
 </template>
 
 <style scoped>
+.computer {
+  position: relative;
+}
+.cleared:before {
+  content: "あ";
+  position: absolute;
+  color: #ffffff;
+  font-weight: bold;
+  background: hsla(51, 94%, 49%, 0.911);
+  font-size: 6vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 10vw;
+  left: 2vw;
+  display: inline-block;
+  width: 6vw;
+  height: 6vw;
+  line-height: 6vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
+.cleared .name:before {
+  content: "が";
+  position: absolute;
+  color: #ffffff;
+  font-weight: bold;
+  background: hsla(51, 94%, 49%, 0.911);
+  font-size: 6vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 12vw;
+  left: 9vw;
+  display: inline-block;
+  width: 6vw;
+  height: 6vw;
+  line-height: 6vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
+.cleared:after {
+  content: "り";
+  position: absolute;
+  color: #ffffff;
+  font-weight: bold;
+  background: hsla(51, 94%, 49%, 0.911);
+  font-size: 6vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 14vw;
+  left: 16vw;
+  display: inline-block;
+  width: 6vw;
+  height: 6vw;
+  line-height: 6vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
 .turn {
-  background: #CC1160;
+  background: #cc1160;
   color: white;
 }
 .name {
@@ -75,6 +138,10 @@
   vertical-align: middle;
 }
 
+.cleared .cards:after {
+  content: "";
+}
+
 .card {
   width: 4.5vw;
   height: 6.36vw;
@@ -96,8 +163,14 @@ export default {
       return `images/${computer.image}`;
     },
     bgColor(baseColor) {
-      const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(baseColor);
-      const colors = [parseInt(match[1], 16), parseInt(match[2], 16), parseInt(match[3], 16)];
+      const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(
+        baseColor
+      );
+      const colors = [
+        parseInt(match[1], 16),
+        parseInt(match[2], 16),
+        parseInt(match[3], 16)
+      ];
       return `rgba(${colors[0]}, ${colors[1]}, ${colors[2]}, 0.2)`;
     }
   }
