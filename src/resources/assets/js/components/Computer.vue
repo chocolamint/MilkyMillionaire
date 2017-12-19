@@ -3,6 +3,9 @@
         <div class="name" :class="{ 'turn': computer.isMyTurn }">
             {{ computer.name }}
         </div>
+        <div v-if="computer.isCleared">
+            あがり
+        </div>
         <div class="card-count">
             {{ computer.cards.length }}
         </div>

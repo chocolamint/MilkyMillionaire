@@ -4,6 +4,9 @@
             {{ player.name }}
         </div>
         <div>
+          <div v-if="player.isCleared">
+            あがり
+          </div>
           <div v-on:click="pass(player)">パス</div>
           <div v-on:click="discardStaging(player)">カードを捨てる</div>
         </div>
@@ -65,11 +68,16 @@ export default {
       const top = field.top();
       if (stagings.length == 0) {
         if (top == null) return true;
-        const discardables = ArrayEx.combination(player.cards, top.length).filter(xs => field.canDiscard(xs));
+        const discardables = ArrayEx.combination(
+          player.cards,
+          top.length
+        ).filter(xs => field.canDiscard(xs));
         return discardables.some(xs => xs.indexOf(card) != -1);
       } else {
-        console.log(stagings.concat(card).join(',') + ' -> ' + field.canDiscard(stagings.concat(card)));
-        return field.canDiscard(stagings.concat(card)) || stagings.indexOf(card) != -1;
+        return (
+          field.canDiscard(stagings.concat(card)) ||
+          stagings.indexOf(card) != -1
+        );
       }
     }
   }

@@ -84,11 +84,11 @@
 import { field, Player, Computer, Card, ArrayEx } from "../models.js";
 
 var characters = [
-  new Player("シャーロック"),
-  new Computer("ネロ"),
-  new Computer("エリー"),
-  new Computer("コーデリア"),
-  new Computer("かまぼこ")
+  new Player("シャーロック", "#F189C8"),
+  new Computer("ネロ", "#F1A15B"),
+  new Computer("エリー", "#34BD67"),
+  new Computer("コーデリア", "#26C4F0"),
+  new Computer("かまぼこ", "#C97842")
 ];
 
 const computers = characters.filter(x => x instanceof Computer);

@@ -122,35 +122,51 @@ class Field {
     }
     async beginGame(characters, cards) {
 
-        Field.deal(characters, cards);
+        const doGame = async () => {
 
-        for (const character of characters) {
-            character.cards.sort(Card.compareSort);
-        }
+            Field.deal(characters, cards);
 
-        let nextDealer = ArrayEx.random(characters);
-        console.log(`${nextDealer.name}の親ではじめます`);
-        while (true) {
             for (const character of characters) {
-                if (nextDealer != null && character != nextDealer) continue;
-                nextDealer = null;
-                if (character.isCleared) continue;
-                await character.turn();
-                if (this._passCount == 4) {
-                    console.log(`パスが4回続いたので最後にカードを捨てた${this._lastDiscard.name}が次の親になります`);
-                    this.cards.splice(0, this.cards.length);
-                    nextDealer = this._lastDiscard;
-                    this._passCount = 0;
-                    this._lastDiscard = null;
-                }
+                character.cards.sort(Card.compareSort);
             }
-            if (characters.every(x => x.isCleared)) {
-                field.endGame();
+
+            let nextDealer = ArrayEx.random(characters);
+            console.log(`${nextDealer.name}の親ではじめます`);
+            let turnCount = 0;
+            let isGameEnd = false;
+            while (true) {
+                for (const character of characters) {
+                    if (nextDealer != null && character != nextDealer) continue;
+                    nextDealer = null;
+                    if (character.isCleared) {
+                        console.log(`${character.name}はあがっているので飛ばします`);
+                        continue;
+                    }
+                    await character.turn(turnCount);
+                    if (this._passCount == 4) {
+                        console.log(`パスが4回続いたので最後にカードを捨てた${this._lastDiscard.name}が次の親になります`);
+                        this.cards.splice(0, this.cards.length);
+                        nextDealer = this._lastDiscard;
+                        this._passCount = 0;
+                        this._lastDiscard = null;
+                    }
+                    isGameEnd = characters.filter(x => x.isCleared).length == 4;
+                    if (isGameEnd) break;
+                }
+                if (isGameEnd) break;
+                turnCount++;
+            }
+            this._lastDiscard = null;
+            this._passCount = 0;
+        };
+
+        while (true) {
+            await doGame();
+            console.log('全員あがったので次のゲームへ進みます');
+            for (const character of characters) {
+                character.endGame();
             }
         }
-    }
-    endGame() {
-
     }
 }
 
@@ -159,29 +175,30 @@ export const field = new Field();
 let discardId = 0;
 
 export class Character {
-    constructor(name) {
+    constructor(name, color) {
         this.name = name;
         this.cards = [];
         this.isMyTurn = false;
         this.isCleared = false;
+        this.color = color;
     }
-    turn() {
+    turn(turnCount) {
         return new Promise(resolve => {
             this._resolveTurn = resolve;
-            console.log(`${this.name}のターン`);
+            this.say(`私のターンです！`);
             this.isMyTurn = true;
-            this.turnCore();
+            this.turnCore(turnCount);
         });
     }
-    turnCore() {
+    turnCore(turnCount) {
 
     }
     turnEnd(nextDealer) {
         this.isMyTurn = false;
-        console.log(`${this.name}のターン終わり`);
+        this.say(`ターン終了です！`);
         if (this.cards.length == 0) {
             this.isCleared = true;
-            console.log(`${this.name}があがりました`);
+            this.say(`あがりです！`);
             field.notifyClear(this);
         }
         this._resolveTurn(nextDealer);
@@ -197,15 +214,17 @@ export class Character {
         field.discard(this, cards);
         this.turnEnd();
     }
+    endGame() {
+        this.cards.splice(0, this.cards.length);
+        this.isMyTurn = false;
+        this.isCleared = false;
+    }
+    say(message) {
+        console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
+    }
 }
 
 export class Player extends Character {
-    turn() {
-        this.isMyTurn = true;
-        return new Promise(resolve => {
-            this._resolveTurn = resolve;
-        });
-    }
     stagings() {
         return this.cards.filter(x => x.isStaged);
     }
@@ -216,7 +235,7 @@ export class Player extends Character {
 }
 
 export class Computer extends Character {
-    turnCore() {
+    turnCore(turnCount) {
 
         setTimeout(() => {
             const top = field.top();
@@ -224,14 +243,29 @@ export class Computer extends Character {
             if (top != null) {
                 const fieldCardCount = top.length;
                 const discardables = ArrayEx.combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
-                console.log('捨てられるのは以下の組み合わせです');
-                console.dir(discardables.map(x => x.join(',')));
-                discardable = ArrayEx.random(discardables);
+                this.say(`捨てられるのは... ${discardables.length ? discardables.map(x => x.join('')).join(', ') : 'ないですね...'}`);
+                let strategicPass = false;
+                if (discardables.length != 0) {
+                    // ターンが早くてかつ捨てないといけないカードのランクが高いほどパスしやすくする
+                    const turnRatio = Math.max((- (turnCount + 1) + 10) / 10, 0);
+                    this.say(`ターンのはやさは${turnRatio}`);
+                    // TODO: 実際に捨てないといけないカードのランクの高さでパスしやすさを決めたいが、弱いものほど捨てやすいロジックになっていないと意味がないのでまたあとで
+                    const fieldRank = top.filter(x => !x.isJoker)[0].rankLevel();
+                    const passRatio = turnRatio * (fieldRank * fieldRank / 169);
+                    this.say(`${turnCount + 1}ターン目で${fieldRank}という高さ…パスしたさは${Math.round(passRatio * 100)}%くらいかな...`)
+                    if (Math.random() < passRatio) {
+                        strategicPass = true;
+                        this.say(`戦略的パスします`);
+                    }
+                }
+                // TODO: 弱いものほど捨てやすくしたい
+                discardable = strategicPass ? null : ArrayEx.random(discardables);
+
             } else {
                 const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => ArrayEx.combination(this.cards, x))
                     .filter(x => field.canDiscard(x));
-                console.log('捨てられるのは以下の組み合わせです');
-                console.dir(discardables.map(x => x.join(',')));
+                this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
+                // TODO: 弱いものほど捨てやすくしたい
                 discardable = ArrayEx.random(discardables);
             }
             if (discardable == null) {
@@ -278,8 +312,12 @@ export class Card {
         if (a.isJoker && b.isJoker) return 0;
         if (a.isJoker) return 1;
         if (b.isJoker) return -1;
-        const numberRanks = n => (n == 2 ? 15 : n == 1 ? 14 : n);
-        return numberRanks(a.rank) - numberRanks(b.rank);
+        return a.rankLevel() - b.rankLevel();
+    }
+    rankLevel() {
+        if (this.isJoker) 13;
+        const n = this.rank;
+        return (n == 2 ? 12 : n == 1 ? 11 : n - 3);
     }
     static allCards() {
         const suits = ["♥", "♦", "♠", "♣"];
