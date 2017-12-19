@@ -4,7 +4,7 @@
             <span>Joker</span>
         </div>
         <div v-else>
-            <span class="suit">{{ card.suit }}</span><span class="rank">{{ showCardRank(card.rank) }}</span>
+            <span class="suit">{{ card.suit }}</span><span class="rank" :data-rank="card.rank">{{ showCardRank(card.rank) }}</span>
         </div>
     </div>
 </template>
@@ -42,6 +42,13 @@
 .card.heart,
 .card.diamond {
   color: red;
+}
+.card .suit {
+  font-family: "HiraKakuProN-W6" !important;
+  font-size: 90%;
+}
+.card .rank[data-rank="10"] {
+  letter-spacing: -0.4vw;
 }
 </style>
 

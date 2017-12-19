@@ -29,7 +29,7 @@
   content: "あ";
   position: absolute;
   color: #ffffff;
-  font-weight: bold;
+  font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 10vw;
   padding: 1vw;
@@ -50,7 +50,7 @@
   content: "が";
   position: absolute;
   color: #ffffff;
-  font-weight: bold;
+  font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 10vw;
   padding: 1vw;
@@ -71,7 +71,7 @@
   content: "り";
   position: absolute;
   color: #ffffff;
-  font-weight: bold;
+  font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 10vw;
   padding: 1vw;
@@ -175,7 +175,7 @@
 .name[data-player-rank="3"]:after {
   content: "\1F4B4平民";
   color: #183b04;
-  font-weight: bold;
+  font-weight: 900;
   text-shadow: rgba(90, 90, 90, 0.6) 0.2vw 0.2vw 0.2vw;
   display: block;
   width: 100%;
