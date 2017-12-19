@@ -11,7 +11,7 @@
 
 <style scoped>
 .card {
-  border: solid 0.2vw #909090;
+  border: solid 0.3vw #c0c0c0;
   border-radius: 1vw;
   background: #ffffff;
   position: relative;

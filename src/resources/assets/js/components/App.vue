@@ -24,7 +24,6 @@
   margin: 0;
   padding: 0;
   width: 100%;
-  background: #fff0f0;
 }
 .computers:before {
   content: "";
@@ -36,7 +35,6 @@
 }
 .field {
   width: 100%;
-  background: #f0f0ff;
   position: relative;
 }
 .field:before {
@@ -71,7 +69,6 @@
 }
 .player {
   width: 100%;
-  background: #f0fff0;
 }
 </style>
 

@@ -25,7 +25,6 @@
 </template>
 
 <style scoped>
-
 .player-buttons {
   display: flex;
   margin: 0 4vw;
@@ -93,7 +92,6 @@
   display: block;
   border-radius: 1.4vw;
 }
-
 
 .name {
   text-indent: -10000vw;
