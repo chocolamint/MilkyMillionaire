@@ -72,9 +72,6 @@ class Field {
     pass(character) {
 
         console.log(`${character.name}がパスしました`);
-
-        this._passCount++;
-        console.log(`パス${this._passCount}連続`);
     }
     discard(character, cards) {
 
@@ -136,20 +133,20 @@ class Field {
             let isGameEnd = false;
             while (true) {
                 for (const character of characters) {
+                    if (this._lastDiscard == character) {
+                        console.log(`最後にカードを捨てた${this._lastDiscard.name}の番が回ってきたので次の親になります`);
+                        this.cards.splice(0, this.cards.length);
+                        this._lastDiscard = null;
+                    }
                     if (nextDealer != null && character != nextDealer) continue;
                     nextDealer = null;
                     if (character.isCleared) {
                         console.log(`${character.name}はあがっているので飛ばします`);
                         continue;
                     }
+
                     await character.turn(turnCount);
-                    if (this._passCount == 4) {
-                        console.log(`パスが4回続いたので最後にカードを捨てた${this._lastDiscard.name}が次の親になります`);
-                        this.cards.splice(0, this.cards.length);
-                        nextDealer = this._lastDiscard;
-                        this._passCount = 0;
-                        this._lastDiscard = null;
-                    }
+                    
                     isGameEnd = characters.filter(x => x.isCleared).length == 4;
                     if (isGameEnd) break;
                 }
@@ -252,7 +249,6 @@ export class Computer extends Character {
                 if (discardables.length != 0) {
                     // ターンが早くてかつ捨てないといけないカードのランクが高いほどパスしやすくする
                     const turnRatio = Math.max((- (turnCount + 1) + 10) / 10, 0);
-                    this.say(`ターンのはやさは${turnRatio}`);
                     // TODO: 実際に捨てないといけないカードのランクの高さでパスしやすさを決めたいが、弱いものほど捨てやすいロジックになっていないと意味がないのでまたあとで
                     const fieldRank = top.filter(x => !x.isJoker)[0].rankLevel();
                     const passRatio = turnRatio * (fieldRank * fieldRank / 169);
