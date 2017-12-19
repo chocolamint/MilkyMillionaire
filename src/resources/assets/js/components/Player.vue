@@ -15,7 +15,7 @@
             <div v-for="card in player.cards" :key="card.id" class="card-container">
                 <card :card="card" 
                   :class="{ 'staging': card.isStaged, 'disable-stage': player.isMyTurn && !canStage(card, player, field) }"
-                  v-on:click.native="canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
+                  v-on:click.native="player.isMyTurn && canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
   padding: 1vw;
   z-index: 1;
   border-radius: 1vw;
-  top: 23vw;
+  top: 106%;
   left: 26vw;
   display: inline-block;
   width: 12vw;
@@ -56,7 +56,7 @@
   padding: 1vw;
   z-index: 1;
   border-radius: 1vw;
-  top: 29vw;
+  top: 134%;
   left: 43vw;
   display: inline-block;
   width: 12vw;
@@ -77,7 +77,7 @@
   padding: 1vw;
   z-index: 1;
   border-radius: 1vw;
-  top: 26vw;
+  top: 120%;
   left: 60vw;
   display: inline-block;
   width: 12vw;

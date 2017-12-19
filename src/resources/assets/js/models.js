@@ -228,6 +228,9 @@ export class Player extends Character {
     }
     discardStaging() {
         var stagings = this.stagings();
+        for (const card of stagings) {
+            card.isStaged = false;
+        }
         this.discard(stagings);
     }
     pass() {

@@ -26,7 +26,7 @@
   padding: 1vw;
   z-index: 1;
   border-radius: 1vw;
-  top: 10vw;
+  top: 41%;
   left: 2vw;
   display: inline-block;
   width: 6vw;
@@ -47,7 +47,7 @@
   padding: 1vw;
   z-index: 1;
   border-radius: 1vw;
-  top: 12vw;
+  top: 47%;
   left: 9vw;
   display: inline-block;
   width: 6vw;
@@ -68,7 +68,7 @@
   padding: 1vw;
   z-index: 1;
   border-radius: 1vw;
-  top: 14vw;
+  top: 53%;
   left: 16vw;
   display: inline-block;
   width: 6vw;
