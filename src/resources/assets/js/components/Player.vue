@@ -1,5 +1,5 @@
 <template>
-    <div class="player">
+    <div class="player" :class="{ cleared: player.isCleared }">
         <div class="player-buttons">
           <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
             パス
@@ -10,9 +10,6 @@
         </div>
         <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank">
           {{ player.name }}
-        </div>
-        <div v-if="player.isCleared" class="cleared">
-          あがり
         </div>
         <div class="players-cards">
             <div v-for="card in player.cards" :key="card.id" class="card-container">
@@ -25,6 +22,73 @@
 </template>
 
 <style scoped>
+.player {
+  position: relative;
+}
+.cleared:before {
+  content: "あ";
+  position: absolute;
+  color: #ffffff;
+  font-weight: bold;
+  background: hsla(51, 94%, 49%, 0.911);
+  font-size: 10vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 23vw;
+  left: 26vw;
+  display: inline-block;
+  width: 12vw;
+  height: 12vw;
+  line-height: 12vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
+.cleared .players-cards:after {
+  content: "が";
+  position: absolute;
+  color: #ffffff;
+  font-weight: bold;
+  background: hsla(51, 94%, 49%, 0.911);
+  font-size: 10vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 29vw;
+  left: 43vw;
+  display: inline-block;
+  width: 12vw;
+  height: 12vw;
+  line-height: 12vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
+.cleared:after {
+  content: "り";
+  position: absolute;
+  color: #ffffff;
+  font-weight: bold;
+  background: hsla(51, 94%, 49%, 0.911);
+  font-size: 10vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 26vw;
+  left: 60vw;
+  display: inline-block;
+  width: 12vw;
+  height: 12vw;
+  line-height: 12vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
+
 .player-buttons {
   display: flex;
   margin: 0 4vw;
@@ -40,6 +104,7 @@
   padding: 2.4vw 0;
   position: relative;
   color: #909090;
+  font-size: 4.5vw;
 }
 .player-button.enabled {
   color: #ffffff;
@@ -99,6 +164,7 @@
   height: 0vw;
   border-style: solid;
   border-color: transparent;
+  border-bottom-color: #909090;
   border-width: 5vw;
 }
 
