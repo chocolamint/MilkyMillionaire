@@ -1,6 +1,6 @@
 <template>
     <div class="computer" :class="{ 'cleared': computer.isCleared }">
-        <div class="name" :class="{ 'turn': computer.isMyTurn }">
+        <div class="name" :class="{ 'turn': computer.isMyTurn }" :data-player-rank="computer.rank">
             {{ computer.name }}
         </div>
         <div class="image" :style="{ borderColor: computer.color, 'background-color': bgColor(computer.color) }">
@@ -37,7 +37,7 @@
   box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
   text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
 }
-.cleared .name:before {
+.cleared .name:after {
   content: "が";
   position: absolute;
   color: #ffffff;
@@ -87,7 +87,20 @@
   text-align: center;
   font-weight: bold;
   font-size: 5vw;
-  margin: 4vw 0 0;
+  margin: 10vw 0 0;
+}
+.name[data-player-rank="3"]:before {
+  content: "\1F4B4平民";
+  color: #183b04;
+  position: absolute;
+  font-weight: bold;
+  text-shadow: rgba(90, 90, 90, 0.6) 0.2vw 0.2vw 0.2vw;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 4vw;
+  margin: 0;
+  top: -7vw;
 }
 .image {
   text-align: center;

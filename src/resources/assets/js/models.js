@@ -178,6 +178,7 @@ export class Character {
         this.isMyTurn = false;
         this.isCleared = false;
         this.color = color;
+        this.rank = 3;
     }
     turn(turnCount) {
         return new Promise(resolve => {

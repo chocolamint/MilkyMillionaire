@@ -8,7 +8,7 @@
             カードを捨てる
           </div>
         </div>
-        <div class="name" :class="{ 'turn': player.isMyTurn }">
+        <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank">
           {{ player.name }}
         </div>
         <div v-if="player.isCleared" class="cleared">
@@ -25,14 +25,10 @@
 </template>
 
 <style scoped>
-.turn {
-  background: #cc1160;
-  color: white;
-}
 
 .player-buttons {
   display: flex;
-  margin: 0 4vw 4vw;
+  margin: 0 4vw;
 }
 
 .player-button {
@@ -96,6 +92,38 @@
   left: 0;
   display: block;
   border-radius: 1.4vw;
+}
+
+
+.name {
+  text-indent: -10000vw;
+  position: relative;
+  height: 0vw;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5vw;
+}
+
+.name.turn {
+  border-bottom-color: #cc1160;
+}
+
+.name[data-player-rank="3"]:after {
+  content: "\1F4B4平民";
+  color: #183b04;
+  font-weight: bold;
+  text-shadow: rgba(90, 90, 90, 0.6) 0.2vw 0.2vw 0.2vw;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 6vw;
+  margin: -4vw 0 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  text-indent: 0;
 }
 
 .players-cards {
