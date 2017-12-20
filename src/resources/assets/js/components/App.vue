@@ -101,6 +101,9 @@
 .card-discard-enter[data-discarded-by="3"] {
   transform: translate(30vw, -20vw);
 }
+.card-discard-enter[data-discarded-by="-1"] {
+  transform: translate(0, 20vw);
+}
 .card-discard-enter-active {
   transition: transform 0.3s linear;
   transform: translate(0, 0);

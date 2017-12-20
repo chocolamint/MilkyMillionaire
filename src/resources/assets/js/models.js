@@ -124,7 +124,7 @@ class Field {
 
             const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-            this._computers = characters.filter(x => x instanceof Character);
+            this._computers = characters.filter(x => x instanceof Computer);
 
             Field.deal(characters, cards);
 
@@ -236,7 +236,9 @@ export class Player extends Character {
             card.isStaged = false;
         }
         this.discard(stagings);
-        this.turnEnd();
+        setTimeout(() => {
+            this.turnEnd();
+        }, 500);
     }
     pass() {
         this.stagings().forEach(x => x.isStaged = false);
