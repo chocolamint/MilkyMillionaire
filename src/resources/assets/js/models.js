@@ -80,6 +80,7 @@ class Field {
         this._lastDiscard = character;
         this._passCount = 0;
 
+        cards.discardedBy = this._computers.indexOf(character);
         cards.id = 'discards-' + String(discardId++);
         for (const card of cards) {
             card.id += '-discard';
@@ -121,6 +122,10 @@ class Field {
 
         const doGame = async () => {
 
+            const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            this._computers = characters.filter(x => x instanceof Computer);
+
             Field.deal(characters, cards);
 
             for (const character of characters) {
@@ -137,6 +142,7 @@ class Field {
                         console.log(`最後にカードを捨てた${this._lastDiscard.name}の番が回ってきたので次の親になります`);
                         this.cards.splice(0, this.cards.length);
                         this._lastDiscard = null;
+                        await delay(500);
                     }
                     if (nextDealer != null && character != nextDealer) continue;
                     nextDealer = null;
@@ -182,16 +188,16 @@ export class Character {
     }
     turn(turnCount) {
         return new Promise(resolve => {
-            this._resolveTurn = resolve;
             this.say(`私のターンです！`);
             this.isMyTurn = true;
+            this._resolveTurn = resolve;
             this.turnCore(turnCount);
         });
     }
     turnCore(turnCount) {
 
     }
-    turnEnd(nextDealer) {
+    turnEnd() {
         this.isMyTurn = false;
         this.say(`ターン終了です！`);
         if (this.cards.length == 0) {
@@ -199,18 +205,16 @@ export class Character {
             this.say(`あがりです！`);
             field.notifyClear(this);
         }
-        this._resolveTurn(nextDealer);
+        this._resolveTurn();
     }
     pass() {
-        field.pass(this, this._resolveTurn);
-        this.turnEnd();
+        field.pass(this);
     }
     discard(cards) {
         for (const card of cards) {
             this.cards.splice(this.cards.indexOf(card), 1);
         }
         field.discard(this, cards);
-        this.turnEnd();
     }
     endGame() {
         this.cards.splice(0, this.cards.length);
@@ -232,55 +236,65 @@ export class Player extends Character {
             card.isStaged = false;
         }
         this.discard(stagings);
+        setTimeout(() => {
+            this.turnEnd();
+        }, 500);
     }
     pass() {
         this.stagings().forEach(x => x.isStaged = false);
         super.pass();
+        this.turnEnd();
     }
 }
 
 export class Computer extends Character {
     constructor(name, color, image) {
         super(name, color);
+        this.passing = false;
         this.image = image;
     }
     turnCore(turnCount) {
 
-        setTimeout(() => {
-            const top = field.top();
-            let discardable;
-            if (top != null) {
-                const fieldCardCount = top.length;
-                const discardables = ArrayEx.combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
-                this.say(`捨てられるのは... ${discardables.length ? discardables.map(x => x.join('')).join(', ') : 'ないですね...'}`);
-                let strategicPass = false;
-                if (discardables.length != 0) {
-                    // ターンが早くてかつ捨てないといけないカードのランクが高いほどパスしやすくする
-                    const turnRatio = Math.max((- (turnCount + 1) + 10) / 10, 0);
-                    // TODO: 実際に捨てないといけないカードのランクの高さでパスしやすさを決めたいが、弱いものほど捨てやすいロジックになっていないと意味がないのでまたあとで
-                    const fieldRank = top.filter(x => !x.isJoker)[0].rankLevel();
-                    const passRatio = turnRatio * (fieldRank * fieldRank / 169);
-                    this.say(`${turnCount + 1}ターン目で${fieldRank}という高さ…パスしたさは${Math.round(passRatio * 100)}%くらいかな...`)
-                    if (Math.random() < passRatio) {
-                        strategicPass = true;
-                        this.say(`戦略的パスします`);
-                    }
+        const top = field.top();
+        let discardable;
+        if (top != null) {
+            const fieldCardCount = top.length;
+            const discardables = ArrayEx.combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
+            this.say(`捨てられるのは... ${discardables.length ? discardables.map(x => x.join('')).join(', ') : 'ないですね...'}`);
+            let strategicPass = false;
+            if (discardables.length != 0) {
+                // ターンが早くてかつ捨てないといけないカードのランクが高いほどパスしやすくする
+                const turnRatio = Math.max((- (turnCount + 1) + 10) / 10, 0);
+                // TODO: 実際に捨てないといけないカードのランクの高さでパスしやすさを決めたいが、弱いものほど捨てやすいロジックになっていないと意味がないのでまたあとで
+                const fieldRank = top.filter(x => !x.isJoker)[0].rankLevel();
+                const passRatio = turnRatio * (fieldRank * fieldRank / 169);
+                this.say(`${turnCount + 1}ターン目で${fieldRank}という高さ…パスしたさは${Math.round(passRatio * 100)}%くらいかな...`)
+                if (Math.random() < passRatio) {
+                    strategicPass = true;
+                    this.say(`戦略的パスします`);
                 }
-                // TODO: 弱いものほど捨てやすくしたい
-                discardable = strategicPass ? null : ArrayEx.random(discardables);
+            }
+            // TODO: 弱いものほど捨てやすくしたい
+            discardable = strategicPass ? null : ArrayEx.random(discardables);
 
-            } else {
-                const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => ArrayEx.combination(this.cards, x))
-                    .filter(x => field.canDiscard(x));
-                this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
-                // TODO: 弱いものほど捨てやすくしたい
-                discardable = ArrayEx.random(discardables);
-            }
-            if (discardable == null) {
-                this.pass();
-            } else {
-                this.discard(discardable);
-            }
+        } else {
+            const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => ArrayEx.combination(this.cards, x))
+                .filter(x => field.canDiscard(x));
+            this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
+            // TODO: 弱いものほど捨てやすくしたい
+            discardable = ArrayEx.random(discardables);
+        }
+
+        if (discardable == null) {
+            this.passing = true;
+            this.pass();
+        } else {
+            this.discard(discardable);
+        }
+
+        setTimeout(() => {
+            this.passing = false;
+            this.turnEnd();
         }, 500);
     }
 }

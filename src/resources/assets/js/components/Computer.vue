@@ -1,5 +1,5 @@
 <template>
-    <div class="computer" :class="{ 'cleared': computer.isCleared }">
+    <div class="computer" :class="{ 'cleared': computer.isCleared, 'passing': computer.passing }">
         <div class="name" :class="{ 'turn': computer.isMyTurn }" :data-player-rank="computer.rank">
             {{ computer.name }}
         </div>
@@ -78,6 +78,48 @@
   text-align: center;
   box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
   text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
+.passing:before {
+  content: "パ";
+  position: absolute;
+  color: #ffffff;
+  font-weight: 900;
+  background: hsla(197, 94%, 49%, 0.911);
+  font-size: 6vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 28%;
+  left: 5vw;
+  display: inline-block;
+  width: 6vw;
+  height: 6vw;
+  line-height: 6vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(209, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(209, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+}
+.passing:after {
+  content: "ス";
+  position: absolute;
+  color: #ffffff;
+  font-weight: 900;
+  background: hsla(197, 94%, 49%, 0.911);
+  font-size: 6vw;
+  padding: 1vw;
+  z-index: 1;
+  border-radius: 1vw;
+  top: 40%;
+  left: 12vw;
+  display: inline-block;
+  width: 6vw;
+  height: 6vw;
+  line-height: 6vw;
+  vertical-align: middle;
+  text-align: center;
+  box-shadow: hsla(209, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  text-shadow: hsla(209, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
 }
 .turn {
   background: #cc1160;
