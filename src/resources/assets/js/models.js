@@ -64,10 +64,11 @@ export class ArrayEx {
 }
 
 class Field {
-    constructor() {
+    constructor(messenger) {
         this.cards = [];
         this._passCount = 0;
         this._lastDiscard = null;
+        this.messenger = messenger;
     }
     pass(character) {
 
@@ -132,6 +133,8 @@ class Field {
                 character.cards.sort(Card.compareSort);
             }
 
+            await messenger.show('ゲームスタート');
+
             let nextDealer = ArrayEx.random(characters);
             console.log(`${nextDealer.name}の親ではじめます`);
             let turnCount = 0;
@@ -173,7 +176,24 @@ class Field {
     }
 }
 
-export const field = new Field();
+export class Messenger {
+    async show(message) {
+        this.message = message;
+        this.isShown = true;
+        console.log('isShown = true');
+        return new Promise(resolve => {
+            setTimeout(() => {
+                this.isShown = false;
+                console.log('isShown = false');
+                resolve();
+            }, 1000);
+        });
+    }
+}
+
+export const messenger = new Messenger();
+
+export const field = new Field(messenger);
 
 let discardId = 0;
 
