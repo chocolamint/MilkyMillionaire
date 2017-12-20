@@ -133,7 +133,7 @@ class Field {
                 character.cards.sort(Card.compareSort);
             }
 
-            await messenger.show('ゲームスタート');
+            await messenger.show('ゲームスタート', 1000);
 
             let nextDealer = ArrayEx.random(characters);
             console.log(`${nextDealer.name}の親ではじめます`);
@@ -172,12 +172,14 @@ class Field {
             for (const character of characters) {
                 character.endGame();
             }
+            
+            await messenger.show('ゲームセット', 2000);
         }
     }
 }
 
 export class Messenger {
-    async show(message) {
+    async show(message, ms) {
         this.message = message;
         this.isShown = true;
         console.log('isShown = true');
@@ -186,7 +188,7 @@ export class Messenger {
                 this.isShown = false;
                 console.log('isShown = false');
                 resolve();
-            }, 1000);
+            }, ms);
         });
     }
 }
@@ -370,6 +372,12 @@ export class Card {
             new Card("joker1", null, null, true),
             new Card("joker2", null, null, true)
             );
+
+        if (typeof document != 'undefined' && document && document.location && document.location.search) {
+            if (~document.location.search.indexOf('debug')) {
+                return cards.slice(0, 16);
+            }
+        }
         return cards;
     }
     toString() {
