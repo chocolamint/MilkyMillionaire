@@ -1,6 +1,6 @@
 <template>
-    <div class="computer" :class="{ 'cleared': computer.isCleared, 'passing': computer.passing }">
-        <div class="name" :class="{ 'turn': computer.isMyTurn }" :data-player-rank="computer.rank">
+    <div class="computer" :class="{ 'cleared': computer.isCleared, 'passing': computer.passing, 'game-end': computer.isGameEnd }">
+        <div class="name" :class="{ 'turn': computer.isMyTurn }" :data-player-rank="computer.rank" :data-player-next-rank="computer.nextRank">
             {{ computer.name }}
         </div>
         <div class="image" :style="{ borderColor: computer.color, 'background-color': bgColor(computer.color) }">
@@ -20,6 +20,7 @@
   content: "あ";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -41,6 +42,7 @@
   content: "が";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -62,6 +64,7 @@
   content: "り";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -83,6 +86,7 @@
   content: "パ";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(197, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -104,6 +108,7 @@
   content: "ス";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(197, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -131,18 +136,38 @@
   font-size: 5vw;
   margin: 10vw 0 0;
 }
-.name[data-player-rank="3"]:before {
-  content: "\1F4B4平民";
-  color: #183b04;
+
+.name[data-player-rank]:before {
   position: absolute;
   font-weight: 900;
-  text-shadow: rgba(90, 90, 90, 0.6) 0.2vw 0.2vw 0.2vw;
   display: block;
   width: 100%;
   text-align: center;
   font-size: 4vw;
   margin: 0;
   top: -7vw;
+  font-family: "M+ 1p black";
+}
+
+.name[data-player-rank="1"]:before {
+  content: "\1F4A9大貧民";
+  color: #530165;
+}
+.name[data-player-rank="2"]:before {
+  content: "\1F4B8貧民";
+  color: #08507a;
+}
+.name[data-player-rank="3"]:before {
+  content: "\1F4B0平民";
+  color: #1e4a05;
+}
+.name[data-player-rank="4"]:before {
+  content: "\1F4B4富豪";
+  color: #62360c;
+}
+.name[data-player-rank="5"]:before {
+  content: "\1F451大富豪";
+  color: #5e550c;
 }
 .image {
   text-align: center;
@@ -166,6 +191,41 @@
   bottom: 0;
   left: 0;
   margin: auto;
+}
+.game-end .image:after {
+  position: absolute;
+  font-weight: 900;
+  display: block;
+  width: 130%;
+  text-align: center;
+  font-size: 7vw;
+  top: 0.5vw;
+  font-family: "M+ 1p black";
+  white-space: pre;
+  text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
+  line-height: 8vw;
+  right: -15%;
+  left: -15%;
+}
+.game-end .name[data-player-next-rank="1"] + .image:after {
+  content: "\1F4A9\A大貧民";
+  color: #530165;
+}
+.game-end .name[data-player-next-rank="2"] + .image:after {
+  content: "\1F4B8\A貧民";
+  color: #08507a;
+}
+.game-end .name[data-player-next-rank="3"] + .image:after {
+  content: "\1F4B0\A平民";
+  color: #1e4a05;
+}
+.game-end .name[data-player-next-rank="4"] + .image:after {
+  content: "\1F4B4\A富豪";
+  color: #62360c;
+}
+.game-end .name[data-player-next-rank="5"] + .image:after {
+  content: "\1F451\A大富豪";
+  color: #5e550c;
 }
 
 .cards {
@@ -193,7 +253,7 @@
   vertical-align: middle;
 }
 
-.cleared .cards:after {
+.cards[data-card-count="0"]:after {
   content: "";
 }
 

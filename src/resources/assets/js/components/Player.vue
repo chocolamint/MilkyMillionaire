@@ -1,21 +1,26 @@
 <template>
-    <div class="player" :class="{ cleared: player.isCleared }">
+    <div class="player" :class="{ cleared: player.isCleared, 'game-end': player.isGameEnd, 'trading': player.isTrading }">
         <div class="player-buttons">
           <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
             パス
           </div>
-          <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null">
-            カードを捨てる
+          <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null"
+                v-show="!player.waitingForNextGame">
+            カードを出す
+          </div>
+          <div class="next-game-button player-button enabled" v-on:click="goToNextGame(player)"
+                v-show="player.waitingForNextGame">
+            次のゲームへ
           </div>
         </div>
-        <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank">
+        <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank" :data-player-next-rank="player.nextRank">
           {{ player.name }}
         </div>
         <div class="players-cards">
             <div v-for="card in player.cards" :key="card.id" class="card-container">
                 <card :card="card" 
-                  :class="{ 'staging': card.isStaged, 'disable-stage': player.isMyTurn && !canStage(card, player, field) }"
-                  v-on:click.native="player.isMyTurn && canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
+                  :class="{ 'staging': card.isStaged, 'disable-stage': isCardGrayedOut(card, player, field) }"
+                  v-on:click.native="canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
             </div>
         </div>
     </div>
@@ -25,10 +30,33 @@
 .player {
   position: relative;
 }
+.player.trading:before {
+  content: "交換するカードを選んでください";
+  border: 1vw #593800 solid;
+  padding: 5vw;
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 70%;
+  margin: auto;
+  top: -75%;
+  background: #fffaf0;
+  border-radius: 2vw;
+  font-weight: bold;
+  color: #593800;
+}
+
+@media screen and (min-device-height: 800px) {
+  .player.trading:before {
+    top: -100%;
+  }
+}
 .cleared:before {
   content: "あ";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 10vw;
@@ -50,6 +78,7 @@
   content: "が";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 10vw;
@@ -71,6 +100,7 @@
   content: "り";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 10vw;
@@ -139,12 +169,19 @@
 .discard-button {
   flex-grow: 8;
 }
+.next-game-button {
+  flex-grow: 8;
+}
 
 .discard-button:before {
   content: "↑ ";
 }
+.next-game-button:after {
+  content: " →";
+}
 
-.discard-button.enabled:after {
+.discard-button.enabled:after,
+.next-game-button.enabled:before {
   border-style: solid;
   border-color: #ffffff;
   box-shadow: #640970 0 0 2vw, #640970 0 0 2vw inset;
@@ -172,11 +209,8 @@
   border-bottom-color: #cc1160;
 }
 
-.name[data-player-rank="3"]:after {
-  content: "\1F4B4平民";
-  color: #183b04;
+.name[data-player-rank]:after {
   font-weight: 900;
-  text-shadow: rgba(90, 90, 90, 0.6) 0.2vw 0.2vw 0.2vw;
   display: block;
   width: 100%;
   text-align: center;
@@ -188,12 +222,74 @@
   right: 0;
   bottom: 0;
   text-indent: 0;
+  font-family: "M+ 1p black";
+  text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
+}
+
+.name[data-player-rank="1"]:after {
+  content: "\1F4A9大貧民";
+  color: #530165;
+}
+.name[data-player-rank="2"]:after {
+  content: "\1F4B8貧民";
+  color: #08507a;
+}
+.name[data-player-rank="3"]:after {
+  content: "\1F4B0平民";
+  color: #1e4a05;
+}
+.name[data-player-rank="4"]:after {
+  content: "\1F4B4富豪";
+  color: #62360c;
+}
+.name[data-player-rank="5"]:after {
+  content: "\1F451大富豪";
+  color: #5e550c;
 }
 
 .players-cards {
   display: flex;
   flex-wrap: wrap;
   margin: 1vw 4vw;
+}
+
+.game-end .players-cards:after {
+  font-weight: 900;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 12vw;
+  position: absolute;
+  left: 0;
+  top: 120%;
+  right: 0;
+  bottom: 0;
+  text-indent: 0;
+  font-family: "M+ 1p black";
+  text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
+  white-space: pre;
+  line-height: 14vw;
+}
+
+.game-end [data-player-next-rank="1"] + .players-cards:after {
+  content: "\1F4A9\A大貧民";
+  color: #530165;
+}
+.game-end [data-player-next-rank="2"] + .players-cards:after {
+  content: "\1F4B8\A貧民";
+  color: #08507a;
+}
+.game-end [data-player-next-rank="3"] + .players-cards:after {
+  content: "\1F4B0\A平民";
+  color: #1e4a05;
+}
+.game-end [data-player-next-rank="4"] + .players-cards:after {
+  content: "\1F4B4\A富豪";
+  color: #62360c;
+}
+.game-end [data-player-next-rank="5"] + .players-cards:after {
+  content: "\1F451\A大富豪";
+  color: #5e550c;
 }
 
 .card-container {
@@ -210,6 +306,26 @@
 .card.disable-stage {
   background: #c0c0c0;
 }
+
+.trading
+  [data-player-rank="1"]
+  + .players-cards
+  .card-container:nth-last-child(-n + 2),
+.trading [data-player-rank="2"] + .players-cards .card-container:last-child {
+  position: relative;
+  animation: card-missing 2.5s linear forwards;
+}
+
+@keyframes card-missing {
+  0% {
+    opacity: 1;
+    top: 0;
+  }
+  100% {
+    opacity: 0;
+    top: -10vw;
+  }
+}
 </style>
 
 <script>
@@ -225,13 +341,38 @@ export default {
       player.pass();
     },
     discardStaging(player) {
-      player.discardStaging();
+      if (this.isUnnecessaryCardSelecting(player)) {
+        player.giveStagings();
+      } else {
+        player.discardStaging();
+      }
     },
     canDiscard(field, player) {
+      if (this.isUnnecessaryCardSelecting(player)) {
+        const missingCount = player.rank - 3;
+        return player.stagings().length == missingCount;
+      }
       return field.canDiscard(player.stagings());
+    },
+    isUnnecessaryCardSelecting(player) {
+      return player.isTrading && player.rank >= 4;
+    },
+    isCardGrayedOut(card, player, field) {
+      if (this.isUnnecessaryCardSelecting(player)) {
+        return !this.canStage(card, player, field);
+      }
+      return player.isMyTurn && !this.canStage(card, player, field);
     },
     canStage(card, player, field) {
       const stagings = player.stagings();
+
+      if (this.isUnnecessaryCardSelecting(player)) {
+        const missingCount = player.rank - 3;
+        return stagings.length < missingCount || stagings.indexOf(card) != -1;
+      }
+
+      if (!player.isMyTurn) return false;
+
       const top = field.top();
       if (stagings.length == 0) {
         if (top == null) return true;
@@ -249,6 +390,9 @@ export default {
     },
     canPass(player) {
       return player.isMyTurn;
+    },
+    goToNextGame(player) {
+      player.goToNextGame();
     }
   }
 };
