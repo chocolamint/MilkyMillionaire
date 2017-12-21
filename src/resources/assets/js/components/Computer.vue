@@ -20,6 +20,7 @@
   content: "あ";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -41,6 +42,7 @@
   content: "が";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -62,6 +64,7 @@
   content: "り";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(51, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -83,6 +86,7 @@
   content: "パ";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(197, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -104,6 +108,7 @@
   content: "ス";
   position: absolute;
   color: #ffffff;
+  font-family: "M+ 1p black";
   font-weight: 900;
   background: hsla(197, 94%, 49%, 0.911);
   font-size: 6vw;
@@ -131,18 +136,38 @@
   font-size: 5vw;
   margin: 10vw 0 0;
 }
-.name[data-player-rank="3"]:before {
-  content: "\1F4B4平民";
-  color: #183b04;
+
+.name[data-player-rank]:before {
   position: absolute;
   font-weight: 900;
-  text-shadow: rgba(90, 90, 90, 0.6) 0.2vw 0.2vw 0.2vw;
   display: block;
   width: 100%;
   text-align: center;
   font-size: 4vw;
   margin: 0;
   top: -7vw;
+  font-family: "M+ 1p black";
+}
+
+.name[data-player-rank="1"]:before {
+  content: "\1F4A9大貧民";
+  color: #530165;
+}
+.name[data-player-rank="2"]:before {
+  content: "\1F4B8貧民";
+  color: #08507A;
+}
+.name[data-player-rank="3"]:before {
+  content: "\1F4B0平民";
+  color: #1E4A05;
+}
+.name[data-player-rank="4"]:before {
+  content: "\1F4B4富豪";
+  color: #62360C;
+}
+.name[data-player-rank="5"]:before {
+  content: "\1F451大富豪";
+  color: #5e550c;
 }
 .image {
   text-align: center;
@@ -193,7 +218,7 @@
   vertical-align: middle;
 }
 
-.cleared .cards:after {
+.cards[data-card-count="0"]:after {
   content: "";
 }
 

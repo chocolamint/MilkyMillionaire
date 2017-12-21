@@ -125,6 +125,8 @@ class Field {
 
             const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+            const ranking = [];
+
             this._computers = characters.filter(x => x instanceof Computer);
 
             Field.deal(characters, cards);
@@ -156,6 +158,10 @@ class Field {
 
                     await character.turn(turnCount);
 
+                    if (character.isCleared) {
+                        ranking.unshift(character);
+                    }
+
                     isGameEnd = characters.filter(x => x.isCleared).length == 4;
                     if (isGameEnd) break;
                 }
@@ -164,14 +170,19 @@ class Field {
             }
             this._lastDiscard = null;
             this._passCount = 0;
+
+            for (const character of characters) {
+                character.endGame();
+                // 早くあがったキャラクターほど後ろに入っており、最後のキャラクターは入っていないため -1 が返る
+                // そのため +1 すると 1～5 になる
+                console.dir(ranking);
+                character.rank = ranking.indexOf(character) + 2;
+            }
         };
 
         while (true) {
             await doGame();
             console.log('全員あがったので次のゲームへ進みます');
-            for (const character of characters) {
-                character.endGame();
-            }
             
             await messenger.show('ゲームセット', 2000);
         }

@@ -140,6 +140,7 @@
   font-size: 6vw;
   font-weight: 900;
   display: inline-block;
+  font-family: "M+ 1p black";
 }
 </style>
 
