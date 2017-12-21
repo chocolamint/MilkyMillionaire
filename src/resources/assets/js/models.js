@@ -133,6 +133,19 @@ class Field {
                 character.cards.sort(Card.compareSort);
             }
 
+            console.log('カードの交換を開始します');
+            const tradings = {};
+            for (const character of characters) {
+                tradings[character.rank] = await character.giveCards();
+            }
+            for (const character of characters) {
+                for (const card of tradings[6 - character.rank]) {
+                    character.cards.push(card);
+                }
+                character.cards.sort(Card.compareSort);
+            }
+            console.log('カードの交換を終了します');
+
             await messenger.show('ゲームスタート', 1000);
 
             let nextDealer = ArrayEx.random(characters);
@@ -179,7 +192,9 @@ class Field {
 
             await messenger.show('ゲームセット', 1000);
 
+            console.log('結果を発表してプレーヤーの確認待ち');
             await this._player.waitForNextGame();
+            console.log('次のゲームを開始します');
 
             for (const character of characters) {
                 character.nextGame();
@@ -188,12 +203,14 @@ class Field {
 
         while (true) {
             await doGame();
-            console.log('全員あがったので次のゲームへ進みます');
         }
     }
 }
 
 export class Messenger {
+    constructor() {
+        this.isShown = false;
+    }
     async show(message, ms) {
         this.message = message;
         this.isShown = true;
@@ -266,6 +283,32 @@ export class Character {
     }
     say(message) {
         console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
+    }
+    giveCards() {
+        return new Promise(resolve => {
+            let cards;
+            switch (this.rank) {
+                case 1:
+                    cards = this.cards.splice(this.cards.length - 2, 2);
+                    break;
+                case 2:
+                    cards = this.cards.splice(this.cards.length - 1, 1);
+                    break;
+                case 3:
+                    cards = [];
+                    break;
+                case 4:
+                    cards = this.cards.splice(0, 1);
+                    break;
+                case 5:
+                    cards = this.cards.splice(0, 2);
+                    break;
+            }
+            if (cards.length) {
+                this.say(`${cards.join(',')}を差し出します`);
+            }
+            resolve(cards);
+        });
     }
 }
 
