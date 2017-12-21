@@ -1,5 +1,5 @@
 <template>
-    <div class="player" :class="{ cleared: player.isCleared }">
+    <div class="player" :class="{ cleared: player.isCleared, 'game-end': player.isGameEnd }">
         <div class="player-buttons">
           <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
             パス
@@ -13,7 +13,7 @@
             次のゲームへ
           </div>
         </div>
-        <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank">
+        <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank" :data-player-next-rank="player.nextRank">
           {{ player.name }}
         </div>
         <div class="players-cards">
@@ -213,7 +213,7 @@
   color: #08507a;
 }
 .name[data-player-rank="3"]:after {
-  content: "\1F4B4平民";
+  content: "\1F4B0平民";
   color: #1e4a05;
 }
 .name[data-player-rank="4"]:after {
@@ -229,6 +229,45 @@
   display: flex;
   flex-wrap: wrap;
   margin: 1vw 4vw;
+}
+
+.game-end .players-cards:after {
+  font-weight: 900;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 12vw;
+  position: absolute;
+  left: 0;
+  top: 120%;
+  right: 0;
+  bottom: 0;
+  text-indent: 0;
+  font-family: "M+ 1p black";
+  text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
+  white-space: pre;
+  line-height: 14vw;
+}
+
+.game-end [data-player-next-rank="1"] + .players-cards:after {
+  content: "\1F4A9\A大貧民";
+  color: #530165;
+}
+.game-end [data-player-next-rank="2"] + .players-cards:after {
+  content: "\1F4B8\A貧民";
+  color: #08507a;
+}
+.game-end [data-player-next-rank="3"] + .players-cards:after {
+  content: "\1F4B0\A平民";
+  color: #1e4a05;
+}
+.game-end [data-player-next-rank="4"] + .players-cards:after {
+  content: "\1F4B4\A富豪";
+  color: #62360c;
+}
+.game-end [data-player-next-rank="5"] + .players-cards:after {
+  content: "\1F451\A大富豪";
+  color: #5e550c;
 }
 
 .card-container {

@@ -223,6 +223,7 @@ export class Character {
         this.color = color;
         this.rank = 3;
         this.nextRank = 3;
+        this.isGameEnd = false;
     }
     turn(turnCount) {
         return new Promise(resolve => {
@@ -257,9 +258,11 @@ export class Character {
         this.cards.splice(0, this.cards.length);
         this.isMyTurn = false;
         this.isCleared = false;
+        this.isGameEnd = true;
     }
     nextGame() {
         this.rank = this.nextRank;
+        this.isGameEnd = false;
     }
     say(message) {
         console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
