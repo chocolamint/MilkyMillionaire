@@ -4,8 +4,13 @@
           <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
             パス
           </div>
-          <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null">
+          <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null"
+                v-show="!player.waitingForNextGame">
             カードを捨てる
+          </div>
+          <div class="next-game-button player-button enabled" v-on:click="goToNextGame(player)"
+                v-show="player.waitingForNextGame">
+            次のゲームへ
           </div>
         </div>
         <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank">
@@ -142,12 +147,19 @@
 .discard-button {
   flex-grow: 8;
 }
+.next-game-button {
+  flex-grow: 8;
+}
 
 .discard-button:before {
   content: "↑ ";
 }
+.next-game-button:after {
+  content: " →";
+}
 
-.discard-button.enabled:after {
+.discard-button.enabled:after,
+.next-game-button.enabled:before {
   border-style: solid;
   border-color: #ffffff;
   box-shadow: #640970 0 0 2vw, #640970 0 0 2vw inset;
@@ -198,15 +210,15 @@
 }
 .name[data-player-rank="2"]:after {
   content: "\1F4B8貧民";
-  color: #08507A;
+  color: #08507a;
 }
 .name[data-player-rank="3"]:after {
   content: "\1F4B4平民";
-  color: #1E4A05;
+  color: #1e4a05;
 }
 .name[data-player-rank="4"]:after {
   content: "\1F4B4富豪";
-  color: #62360C;
+  color: #62360c;
 }
 .name[data-player-rank="5"]:after {
   content: "\1F451大富豪";
@@ -272,6 +284,9 @@ export default {
     },
     canPass(player) {
       return player.isMyTurn;
+    },
+    goToNextGame(player) {
+      player.goToNextGame();
     }
   }
 };

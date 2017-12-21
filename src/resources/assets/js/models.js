@@ -106,9 +106,6 @@ class Field {
         if (this.cards.length == 0) return null;
         return this.cards.slice(this.cards.length - 1, this.cards.length)[0];
     }
-    notifyClear(character) {
-
-    }
     /**
      * @param {Character[]} characters  
      * @param {Card[]} cards
@@ -121,13 +118,14 @@ class Field {
     }
     async beginGame(characters, cards) {
 
+        this._computers = characters.filter(x => x instanceof Computer);
+        this._player = characters.filter(x => x instanceof Player)[0];
+
         const doGame = async () => {
 
             const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
             const ranking = [];
-
-            this._computers = characters.filter(x => x instanceof Computer);
 
             Field.deal(characters, cards);
 
@@ -170,21 +168,27 @@ class Field {
             }
             this._lastDiscard = null;
             this._passCount = 0;
+            this.cards.splice(0, this.cards.length);
 
             for (const character of characters) {
-                character.endGame();
                 // 早くあがったキャラクターほど後ろに入っており、最後のキャラクターは入っていないため -1 が返る
                 // そのため +1 すると 1～5 になる
-                console.dir(ranking);
-                character.rank = ranking.indexOf(character) + 2;
+                character.nextRank = ranking.indexOf(character) + 2;
+                character.endGame();
+            }
+
+            await messenger.show('ゲームセット', 1000);
+
+            await this._player.waitForNextGame();
+
+            for (const character of characters) {
+                character.nextGame();
             }
         };
 
         while (true) {
             await doGame();
             console.log('全員あがったので次のゲームへ進みます');
-            
-            await messenger.show('ゲームセット', 2000);
         }
     }
 }
@@ -218,6 +222,7 @@ export class Character {
         this.isCleared = false;
         this.color = color;
         this.rank = 3;
+        this.nextRank = 3;
     }
     turn(turnCount) {
         return new Promise(resolve => {
@@ -236,7 +241,6 @@ export class Character {
         if (this.cards.length == 0) {
             this.isCleared = true;
             this.say(`あがりです！`);
-            field.notifyClear(this);
         }
         this._resolveTurn();
     }
@@ -254,12 +258,19 @@ export class Character {
         this.isMyTurn = false;
         this.isCleared = false;
     }
+    nextGame() {
+        this.rank = this.nextRank;
+    }
     say(message) {
         console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
     }
 }
 
 export class Player extends Character {
+    constructor(name, color) {
+        super(name, color);
+        this.waitingForNextGame = false;
+    }
     stagings() {
         return this.cards.filter(x => x.isStaged);
     }
@@ -277,6 +288,16 @@ export class Player extends Character {
         this.stagings().forEach(x => x.isStaged = false);
         super.pass();
         this.turnEnd();
+    }
+    waitForNextGame() {
+        return new Promise(resolve => {
+            this.waitingForNextGame = true;
+            this._resolveNextGame = resolve;
+        });
+    }
+    goToNextGame() {
+        this.waitingForNextGame = false;
+        this._resolveNextGame();
     }
 }
 
@@ -386,7 +407,7 @@ export class Card {
 
         if (typeof document != 'undefined' && document && document.location && document.location.search) {
             if (~document.location.search.indexOf('debug')) {
-                return cards.slice(0, 16);
+                return ArrayEx.shuffle(cards).slice(0, 10);
             }
         }
         return cards;
