@@ -129,8 +129,10 @@ class Field {
 
             Field.deal(characters, cards);
 
+            //let i = 0;
             for (const character of characters) {
                 character.cards.sort(Card.compareSort);
+                //character.rank = ++i;
             }
 
             console.log('カードの交換を開始します');
@@ -367,8 +369,17 @@ export class Player extends Character {
             }
         });
     }
-    giveStagings(cards) {
-
+    giveStagings() {
+        const stagings = this.stagings();
+        for (const card of stagings) {
+            card.isStaged = false;
+            const index = this.cards.indexOf(card);
+            this.cards.splice(index, 1);
+        }
+        this.isTrading = false;
+        setTimeout(() => {
+            this._resolveTrading(stagings);
+        }, 500);
     }
 }
 

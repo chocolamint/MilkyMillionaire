@@ -6,7 +6,7 @@
           </div>
           <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null"
                 v-show="!player.waitingForNextGame">
-            カードを捨てる
+            カードを出す
           </div>
           <div class="next-game-button player-button enabled" v-on:click="goToNextGame(player)"
                 v-show="player.waitingForNextGame">
@@ -19,8 +19,8 @@
         <div class="players-cards">
             <div v-for="card in player.cards" :key="card.id" class="card-container">
                 <card :card="card" 
-                  :class="{ 'staging': card.isStaged, 'disable-stage': player.isMyTurn && !canStage(card, player, field) }"
-                  v-on:click.native="player.isMyTurn && canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
+                  :class="{ 'staging': card.isStaged, 'disable-stage': isCardGrayedOut(card, player, field) }"
+                  v-on:click.native="canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
             </div>
         </div>
     </div>
@@ -29,6 +29,28 @@
 <style scoped>
 .player {
   position: relative;
+}
+.player.trading:before {
+  content: "交換するカードを選んでください";
+  border: 1vw #593800 solid;
+  padding: 5vw;
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 70%;
+  margin: auto;
+  top: -75%;
+  background: #fffaf0;
+  border-radius: 2vw;
+  font-weight: bold;
+  color: #593800;
+}
+
+@media screen and (min-device-height: 800px) {
+  .player.trading:before {
+    top: -100%;
+  }
 }
 .cleared:before {
   content: "あ";
@@ -285,7 +307,10 @@
   background: #c0c0c0;
 }
 
-.trading [data-player-rank="1"] + .players-cards .card-container:nth-last-child(-n+2),
+.trading
+  [data-player-rank="1"]
+  + .players-cards
+  .card-container:nth-last-child(-n + 2),
 .trading [data-player-rank="2"] + .players-cards .card-container:last-child {
   position: relative;
   animation: card-missing 2.5s linear forwards;
@@ -316,13 +341,38 @@ export default {
       player.pass();
     },
     discardStaging(player) {
-      player.discardStaging();
+      if (this.isUnnecessaryCardSelecting(player)) {
+        player.giveStagings();
+      } else {
+        player.discardStaging();
+      }
     },
     canDiscard(field, player) {
+      if (this.isUnnecessaryCardSelecting(player)) {
+        const missingCount = player.rank - 3;
+        return player.stagings().length == missingCount;
+      }
       return field.canDiscard(player.stagings());
+    },
+    isUnnecessaryCardSelecting(player) {
+      return player.isTrading && player.rank >= 4;
+    },
+    isCardGrayedOut(card, player, field) {
+      if (this.isUnnecessaryCardSelecting(player)) {
+        return !this.canStage(card, player, field);
+      }
+      return player.isMyTurn && !this.canStage(card, player, field);
     },
     canStage(card, player, field) {
       const stagings = player.stagings();
+
+      if (this.isUnnecessaryCardSelecting(player)) {
+        const missingCount = player.rank - 3;
+        return stagings.length < missingCount || stagings.indexOf(card) != -1;
+      }
+
+      if (!player.isMyTurn) return false;
+
       const top = field.top();
       if (stagings.length == 0) {
         if (top == null) return true;
