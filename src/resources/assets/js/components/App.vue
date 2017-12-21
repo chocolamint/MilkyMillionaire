@@ -15,6 +15,11 @@
       </transition-group>
     </div>
     <player :player="player" :field="field" class="player"></player>
+    <div class="message" v-if="messenger.isShown">
+      <div class="message-text">
+        {{ messenger.message }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -118,10 +123,28 @@
 .player {
   width: 100%;
 }
+
+.message {
+  position: fixed;
+  top: 23%;
+  height: 27%;
+  left: 0;
+  right: 0;
+  background: rgba(10, 10, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.message .message-text {
+  color: #ffffff;
+  font-size: 6vw;
+  font-weight: 900;
+  display: inline-block;
+}
 </style>
 
 <script>
-import { field, Player, Computer, Card, ArrayEx } from "../models.js";
+import { field, Player, Computer, Card, ArrayEx, messenger } from "../models.js";
 
 var characters = [
   new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png"),
@@ -144,7 +167,8 @@ export default {
       computers,
       player,
       cards,
-      field
+      field,
+      messenger
     };
   }
 };
