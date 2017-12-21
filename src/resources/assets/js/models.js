@@ -316,6 +316,7 @@ export class Player extends Character {
     constructor(name, color) {
         super(name, color);
         this.waitingForNextGame = false;
+        this.isTrading = false;
     }
     stagings() {
         return this.cards.filter(x => x.isStaged);
@@ -344,6 +345,30 @@ export class Player extends Character {
     goToNextGame() {
         this.waitingForNextGame = false;
         this._resolveNextGame();
+    }
+    giveCards() {
+        return new Promise(resolve => {
+            this.isTrading = true;
+            if (this.rank <= 2) {
+                setTimeout(() => {
+                    this.isTrading = false;
+                    const missingCount = 3 - this.rank;
+                    const cards = this.cards.splice(this.cards.length - missingCount, missingCount);
+                    this.say(`${cards.join(',')}を差し出します`);
+                    resolve(cards);
+                }, 2200);
+            }
+            if (this.rank == 3) {
+                this.isTrading = false;
+                resolve([]);
+            }
+            if (this.rank >= 4) {
+                this._resolveTrading = resolve;
+            }
+        });
+    }
+    giveStagings(cards) {
+
     }
 }
 
@@ -453,7 +478,7 @@ export class Card {
 
         if (typeof document != 'undefined' && document && document.location && document.location.search) {
             if (~document.location.search.indexOf('debug')) {
-                return ArrayEx.shuffle(cards).slice(0, 10);
+                return ArrayEx.shuffle(cards).slice(0, 15);
             }
         }
         return cards;

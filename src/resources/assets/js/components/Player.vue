@@ -1,5 +1,5 @@
 <template>
-    <div class="player" :class="{ cleared: player.isCleared, 'game-end': player.isGameEnd }">
+    <div class="player" :class="{ cleared: player.isCleared, 'game-end': player.isGameEnd, 'trading': player.isTrading }">
         <div class="player-buttons">
           <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
             パス
@@ -283,6 +283,23 @@
 
 .card.disable-stage {
   background: #c0c0c0;
+}
+
+.trading [data-player-rank="1"] + .players-cards .card-container:nth-last-child(-n+2),
+.trading [data-player-rank="2"] + .players-cards .card-container:last-child {
+  position: relative;
+  animation: card-missing 2.5s linear forwards;
+}
+
+@keyframes card-missing {
+  0% {
+    opacity: 1;
+    top: 0;
+  }
+  100% {
+    opacity: 0;
+    top: -10vw;
+  }
 }
 </style>
 
