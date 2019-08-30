@@ -22,10 +22,17 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
+      },
+      {
+        // 拡張子 .ts の場合
+        test: /\.ts$/,
+        // TypeScript をコンパイルする
+        use: "ts-loader"
       }
     ]
   },
   resolve: {
+    extensions: [".js", ".ts"],
     alias: {
       'vue$': 'vue/dist/vue.common.js'
     }
