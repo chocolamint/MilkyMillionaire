@@ -146,7 +146,7 @@
 </style>
 
 <script>
-import { field, Player, Computer, Card, ArrayEx, messenger } from "../models.js";
+import { field, Player, Computer, Card, ArrayEx, messenger } from "../models.ts";
 
 var characters = [
   new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png"),

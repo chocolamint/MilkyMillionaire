@@ -64,6 +64,14 @@ export class ArrayEx {
 }
 
 class Field {
+    
+    public cards: Card[][];
+    private _computers: Computer[];
+    private _player: Player;
+    private _passCount: number;
+    private _lastDiscard: Character;
+    public messenger: Messenger;
+
     constructor(messenger) {
         this.cards = [];
         this._passCount = 0;
@@ -102,7 +110,7 @@ class Field {
         if (Card.compareRank(c, top[0]) <= 0) return false;
         return cards.length == top.length;
     }
-    top() {
+    top(): Card[] | null {
         if (this.cards.length == 0) return null;
         return this.cards.slice(this.cards.length - 1, this.cards.length)[0];
     }
@@ -210,6 +218,10 @@ class Field {
 }
 
 export class Messenger {
+    
+    public isShown: boolean;
+    public message: string;
+
     constructor() {
         this.isShown = false;
     }
@@ -234,6 +246,17 @@ export const field = new Field(messenger);
 let discardId = 0;
 
 export class Character {
+
+    public name: string;
+    public cards: Card[];
+    public isMyTurn: boolean;
+    public isCleared: boolean;
+    public color: string;
+    public rank: number;
+    public nextRank: number;
+    public isGameEnd: boolean;
+    private _resolveTurn: () => void;
+
     constructor(name, color) {
         this.name = name;
         this.cards = [];
@@ -315,6 +338,12 @@ export class Character {
 }
 
 export class Player extends Character {
+
+    public waitingForNextGame: boolean;
+    public isTrading: boolean;
+    private _resolveNextGame: () => void;
+    private _resolveTrading: (cards: Card[]) => void;
+
     constructor(name, color) {
         super(name, color);
         this.waitingForNextGame = false;
@@ -384,6 +413,10 @@ export class Player extends Character {
 }
 
 export class Computer extends Character {
+
+    public passing: boolean;
+    public image: string;
+
     constructor(name, color, image) {
         super(name, color);
         this.passing = false;
@@ -436,7 +469,14 @@ export class Computer extends Character {
 }
 
 export class Card {
-    constructor(id, suit, rank, isJoker) {
+
+    public id: string;
+    public suit: string;
+    public rank: number;
+    public isJoker: boolean;
+    public isStaged: boolean;
+
+    constructor(id, suit, rank, isJoker?: boolean) {
         this.id = id;
         this.suit = suit;
         this.rank = rank;

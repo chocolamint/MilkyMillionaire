@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 
 module.exports = {
+  mode: 'development',
   entry: './resources/assets/js/app.js',
   output: {
     path: __dirname + '/public',
@@ -24,9 +25,7 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        // 拡張子 .ts の場合
         test: /\.ts$/,
-        // TypeScript をコンパイルする
         use: "ts-loader"
       }
     ]
