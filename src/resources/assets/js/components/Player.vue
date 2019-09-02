@@ -328,42 +328,42 @@
 }
 </style>
 
-<script>
-import { Card, ArrayEx } from "../models.js";
+<script lang="ts">
+import { Card, Player, Field, ArrayEx } from "../models";
 
 export default {
   props: ["player", "field"],
   methods: {
-    toggleCardStaging(card) {
+    toggleCardStaging(card: Card) {
       card.isStaged = !card.isStaged;
     },
-    pass(player) {
+    pass(player: Player) {
       player.pass();
     },
-    discardStaging(player) {
+    discardStaging(player: Player) {
       if (this.isUnnecessaryCardSelecting(player)) {
         player.giveStagings();
       } else {
         player.discardStaging();
       }
     },
-    canDiscard(field, player) {
+    canDiscard(field: Field, player: Player) {
       if (this.isUnnecessaryCardSelecting(player)) {
         const missingCount = player.rank - 3;
         return player.stagings().length == missingCount;
       }
       return field.canDiscard(player.stagings());
     },
-    isUnnecessaryCardSelecting(player) {
+    isUnnecessaryCardSelecting(player: Player) {
       return player.isTrading && player.rank >= 4;
     },
-    isCardGrayedOut(card, player, field) {
+    isCardGrayedOut(card: Card, player: Player, field: Field) {
       if (this.isUnnecessaryCardSelecting(player)) {
         return !this.canStage(card, player, field);
       }
       return player.isMyTurn && !this.canStage(card, player, field);
     },
-    canStage(card, player, field) {
+    canStage(card: Card, player: Player, field: Field) {
       const stagings = player.stagings();
 
       if (this.isUnnecessaryCardSelecting(player)) {
@@ -388,10 +388,10 @@ export default {
         );
       }
     },
-    canPass(player) {
+    canPass(player: Player) {
       return player.isMyTurn;
     },
-    goToNextGame(player) {
+    goToNextGame(player: Player) {
       player.goToNextGame();
     }
   }

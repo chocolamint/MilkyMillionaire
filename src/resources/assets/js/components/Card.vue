@@ -52,12 +52,14 @@
 }
 </style>
 
-<script>
+<script lang="ts">
+import { Card } from "../models";
+
 export default {
   props: ["card"],
   methods: {
-    suitClass: function(card) {
-      const suitClasses = {
+    suitClass: function(card: Card) {
+      const suitClasses: Record<string, string> = {
         "♥": "heart",
         "♦": "diamond",
         "♠": "spade",
@@ -65,7 +67,7 @@ export default {
       };
       return suitClasses[card.suit];
     },
-    rankClass: function(card) {
+    rankClass: function(card: Card) {
       const rankClasses = [
         "ace",
         "two",
@@ -83,7 +85,7 @@ export default {
       ];
       return rankClasses[card.rank];
     },
-    showCardRank: function(rank) {
+    showCardRank: function(rank: number) {
       switch (rank) {
         case 1:
           return "A";

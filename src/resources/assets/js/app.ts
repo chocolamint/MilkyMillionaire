@@ -1,6 +1,5 @@
 import 'babel-polyfill';
 import Vue from 'vue';
-import Models from './models.js';
 import App from './components/App.vue';
 import Card from "./components/Card.vue";
 import Player from "./components/Player.vue";
