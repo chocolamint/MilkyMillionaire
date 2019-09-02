@@ -10,6 +10,7 @@
       "es2019"
     ],
     "moduleResolution": "node",
+    "experimentalDecorators": true,
     "downlevelIteration": true
   },
   "include": [

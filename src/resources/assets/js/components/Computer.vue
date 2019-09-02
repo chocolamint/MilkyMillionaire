@@ -1,15 +1,24 @@
 <template>
-    <div class="computer" :class="{ 'cleared': computer.isCleared, 'passing': computer.passing, 'game-end': computer.isGameEnd }">
-        <div class="name" :class="{ 'turn': computer.isMyTurn }" :data-player-rank="computer.rank" :data-player-next-rank="computer.nextRank">
-            {{ computer.name }}
-        </div>
-        <div class="image" :style="{ borderColor: computer.color, 'background-color': bgColor(computer.color) }">
-            <img :src="imagePath(computer)" alt="">
-        </div>
-        <div class="cards" :data-card-count="computer.cards.length">
-            <div v-for="card in computer.cards" :key="card.id" class="card"></div>
-        </div>
+  <div
+    class="computer"
+    :class="{ 'cleared': computer.isCleared, 'passing': computer.passing, 'game-end': computer.isGameEnd }"
+  >
+    <div
+      class="name"
+      :class="{ 'turn': computer.isMyTurn }"
+      :data-player-rank="computer.rank"
+      :data-player-next-rank="computer.nextRank"
+    >{{ computer.name }}</div>
+    <div
+      class="image"
+      :style="{ borderColor: computer.color, 'background-color': bgColor }"
+    >
+      <img :src="imagePath" alt />
     </div>
+    <div class="cards" :data-card-count="computer.cards.length">
+      <div v-for="card in computer.cards" :key="card.id" class="card"></div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -271,25 +280,29 @@
 </style>
 
 <script lang="ts">
+import { Component, Vue, Prop } from "vue-property-decorator";
 import { Computer } from "../models";
 
-export default {
-  props: ["computer"],
-  methods: {
-    imagePath(computer: Computer) {
-      return `images/${computer.image}`;
-    },
-    bgColor(baseColor: string) {
-      const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(
-        baseColor
-      );
-      const colors = [
-        parseInt(match[1], 16),
-        parseInt(match[2], 16),
-        parseInt(match[3], 16)
-      ];
-      return `rgba(${colors[0]}, ${colors[1]}, ${colors[2]}, 0.2)`;
-    }
+@Component
+export default class ComputerComponent extends Vue {
+  
+  @Prop()
+  public computer: Computer;
+
+  public get imagePath() {
+    return `images/${this.computer.image}`;
   }
-};
+
+  public get bgColor() {
+    const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(
+      this.computer.color
+    );
+    const colors = [
+      parseInt(match[1], 16),
+      parseInt(match[2], 16),
+      parseInt(match[3], 16)
+    ];
+    return `rgba(${colors[0]}, ${colors[1]}, ${colors[2]}, 0.2)`;
+  }
+}
 </script>
