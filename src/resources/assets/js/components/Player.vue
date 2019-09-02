@@ -328,8 +328,8 @@
 }
 </style>
 
-<script>
-import { Card, ArrayEx } from "../models.ts";
+<script lang="ts">
+import { Card, ArrayEx } from "../models";
 
 export default {
   props: ["player", "field"],

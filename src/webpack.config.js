@@ -1,8 +1,9 @@
 const webpack = require('webpack');
+const { VueLoaderPlugin } = require("vue-loader");
 
 module.exports = {
   mode: 'development',
-  entry: './resources/assets/js/app.js',
+  entry: './resources/assets/js/app.ts',
   output: {
     path: __dirname + '/public',
     publicPath: '/',
@@ -13,27 +14,36 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: {
-          loaders: {
-            js: 'babel-loader'
-          }
-        }
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
         exclude: /node_modules/
       },
       {
+        test: /\.js$/,
+        loader: 'babel-loader'
+      },
+      {
         test: /\.ts$/,
-        use: "ts-loader"
+        loader: "ts-loader",
+        exclude: /node_modules/,
+        options: {
+          appendTsSuffixTo: [/\.vue$/]
+        }
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
+        ]
       }
     ]
   },
   resolve: {
-    extensions: [".js", ".ts"],
+    extensions: [".js", ".ts", '.vue'],
     alias: {
       'vue$': 'vue/dist/vue.common.js'
     }
-  }
+  },
+  plugins: [
+    new VueLoaderPlugin()
+  ]
 };

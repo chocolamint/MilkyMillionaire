@@ -145,8 +145,8 @@
 }
 </style>
 
-<script>
-import { field, Player, Computer, Card, ArrayEx, messenger } from "../models.ts";
+<script lang="ts">
+import { field, Player, Computer, Card, ArrayEx, messenger } from "../models";
 
 var characters = [
   new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png"),
