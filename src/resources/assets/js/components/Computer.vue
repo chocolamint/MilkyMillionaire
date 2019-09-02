@@ -271,13 +271,15 @@
 </style>
 
 <script lang="ts">
+import { Computer } from "../models";
+
 export default {
   props: ["computer"],
   methods: {
-    imagePath(computer) {
+    imagePath(computer: Computer) {
       return `images/${computer.image}`;
     },
-    bgColor(baseColor) {
+    bgColor(baseColor: string) {
       const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(
         baseColor
       );

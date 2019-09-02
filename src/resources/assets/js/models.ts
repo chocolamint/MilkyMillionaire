@@ -1,16 +1,10 @@
 export class ArrayEx {
-    /**
-     * @param {Number} n
-     */
-    static range(start, count) {
+    
+    static range(start: number, count: number): number[] {
         return [...Array(count).keys()].map(x => start + x);
     }
 
-    /**
-     * @param {T[]} arr 
-     * @returns {T[]}
-    */
-    static shuffle(arr) {
+    static shuffle<T>(arr: T[]): T[] {
         var i, j, temp;
         arr = arr.slice();
         i = arr.length;
@@ -26,27 +20,18 @@ export class ArrayEx {
         return arr;
     }
 
-    static random(arr) {
+    static random<T>(arr: T[]): T {
         if (arr.length == 0) return void 0;
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    static flatMap(xs, f) {
+    static flatMap<T, S>(xs: T[], f: (elem: T) => S[]): S[] {
         return xs.map(f).reduce((a, b) => a.concat(b));
     }
 
-    /**
-     * @param {T[]} xs 
-     * @param {Number} k 
-     */
-    static combination(xs, k) {
+    static combination<T>(xs: T[], k: number): T[][] {
 
-        /**
-         * @param {T[]} xs 
-         * @param {Number} i 
-         * @param {Number} k 
-         */
-        const temp = (xs, i, k) => {
+        const temp = (xs: T[], i: number, k: number): T[][] => {
             if (k == 0) {
                 return xs.slice(i).map(x => [x]);
             }
@@ -63,7 +48,7 @@ export class ArrayEx {
     }
 }
 
-class Field {
+export class Field {
     
     public cards: Card[][];
     private _computers: Computer[];
@@ -72,33 +57,35 @@ class Field {
     private _lastDiscard: Character;
     public messenger: Messenger;
 
-    constructor(messenger) {
+    constructor(messenger: Messenger) {
         this.cards = [];
         this._passCount = 0;
         this._lastDiscard = null;
         this.messenger = messenger;
     }
-    pass(character) {
+    pass(character: Character) {
 
         console.log(`${character.name}がパスしました`);
     }
-    discard(character, cards) {
+    discard(character: Character, cards: Card[]) {
 
         console.log(`${character.name}が${cards.map(x => x.toString()).join(',')}を捨てました`);
 
         this._lastDiscard = character;
         this._passCount = 0;
 
-        cards.discardedBy = this._computers.indexOf(character);
-        cards.id = 'discards-' + String(discardId++);
+        // TODO: これはひどい
+        (cards as any).discardedBy = this._computers.indexOf(character as any);
+        // TODO: これはひどい
+        (cards as any).id = 'discards-' + String(discardId++);
         for (const card of cards) {
             card.id += '-discard';
         }
         this.cards.push(cards);
     }
-    canDiscard(cards) {
+    canDiscard(cards: Card[]) {
         if (cards.length == 0) return false;
-        let c;
+        let c: Card;
         if (cards.every(x => x.isJoker)) {
             c = cards[0];
         } else {
@@ -114,24 +101,20 @@ class Field {
         if (this.cards.length == 0) return null;
         return this.cards.slice(this.cards.length - 1, this.cards.length)[0];
     }
-    /**
-     * @param {Character[]} characters  
-     * @param {Card[]} cards
-    */
-    static deal(characters, cards) {
+    static deal(characters: Character[], cards: Card[]) {
         let i = 0;
         for (const card of ArrayEx.shuffle(cards)) {
             characters[i++ % 5].cards.push(card);
         }
     }
-    async beginGame(characters, cards) {
+    async beginGame(characters: Character[], cards: Card[]) {
 
-        this._computers = characters.filter(x => x instanceof Computer);
-        this._player = characters.filter(x => x instanceof Player)[0];
+        this._computers = characters.filter(x => x instanceof Computer) as Computer[];
+        this._player = characters.filter(x => x instanceof Player)[0] as Player;
 
         const doGame = async () => {
 
-            const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
             const ranking = [];
 
@@ -144,7 +127,7 @@ class Field {
             }
 
             console.log('カードの交換を開始します');
-            const tradings = {};
+            const tradings: Record<number, Card[]> = {};
             for (const character of characters) {
                 tradings[character.rank] = await character.giveCards();
             }
@@ -225,7 +208,7 @@ export class Messenger {
     constructor() {
         this.isShown = false;
     }
-    async show(message, ms) {
+    async show(message: string, ms: number): Promise<void> {
         this.message = message;
         this.isShown = true;
         console.log('isShown = true');
@@ -257,7 +240,7 @@ export class Character {
     public isGameEnd: boolean;
     private _resolveTurn: () => void;
 
-    constructor(name, color) {
+    constructor(name: string, color: string) {
         this.name = name;
         this.cards = [];
         this.isMyTurn = false;
@@ -267,7 +250,7 @@ export class Character {
         this.nextRank = 3;
         this.isGameEnd = false;
     }
-    turn(turnCount) {
+    turn(turnCount: number) {
         return new Promise(resolve => {
             this.say(`私のターンです！`);
             this.isMyTurn = true;
@@ -275,7 +258,7 @@ export class Character {
             this.turnCore(turnCount);
         });
     }
-    turnCore(turnCount) {
+    turnCore(turnCount: number) {
 
     }
     turnEnd() {
@@ -290,7 +273,7 @@ export class Character {
     pass() {
         field.pass(this);
     }
-    discard(cards) {
+    discard(cards: Card[]) {
         for (const card of cards) {
             this.cards.splice(this.cards.indexOf(card), 1);
         }
@@ -306,12 +289,12 @@ export class Character {
         this.rank = this.nextRank;
         this.isGameEnd = false;
     }
-    say(message) {
+    say(message: string) {
         console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
     }
     giveCards() {
-        return new Promise(resolve => {
-            let cards;
+        return new Promise<Card[]>(resolve => {
+            let cards: Card[];
             switch (this.rank) {
                 case 1:
                     cards = this.cards.splice(this.cards.length - 2, 2);
@@ -344,7 +327,7 @@ export class Player extends Character {
     private _resolveNextGame: () => void;
     private _resolveTrading: (cards: Card[]) => void;
 
-    constructor(name, color) {
+    constructor(name: string, color: string) {
         super(name, color);
         this.waitingForNextGame = false;
         this.isTrading = false;
@@ -378,7 +361,7 @@ export class Player extends Character {
         this._resolveNextGame();
     }
     giveCards() {
-        return new Promise(resolve => {
+        return new Promise<Card[]>(resolve => {
             this.isTrading = true;
             if (this.rank <= 2) {
                 setTimeout(() => {
@@ -417,12 +400,12 @@ export class Computer extends Character {
     public passing: boolean;
     public image: string;
 
-    constructor(name, color, image) {
+    constructor(name: string, color: string, image: string) {
         super(name, color);
         this.passing = false;
         this.image = image;
     }
-    turnCore(turnCount) {
+    turnCore(turnCount: number) {
 
         const top = field.top();
         let discardable;
@@ -476,22 +459,18 @@ export class Card {
     public isJoker: boolean;
     public isStaged: boolean;
 
-    constructor(id, suit, rank, isJoker?: boolean) {
+    constructor(id: string, suit: string, rank: number, isJoker?: boolean) {
         this.id = id;
         this.suit = suit;
         this.rank = rank;
         this.isJoker = Boolean(isJoker);
         this.isStaged = false;
     }
-    /**
-     * @param {Card} a
-     * @param {Card} b
-     */
-    static compareSort(a, b) {
+    static compareSort(a: Card, b: Card) {
         const temp = Card.compareRank(a, b);
         if (temp != 0) return temp;
 
-        const suitRanks = {
+        const suitRanks: Record<string, number> = {
             "♥": 0,
             "♦": 1,
             "♠": 2,
@@ -499,11 +478,7 @@ export class Card {
         };
         return suitRanks[a.suit] - suitRanks[b.suit];
     }
-    /**
-     * @param {Card} a
-     * @param {Card} b
-     */
-    static compareRank(a, b) {
+    static compareRank(a: Card, b: Card) {
         if (!(a instanceof Card)) throw 'Not a card.';
         if (!(b instanceof Card)) throw 'Not a card.';
 
