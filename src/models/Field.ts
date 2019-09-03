@@ -8,7 +8,7 @@ import ArrayEx from "./ArrayEx";
 let discardId = 0;
 
 export default class Field {
-    
+
     public cards: Card[][];
     private _computers: Computer[];
     private _player: Player;

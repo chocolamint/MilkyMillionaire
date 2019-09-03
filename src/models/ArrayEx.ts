@@ -1,5 +1,5 @@
 export default class ArrayEx {
-    
+
     static range(start: number, count: number): number[] {
         return [...Array(count).keys()].map(x => start + x);
     }

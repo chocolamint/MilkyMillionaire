@@ -1,5 +1,5 @@
 export default class Messenger {
-    
+
     public isShown: boolean;
     public message: string;
 

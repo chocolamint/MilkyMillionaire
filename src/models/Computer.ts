@@ -17,7 +17,7 @@ export default class Computer extends Character {
     }
     turnCore(turnCount: number) {
 
-        const top : Card[] | null = field.top();
+        const top: Card[] | null = field.top();
         let discardable;
         if (top != null) {
             const fieldCardCount = top.length;

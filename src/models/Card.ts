@@ -49,7 +49,7 @@ export default class Card {
         ).concat(
             new Card("joker1", null, null, true),
             new Card("joker2", null, null, true)
-            );
+        );
 
         if (typeof document != 'undefined' && document && document.location && document.location.search) {
             if (~document.location.search.indexOf('debug')) {
