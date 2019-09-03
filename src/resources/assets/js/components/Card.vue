@@ -1,12 +1,13 @@
 <template>
-    <div class="card" :class="[suitClass(card), rankClass(card), { 'joker': card.isJoker }]">
-        <div v-if="card.isJoker">
-            <span>Joker</span>
-        </div>
-        <div v-else>
-            <span class="suit">{{ card.suit }}</span><span class="rank" :data-rank="card.rank">{{ showCardRank(card.rank) }}</span>
-        </div>
+  <div class="card" :class="[suitClass, rankClass, { 'joker': card.isJoker }]">
+    <div v-if="card.isJoker">
+      <span>Joker</span>
     </div>
+    <div v-else>
+      <span class="suit">{{ card.suit }}</span>
+      <span class="rank" :data-rank="card.rank">{{ showCardRank }}</span>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -53,52 +54,58 @@
 </style>
 
 <script lang="ts">
+import { Component, Vue, Prop } from "vue-property-decorator";
 import { Card } from "../models";
 
-export default {
-  props: ["card"],
-  methods: {
-    suitClass: function(card: Card) {
-      const suitClasses: Record<string, string> = {
-        "♥": "heart",
-        "♦": "diamond",
-        "♠": "spade",
-        "♣": "club"
-      };
-      return suitClasses[card.suit];
-    },
-    rankClass: function(card: Card) {
-      const rankClasses = [
-        "ace",
-        "two",
-        "three",
-        "four",
-        "five",
-        "six",
-        "seven",
-        "eight",
-        "nine",
-        "ten",
-        "juck",
-        "queen",
-        "king"
-      ];
-      return rankClasses[card.rank];
-    },
-    showCardRank: function(rank: number) {
-      switch (rank) {
-        case 1:
-          return "A";
-        case 11:
-          return "J";
-        case 12:
-          return "Q";
-        case 13:
-          return "K";
-        default:
-          return String(rank);
-      }
+@Component
+export default class CardComponent extends Vue {
+  
+  @Prop()
+  public card: Card;
+
+  get suitClass() {
+    const suitClasses: Record<string, string> = {
+      "♥": "heart",
+      "♦": "diamond",
+      "♠": "spade",
+      "♣": "club"
+    };
+    return suitClasses[this.card.suit];
+  }
+
+  get rankClass() {
+    const rankClasses = [
+      "ace",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "juck",
+      "queen",
+      "king"
+    ];
+    return rankClasses[this.card.rank];
+  }
+
+  get showCardRank() {
+    const rank = this.card.rank;
+    switch (rank) {
+      case 1:
+        return "A";
+      case 11:
+        return "J";
+      case 12:
+        return "Q";
+      case 13:
+        return "K";
+      default:
+        return String(rank);
     }
   }
-};
+}
 </script>

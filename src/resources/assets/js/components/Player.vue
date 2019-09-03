@@ -1,29 +1,42 @@
 <template>
-    <div class="player" :class="{ cleared: player.isCleared, 'game-end': player.isGameEnd, 'trading': player.isTrading }">
-        <div class="player-buttons">
-          <div class="pass-button player-button" :class="{'enabled':canPass(player)}" v-on:click="canPass(player) ? pass(player) : null">
-            パス
-          </div>
-          <div class="discard-button player-button" :class="{'enabled':canDiscard(field, player)}" v-on:click="canDiscard(field, player) ? discardStaging(player) : null"
-                v-show="!player.waitingForNextGame">
-            カードを出す
-          </div>
-          <div class="next-game-button player-button enabled" v-on:click="goToNextGame(player)"
-                v-show="player.waitingForNextGame">
-            次のゲームへ
-          </div>
-        </div>
-        <div class="name" :class="{ 'turn': player.isMyTurn }" :data-player-rank="player.rank" :data-player-next-rank="player.nextRank">
-          {{ player.name }}
-        </div>
-        <div class="players-cards">
-            <div v-for="card in player.cards" :key="card.id" class="card-container">
-                <card :card="card" 
-                  :class="{ 'staging': card.isStaged, 'disable-stage': isCardGrayedOut(card, player, field) }"
-                  v-on:click.native="canStage(card, player, field) ? toggleCardStaging(card) : null"></card>
-            </div>
-        </div>
+  <div
+    class="player"
+    :class="{ cleared: player.isCleared, 'game-end': player.isGameEnd, 'trading': player.isTrading }"
+  >
+    <div class="player-buttons">
+      <div
+        class="pass-button player-button"
+        :class="{'enabled':canPass}"
+        v-on:click="canPass ? pass() : null"
+      >パス</div>
+      <div
+        class="discard-button player-button"
+        :class="{'enabled':canDiscard}"
+        v-on:click="canDiscard ? discardStaging() : null"
+        v-show="!player.waitingForNextGame"
+      >カードを出す</div>
+      <div
+        class="next-game-button player-button enabled"
+        v-on:click="goToNextGame()"
+        v-show="player.waitingForNextGame"
+      >次のゲームへ</div>
     </div>
+    <div
+      class="name"
+      :class="{ 'turn': player.isMyTurn }"
+      :data-player-rank="player.rank"
+      :data-player-next-rank="player.nextRank"
+    >{{ player.name }}</div>
+    <div class="players-cards">
+      <div v-for="card in player.cards" :key="card.id" class="card-container">
+        <card
+          :card="card"
+          :class="{ 'staging': card.isStaged, 'disable-stage': isCardGrayedOut(card) }"
+          v-on:click.native="canStage(card) ? toggleCardStaging(card) : null"
+        ></card>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -329,71 +342,85 @@
 </style>
 
 <script lang="ts">
+import { Component, Vue, Prop } from "vue-property-decorator";
 import { Card, Player, Field, ArrayEx } from "../models";
 
-export default {
-  props: ["player", "field"],
-  methods: {
-    toggleCardStaging(card: Card) {
-      card.isStaged = !card.isStaged;
-    },
-    pass(player: Player) {
-      player.pass();
-    },
-    discardStaging(player: Player) {
-      if (this.isUnnecessaryCardSelecting(player)) {
-        player.giveStagings();
-      } else {
-        player.discardStaging();
-      }
-    },
-    canDiscard(field: Field, player: Player) {
-      if (this.isUnnecessaryCardSelecting(player)) {
-        const missingCount = player.rank - 3;
-        return player.stagings().length == missingCount;
-      }
-      return field.canDiscard(player.stagings());
-    },
-    isUnnecessaryCardSelecting(player: Player) {
-      return player.isTrading && player.rank >= 4;
-    },
-    isCardGrayedOut(card: Card, player: Player, field: Field) {
-      if (this.isUnnecessaryCardSelecting(player)) {
-        return !this.canStage(card, player, field);
-      }
-      return player.isMyTurn && !this.canStage(card, player, field);
-    },
-    canStage(card: Card, player: Player, field: Field) {
-      const stagings = player.stagings();
+@Component
+export default class PlayerComponent extends Vue {
+  
+  @Prop()
+  public player: Player;
 
-      if (this.isUnnecessaryCardSelecting(player)) {
-        const missingCount = player.rank - 3;
-        return stagings.length < missingCount || stagings.indexOf(card) != -1;
-      }
+  @Prop()
+  public field: Field;
 
-      if (!player.isMyTurn) return false;
+  toggleCardStaging(card: Card) {
+    card.isStaged = !card.isStaged;
+  }
 
-      const top = field.top();
-      if (stagings.length == 0) {
-        if (top == null) return true;
-        const discardables = ArrayEx.combination(
-          player.cards,
-          top.length
-        ).filter(xs => field.canDiscard(xs));
-        return discardables.some(xs => xs.indexOf(card) != -1);
-      } else {
-        return (
-          field.canDiscard(stagings.concat(card)) ||
-          stagings.indexOf(card) != -1
-        );
-      }
-    },
-    canPass(player: Player) {
-      return player.isMyTurn;
-    },
-    goToNextGame(player: Player) {
-      player.goToNextGame();
+  pass() {
+    this.player.pass();
+  }
+
+  discardStaging() {
+    if (this.isUnnecessaryCardSelecting()) {
+      this.player.giveStagings();
+    } else {
+      this.player.discardStaging();
     }
   }
-};
+
+  get canDiscard() {
+    if (this.isUnnecessaryCardSelecting()) {
+      const missingCount = this.player.rank - 3;
+      return this.player.stagings().length == missingCount;
+    }
+    return this.field.canDiscard(this.player.stagings());
+  }
+
+  isUnnecessaryCardSelecting() {
+    return this.player.isTrading && this.player.rank >= 4;
+  }
+
+  isCardGrayedOut(card: Card) {
+    if (this.isUnnecessaryCardSelecting()) {
+      return !this.canStage(card);
+    }
+    return this.player.isMyTurn && !this.canStage(card);
+  }
+
+  canStage(card: Card) {
+    const stagings = this.player.stagings();
+
+    if (this.isUnnecessaryCardSelecting()) {
+      const missingCount = this.player.rank - 3;
+      return stagings.length < missingCount || stagings.indexOf(card) != -1;
+    }
+
+    if (!this.player.isMyTurn) return false;
+
+    const top = this.field.top();
+    if (stagings.length == 0) {
+      if (top == null) return true;
+      const discardables = ArrayEx.combination(
+        this.player.cards,
+        top.length
+      ).filter(xs => this.field.canDiscard(xs));
+      return discardables.some(xs => xs.indexOf(card) != -1);
+    } else {
+      return (
+        this.field.canDiscard(stagings.concat(card)) ||
+        stagings.indexOf(card) != -1
+      );
+    }
+  }
+
+  get canPass() {
+    return this.player.isMyTurn;
+  }
+
+  goToNextGame() {
+    this.player.goToNextGame();
+  }
+}
 </script>
