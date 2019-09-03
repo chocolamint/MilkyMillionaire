@@ -343,9 +343,13 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { Card, Player, Field, ArrayEx } from "../models";
+import ArrayEx from "../models/ArrayEx";
+import Card from "../models/Card";
+import Field from "../models/Field";
+import Player from "../models/Player";
+import CardComponent from "./Card.vue";
 
-@Component
+@Component({ name: "Player", components:{ "card": CardComponent } })
 export default class PlayerComponent extends Vue {
   
   @Prop()

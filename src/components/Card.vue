@@ -55,9 +55,9 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { Card } from "../models";
+import Card from "../models/Card";
 
-@Component
+@Component({ name: "Card" })
 export default class CardComponent extends Vue {
   
   @Prop()
