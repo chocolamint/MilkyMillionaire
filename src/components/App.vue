@@ -7,18 +7,21 @@
     </ul>
     <div class="field">
       <transition-group name="card-discard" tag="div">
-        <div v-for="cards in field.cards" :key="cards.id" class="card-set" :data-discarded-by="cards.discardedBy">
-            <div v-for="card in cards" :key="card.id" class="card-container">
-                <card :card="card"></card>
-            </div>
+        <div
+          v-for="cards in field.cards"
+          :key="cards.id"
+          class="card-set"
+          :data-discarded-by="cards.discardedBy"
+        >
+          <div v-for="card in cards" :key="card.id" class="card-container">
+            <card :card="card"></card>
+          </div>
         </div>
       </transition-group>
     </div>
     <player :player="player" :field="field" class="player"></player>
     <div class="message" v-if="messenger.isShown">
-      <div class="message-text">
-        {{ messenger.message }}
-      </div>
+      <div class="message-text">{{ messenger.message }}</div>
     </div>
   </div>
 </template>
@@ -146,32 +149,47 @@
 </style>
 
 <script lang="ts">
-import { field, Player, Computer, Card, ArrayEx, messenger } from "../models";
+import { Component, Vue } from "vue-property-decorator";
+import Card from "../models/Card";
+import Character from "../models/Character";
+import Computer from "../models/Computer";
+import Field from "../models/Field";
+import Messenger from "../models/Messenger";
+import Player from "../models/Player";
+import CardComponent from "./Card.vue";
+import ComputerComponent from "./Computer.vue";
+import PlayerComponent from "./Player.vue";
 
-var characters = [
+const messenger = new Messenger();
+const field = new Field(messenger);
+const computers = [
   new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png"),
   new Computer("日本酒", "#34BD67", "masu_nihonsyu.png"),
   new Computer("餃子", "#26C4F0", "food_gyouza_mise.png"),
-  new Computer("かまぼこ", "#C97842", "kamaboko_red.png"),
-  new Player("台湾まぜそば", "#F1A15B")
+  new Computer("かまぼこ", "#C97842", "kamaboko_red.png")
 ];
-
-const computers = characters.filter(x => x instanceof Computer);
-const player = characters.filter(x => x instanceof Player)[0];
+const player = new Player("台湾まぜそば", "#F1A15B");
 
 const cards = Card.allCards();
 
-field.beginGame(characters, cards);
+// TODO: 循環参照解決するまでの暫定措置
+(window as any).field = field;
 
-export default {
-  data() {
-    return {
-      computers,
-      player,
-      cards,
-      field,
-      messenger
-    };
-  }
-};
+field.beginGame([...computers, player], cards);
+
+@Component({
+  components: {
+    "card": CardComponent,
+    "computer": ComputerComponent,
+    "player": PlayerComponent
+  },
+  data: () => ({
+    computers,
+    player,
+    cards,
+    field,
+    messenger
+  })
+})
+export default class AppComponent extends Vue {}
 </script>

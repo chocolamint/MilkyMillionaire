@@ -281,9 +281,9 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { Computer } from "../models";
+import Computer from "../models/Computer";
 
-@Component
+@Component({ name: "Computer" })
 export default class ComputerComponent extends Vue {
   
   @Prop()

@@ -1,2 +1,2 @@
-src/node_modules/*
-src/public/js/*.*
+node_modules/*
+dist/js/*.*
