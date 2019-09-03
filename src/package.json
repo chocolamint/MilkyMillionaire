@@ -27,6 +27,8 @@
     "webpack-cli": "^3.3.7"
   },
   "dependencies": {
-    "babel-runtime": "^6.26.0"
+    "babel-runtime": "^6.26.0",
+    "vue-class-component": "^7.1.0",
+    "vue-property-decorator": "^8.2.2"
   }
 }
