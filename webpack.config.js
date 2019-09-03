@@ -5,7 +5,7 @@ module.exports = {
   mode: 'development',
   entry: './src/resources/assets/js/app.ts',
   output: {
-    path: __dirname + '/src/public',
+    path: __dirname + '/dist',
     publicPath: '/',
     filename: 'js/app.js'
   },
