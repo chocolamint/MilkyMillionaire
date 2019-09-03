@@ -3,9 +3,9 @@ const { VueLoaderPlugin } = require("vue-loader");
 
 module.exports = {
   mode: 'development',
-  entry: './resources/assets/js/app.ts',
+  entry: './src/resources/assets/js/app.ts',
   output: {
-    path: __dirname + '/public',
+    path: __dirname + '/src/public',
     publicPath: '/',
     filename: 'js/app.js'
   },

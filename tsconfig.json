@@ -6,14 +6,16 @@
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "lib": [
+      "esnext",
       "dom",
-      "es2019"
+      "dom.iterable",
+      "scripthost"
     ],
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "downlevelIteration": true
   },
   "include": [
-    "resources/**/*"
+    "src/**/*"
   ],
 }

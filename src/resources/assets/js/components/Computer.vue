@@ -287,7 +287,7 @@ import { Computer } from "../models";
 export default class ComputerComponent extends Vue {
   
   @Prop()
-  public computer: Computer;
+  public computer!: Computer;
 
   public get imagePath() {
     return `images/${this.computer.image}`;
@@ -297,6 +297,7 @@ export default class ComputerComponent extends Vue {
     const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(
       this.computer.color
     );
+    if (match == null) throw "Invalid color!";
     const colors = [
       parseInt(match[1], 16),
       parseInt(match[2], 16),
