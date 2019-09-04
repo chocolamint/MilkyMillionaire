@@ -7,8 +7,9 @@ import Stack from "./Stack";
 
 export default class Croupier {
 
-    async beginGame(characters: Character[], cards: Card[], stack: Stack, messenger: Messenger) {
+    async beginGame(characters: Character[], stack: Stack, messenger: Messenger) {
 
+        const cards = Card.allCards();
         let lastDiscard: Character;
         let passCount: number = 0;
         const deal = (characters: Character[], cards: Card[]) => {

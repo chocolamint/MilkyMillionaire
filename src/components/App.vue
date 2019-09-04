@@ -173,10 +173,9 @@ const computers = [
 ];
 const player = new Player("台湾まぜそば", "#F1A15B", rule);
 
-const cards = Card.allCards();
 const stack = new Stack();
 
-croupier.beginGame([...computers, player], cards, stack, messenger);
+croupier.beginGame([...computers, player], stack, messenger);
 
 @Component({
   components: {
@@ -187,7 +186,6 @@ croupier.beginGame([...computers, player], cards, stack, messenger);
   data: () => ({
     computers,
     player,
-    cards,
     stack,
     messenger
   })
