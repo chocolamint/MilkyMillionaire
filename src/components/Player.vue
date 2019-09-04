@@ -345,7 +345,6 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { combination } from "../models/Utils";
 import Card from "../models/Card";
-import Field from "../models/Field";
 import Player from "../models/Player";
 import CardComponent from "./Card.vue";
 

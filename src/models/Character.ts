@@ -1,5 +1,4 @@
 import Card from "./Card";
-import Field from "./Field";
 import { TurnResult } from "./TurnResult";
 import { sleep } from "./Utils";
 import Stack from "./Stack";

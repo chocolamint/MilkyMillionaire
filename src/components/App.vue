@@ -19,7 +19,7 @@
         </div>
       </transition-group>
     </div>
-    <player :player="player" :field="field" class="player"></player>
+    <player :player="player" class="player"></player>
     <div class="message" v-if="messenger.isShown">
       <div class="message-text">{{ messenger.message }}</div>
     </div>
@@ -153,7 +153,7 @@ import { Component, Vue } from "vue-property-decorator";
 import Card from "../models/Card";
 import Character from "../models/Character";
 import Computer from "../models/Computer";
-import Field from "../models/Field";
+import Croupier from "../models/Croupier";
 import Messenger from "../models/Messenger";
 import Player from "../models/Player";
 import Rule from "../models/Rule";
@@ -164,7 +164,7 @@ import PlayerComponent from "./Player.vue";
 
 const messenger = new Messenger();
 const rule = new Rule();
-const field = new Field();
+const croupier = new Croupier();
 const computers = [
   new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png", rule),
   new Computer("日本酒", "#34BD67", "masu_nihonsyu.png", rule),
@@ -176,7 +176,7 @@ const player = new Player("台湾まぜそば", "#F1A15B", rule);
 const cards = Card.allCards();
 const stack = new Stack();
 
-field.beginGame([...computers, player], cards, stack, messenger);
+croupier.beginGame([...computers, player], cards, stack, messenger);
 
 @Component({
   components: {
@@ -188,7 +188,6 @@ field.beginGame([...computers, player], cards, stack, messenger);
     computers,
     player,
     cards,
-    field,
     stack,
     messenger
   })

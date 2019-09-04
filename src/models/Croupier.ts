@@ -5,7 +5,7 @@ import _ from "lodash";
 import { sleep } from "./Utils";
 import Stack from "./Stack";
 
-export default class Field {
+export default class Croupier {
 
     async beginGame(characters: Character[], cards: Card[], stack: Stack, messenger: Messenger) {
 
