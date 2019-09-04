@@ -172,7 +172,6 @@ import CardSet from "../models/CardSet";
 })
 export default class AppComponent extends Vue {
   messenger: Messenger;
-  rule: Rule;
   croupier: Croupier;
   computers: Computer[];
   player: Player;
@@ -188,15 +187,14 @@ export default class AppComponent extends Vue {
   public constructor() {
     super();
     this.messenger = new Messenger();
-    this.rule = new Rule();
     this.croupier = new Croupier();
     this.computers = [
-      new Computer("パクチー", this.rule),
-      new Computer("日本酒", this.rule),
-      new Computer("餃子", this.rule),
-      new Computer("かまぼこ", this.rule)
+      new Computer("パクチー"),
+      new Computer("日本酒"),
+      new Computer("餃子"),
+      new Computer("かまぼこ")
     ];
-    this.player = new Player("台湾まぜそば", this.rule);
+    this.player = new Player("台湾まぜそば");
     this.stack = new Stack();
 
     const characters = [...this.computers, this.player];

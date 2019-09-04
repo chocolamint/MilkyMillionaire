@@ -5,6 +5,7 @@ import _ from "lodash";
 import { sleep } from "./Utils";
 import Stack from "./Stack";
 import CardSet from "./CardSet";
+import Rule from "./Rule";
 
 export default class Croupier {
 
@@ -13,6 +14,7 @@ export default class Croupier {
         const cards = Card.allCards();
         let lastDiscard: Character;
         let passCount: number = 0;
+        const rule = new Rule();
         const deal = (characters: Character[], cards: Card[]) => {
             let i = 0;
             for (const card of _.shuffle(cards)) {
@@ -76,7 +78,7 @@ export default class Croupier {
                         continue;
                     }
 
-                    const result = await character.turn(stack, turnCount);
+                    const result = await character.turn({ stack, rule, turnCount });
                     if (result.action == "pass") {
                         pass(character);
                     } else {

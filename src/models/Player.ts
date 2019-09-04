@@ -3,45 +3,45 @@ import Character from "./Character";
 import Rule from "./Rule";
 import Stack from "./Stack";
 import { combination } from "./Utils";
+import { TurnInfo } from "./Turn";
 
 export default class Player extends Character {
 
     public waitingForNextGame: boolean;
     public isTrading: boolean;
-    public rule: Rule;
     private _resolveNextGame: () => void;
     private _resolveTrading: (cards: Card[]) => void;
-    private _stack: Stack;
+    private _turn: TurnInfo;
 
-    constructor(name: string, rule: Rule) {
+    constructor(name: string) {
         super(name);
         this.waitingForNextGame = false;
         this.isTrading = false;
-        this.rule = rule;
     }
 
-    turnCore(stack: Stack, turnCount: number) {
-        this._stack = stack;
-        super.turnCore(stack, turnCount);
+    turnCore(turn: TurnInfo) {
+        this._turn = turn;
+        super.turnCore(turn);
     }
     canStage(card: Card) {
 
         const stagings = this.stagings();
-        const top = this._stack.top();
+        const top = this._turn.stack.top();
         if (stagings.length == 0) {
             if (top == null) return true;
             const discardables = combination(this.cards, top.length)
-                .filter(xs => this.rule.canDiscard(this._stack, xs));
+                .filter(xs => this._turn.rule.canDiscard(this._turn.stack, xs));
             return discardables.some(xs => xs.indexOf(card) != -1);
         } else {
             return (
-                this.rule.canDiscard(this._stack, stagings.concat(card)) ||
+                this._turn.rule.canDiscard(this._turn.stack, stagings.concat(card)) ||
                 stagings.indexOf(card) != -1
             );
         }
     }
     canDiscard() {
-        return this.rule.canDiscard(this._stack, this.stagings());
+        if (this._turn == null) return false;
+        return this._turn.rule.canDiscard(this._turn.stack, this.stagings());
     }
     isUnnecessaryCardSelecting() {
         return this.isTrading && this.rank >= 4;
