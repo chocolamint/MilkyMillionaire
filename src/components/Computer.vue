@@ -288,8 +288,11 @@ export default class ComputerComponent extends Vue {
   @Prop()
   public color: string;
 
+  @Prop()
+  public imageFileName: string;
+
   public get imagePath() {
-    return `images/${this.computer.image}`;
+    return `images/${this.imageFileName}`;
   }
 
   public get bgColor() {

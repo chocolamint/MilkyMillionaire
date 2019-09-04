@@ -8,13 +8,11 @@ import Rule from "./Rule";
 export default class Computer extends Character {
 
     public passing: boolean;
-    public image: string;
     private _rule: Rule;
 
-    constructor(name: string, image: string, rule: Rule) {
+    constructor(name: string, rule: Rule) {
         super(name);
         this.passing = false;
-        this.image = image;
         this._rule = rule;
     }
     async turnCore(stack: Stack, turnCount: number) {
