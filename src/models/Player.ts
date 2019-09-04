@@ -1,17 +1,20 @@
 import Card from "./Card";
 import Character from "./Character";
+import Rule from "./Rule";
 
 export default class Player extends Character {
 
     public waitingForNextGame: boolean;
     public isTrading: boolean;
+    public rule: Rule;
     private _resolveNextGame: () => void;
     private _resolveTrading: (cards: Card[]) => void;
 
-    constructor(name: string, color: string) {
+    constructor(name: string, color: string, rule: Rule) {
         super(name, color);
         this.waitingForNextGame = false;
         this.isTrading = false;
+        this.rule = rule;
     }
     stagings() {
         return this.cards.filter(x => x.isStaged);

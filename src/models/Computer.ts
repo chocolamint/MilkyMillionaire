@@ -2,25 +2,28 @@ import _ from "lodash";
 import { combination, sleep } from "./Utils";
 import Card from "./Card";
 import Character from "./Character";
-import Field from "./Field";
+import Stack from "./Stack";
+import Rule from "./Rule";
 
 export default class Computer extends Character {
 
     public passing: boolean;
     public image: string;
+    private _rule: Rule;
 
-    constructor(name: string, color: string, image: string) {
+    constructor(name: string, color: string, image: string, rule: Rule) {
         super(name, color);
         this.passing = false;
         this.image = image;
+        this._rule = rule;
     }
-    async turnCore(field: Field, turnCount: number) {
+    async turnCore(stack: Stack, turnCount: number) {
 
-        const top = field.top();
+        const top = stack.top();
         let discardable: Card[];
         if (top != null) {
             const fieldCardCount = top.length;
-            const discardables = combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
+            const discardables = combination(this.cards, fieldCardCount).filter(x => this._rule.canDiscard(stack, x));
             this.say(`捨てられるのは... ${discardables.length ? discardables.map(x => x.join('')).join(', ') : 'ないですね...'}`);
             let strategicPass = false;
             if (discardables.length != 0) {
@@ -40,7 +43,7 @@ export default class Computer extends Character {
 
         } else {
             const discardables = _.range(1, 5).flatMap(x => combination(this.cards, x))
-                .filter(x => field.canDiscard(x));
+                .filter(x => this._rule.canDiscard(stack, x));
             this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
             // TODO: 弱いものほど捨てやすくしたい
             discardable = _.sample(discardables);
@@ -52,7 +55,7 @@ export default class Computer extends Character {
             this.pass();
             this.passing = false;
         } else {
-            await this.discard(discardable);
+            this.discard(discardable);
         }
     }
 }

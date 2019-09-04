@@ -378,7 +378,7 @@ export default class PlayerComponent extends Vue {
       const missingCount = this.player.rank - 3;
       return this.player.stagings().length == missingCount;
     }
-    return this.field.canDiscard(this.player.stagings());
+    return this.player.rule.canDiscard(this.field.stack, this.player.stagings());
   }
 
   isUnnecessaryCardSelecting() {
@@ -402,16 +402,16 @@ export default class PlayerComponent extends Vue {
 
     if (!this.player.isMyTurn) return false;
 
-    const top = this.field.top();
+    const top = this.field.stack.top();
     if (stagings.length == 0) {
       if (top == null) return true;
       const discardables = combination(this.player.cards, top.length).filter(
-        xs => this.field.canDiscard(xs)
+        xs => this.player.rule.canDiscard(this.field.stack, xs)
       );
       return discardables.some(xs => xs.indexOf(card) != -1);
     } else {
       return (
-        this.field.canDiscard(stagings.concat(card)) ||
+        this.player.rule.canDiscard(this.field.stack, stagings.concat(card)) ||
         stagings.indexOf(card) != -1
       );
     }

@@ -5,23 +5,22 @@ import Player from "./Player";
 import Character from "./Character";
 import _ from "lodash";
 import { sleep } from "./Utils";
-
-let discardId = 0;
+import Stack from "./Stack";
 
 export default class Field {
 
-    public cards: Card[][];
     private _computers: Computer[];
     private _player: Player;
     private _passCount: number;
     private _lastDiscard: Character;
     public messenger: Messenger;
+    public stack: Stack;
 
     constructor(messenger: Messenger) {
-        this.cards = [];
         this._passCount = 0;
         this._lastDiscard = null;
         this.messenger = messenger;
+        this.stack = new Stack();
     }
     private pass(character: Character) {
 
@@ -33,33 +32,7 @@ export default class Field {
 
         this._lastDiscard = character;
         this._passCount = 0;
-
-        // TODO: これはひどい
-        (cards as any).discardedBy = this._computers.indexOf(character as any);
-        // TODO: これはひどい
-        (cards as any).id = 'discards-' + String(discardId++);
-        for (const card of cards) {
-            card.id += '-discard';
-        }
-        this.cards.push(cards);
-    }
-    canDiscard(cards: Card[]) {
-        if (cards.length == 0) return false;
-        let c: Card;
-        if (cards.every(x => x.isJoker)) {
-            c = cards[0];
-        } else {
-            c = cards.filter(x => !x.isJoker)[0];
-            if (cards.some(x => !x.isJoker && c.rank != x.rank)) return false;
-        }
-        const top = this.top();
-        if (top == null) return true;
-        if (Card.compareRank(c, top[0]) <= 0) return false;
-        return cards.length == top.length;
-    }
-    top(): Card[] | null {
-        if (this.cards.length == 0) return null;
-        return this.cards.slice(this.cards.length - 1, this.cards.length)[0];
+        this.stack.push(cards, this._computers.indexOf(character as any));
     }
     static deal(characters: Character[], cards: Card[]) {
         let i = 0;
@@ -107,7 +80,7 @@ export default class Field {
                 for (const character of characters) {
                     if (this._lastDiscard == character) {
                         console.log(`最後にカードを捨てた${this._lastDiscard.name}の番が回ってきたので次の親になります`);
-                        this.cards.splice(0, this.cards.length);
+                        this.stack.clear();
                         this._lastDiscard = null;
                         await sleep(500);
                     }
@@ -118,7 +91,7 @@ export default class Field {
                         continue;
                     }
 
-                    const result = await character.turn(this, turnCount);
+                    const result = await character.turn(this.stack, turnCount);
                     if (result.action == "pass") {
                         this.pass(character);
                     } else {
@@ -138,7 +111,7 @@ export default class Field {
             }
             this._lastDiscard = null;
             this._passCount = 0;
-            this.cards.splice(0, this.cards.length);
+            this.stack.clear();
 
             for (const character of characters) {
                 // 早くあがったキャラクターほど後ろに入っており、最後のキャラクターは入っていないため -1 が返る

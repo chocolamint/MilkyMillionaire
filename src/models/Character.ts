@@ -2,6 +2,7 @@ import Card from "./Card";
 import Field from "./Field";
 import { TurnResult } from "./TurnResult";
 import { sleep } from "./Utils";
+import Stack from "./Stack";
 
 export default class Character {
 
@@ -25,15 +26,15 @@ export default class Character {
         this.nextRank = 3;
         this.isGameEnd = false;
     }
-    turn(field: Field, turnCount: number) {
+    turn(stack: Stack, turnCount: number) {
         return new Promise<TurnResult>(resolve => {
             this.say(`私のターンです！`);
             this.isMyTurn = true;
             this._resolveTurn = resolve;
-            this.turnCore(field, turnCount);
+            this.turnCore(stack, turnCount);
         });
     }
-    turnCore(field: Field, turnCount: number) {
+    turnCore(stack: Stack, turnCount: number) {
 
     }
     private turnEnd(result: TurnResult) {
