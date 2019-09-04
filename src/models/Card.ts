@@ -1,4 +1,5 @@
 import ArrayEx from "./ArrayEx";
+import _ from "lodash";
 
 export default class Card {
 
@@ -43,7 +44,7 @@ export default class Card {
     }
     static allCards() {
         const suits = ["♥", "♦", "♠", "♣"];
-        const ranks = ArrayEx.range(1, 13);
+        const ranks = _.range(1, 14);
         const cards = ArrayEx.flatMap(ranks, rank =>
             suits.map(suit => new Card(suit + "-" + rank, suit, rank))
         ).concat(

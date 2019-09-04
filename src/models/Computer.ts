@@ -1,6 +1,7 @@
 import ArrayEx from "./ArrayEx";
 import Card from "./Card";
 import Character from "./Character";
+import _ from "lodash";
 
 // TODO 酷い循環参照
 declare var field: any;
@@ -40,7 +41,7 @@ export default class Computer extends Character {
             discardable = strategicPass ? null : ArrayEx.random(discardables);
 
         } else {
-            const discardables = ArrayEx.flatMap(ArrayEx.range(1, 4), x => ArrayEx.combination(this.cards, x))
+            const discardables = ArrayEx.flatMap(_.range(1, 5), x => ArrayEx.combination(this.cards, x))
                 .filter(x => field.canDiscard(x));
             this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
             // TODO: 弱いものほど捨てやすくしたい
