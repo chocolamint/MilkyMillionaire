@@ -13,7 +13,7 @@ export default class Rule {
             "♠": 2,
             "♣": 3
         };
-        return suitRanks[a.suit] - suitRanks[b.suit];
+        return suitRanks[a.suit!] - suitRanks[b.suit!];
     }
     public compareRank(a: Card, b: Card) {
         if (!(a instanceof Card)) throw 'Not a card.';

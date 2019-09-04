@@ -3,12 +3,12 @@ import _ from "lodash";
 export default class Card {
 
     public id: string;
-    public suit: string;
-    public rank: number;
+    public suit?: string;
+    public rank?: number;
     public isJoker: boolean;
     public isStaged: boolean;
 
-    constructor(id: string, suit: string, rank: number, isJoker?: boolean) {
+    constructor(id: string, suit?: string, rank?: number, isJoker?: boolean) {
         this.id = id;
         this.suit = suit;
         this.rank = rank;
@@ -18,7 +18,7 @@ export default class Card {
     
     rankLevel() {
         if (this.isJoker) 13;
-        const n = this.rank;
+        const n = this.rank!;
         return (n == 2 ? 12 : n == 1 ? 11 : n - 3);
     }
     static allCards() {
@@ -27,8 +27,8 @@ export default class Card {
         const cards = ranks.flatMap(rank =>
             suits.map(suit => new Card(suit + "-" + rank, suit, rank))
         ).concat(
-            new Card("joker1", null, null, true),
-            new Card("joker2", null, null, true)
+            new Card("joker1", undefined, undefined, true),
+            new Card("joker2", undefined, undefined, true)
         );
 
         if (typeof document != 'undefined' && document && document.location && document.location.search) {
@@ -40,7 +40,7 @@ export default class Card {
     }
     toString() {
         if (this.isJoker) return 'Joker';
-        return this.suit +
-            (this.rank == 1 ? 'A' : this.rank == 11 ? 'J' : this.rank == 12 ? 'Q' : this.rank == 13 ? 'K' : this.rank);
+        return this.suit! +
+            (this.rank! == 1 ? 'A' : this.rank == 11 ? 'J' : this.rank == 12 ? 'Q' : this.rank == 13 ? 'K' : this.rank);
     }
 }

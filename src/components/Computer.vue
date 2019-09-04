@@ -283,13 +283,13 @@ import Computer from "../models/Computer";
 @Component({ name: "Computer" })
 export default class ComputerComponent extends Vue {
   @Prop()
-  public computer: Computer;
+  public computer!: Computer;
 
   @Prop()
-  public color: string;
+  public color!: string;
 
   @Prop()
-  public imageFileName: string;
+  public imageFileName!: string;
 
   public get imagePath() {
     return `images/${this.imageFileName}`;
@@ -298,7 +298,7 @@ export default class ComputerComponent extends Vue {
   public get bgColor() {
     const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(
       this.color
-    );
+    )!;
     const colors = [
       parseInt(match[1], 16),
       parseInt(match[2], 16),

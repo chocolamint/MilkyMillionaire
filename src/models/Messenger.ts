@@ -3,7 +3,7 @@ import { sleep } from "./Utils";
 export default class Messenger {
 
     public isShown: boolean;
-    public message: string;
+    public message: string = "";
 
     constructor() {
         this.isShown = false;

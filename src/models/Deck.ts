@@ -1,6 +1,7 @@
 import Card from "./Card";
 import _ from "lodash";
 import Rule from "./Rule";
+import { filterNotNull } from "./Utils";
 
 
 export default class Deck {
@@ -23,10 +24,8 @@ export default class Deck {
     }
     public pick(rule: Rule, strong: boolean, count: number) {
         const sorted = rule.sort(this._cards, !strong);
-        const cards = _.take(sorted, count)
-            .map(x => this.remove(x))
-            .filter(x => x != null);
-        return cards;
+        const cards = _.take(sorted, count).map(x => this.remove(x));
+        return filterNotNull(cards);
     }
     public clear() {
         this._cards.splice(0, this._cards.length);

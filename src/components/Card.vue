@@ -61,7 +61,7 @@ import Card from "../models/Card";
 export default class CardComponent extends Vue {
   
   @Prop()
-  public card: Card;
+  public card!: Card;
 
   get suitClass() {
     const suitClasses: Record<string, string> = {
@@ -70,7 +70,7 @@ export default class CardComponent extends Vue {
       "♠": "spade",
       "♣": "club"
     };
-    return suitClasses[this.card.suit];
+    return suitClasses[this.card.suit!];
   }
 
   get rankClass() {
@@ -89,7 +89,7 @@ export default class CardComponent extends Vue {
       "queen",
       "king"
     ];
-    return rankClasses[this.card.rank];
+    return rankClasses[this.card.rank!];
   }
 
   get showCardRank() {

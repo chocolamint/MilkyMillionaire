@@ -13,9 +13,9 @@ export default class Character {
     public rank: number;
     public nextRank: number;
     public isGameEnd: boolean;
-    public logger: ILogger;
+    public logger?: ILogger;
     private _deck = new Deck();
-    private _resolveTurn: (result: TurnResult) => void;
+    private _resolveTurn?: (result: TurnResult) => void;
 
     constructor(name: string) {
         this.name = name;
@@ -56,7 +56,7 @@ export default class Character {
             this.isCleared = true;
             this.say(`あがりです！`);
         }
-        this._resolveTurn(result);
+        this._resolveTurn!(result);
     }
     pass() {
         sleep(0);
@@ -80,7 +80,9 @@ export default class Character {
         return Promise.resolve();
     }
     say(message: string) {
-        this.logger.log(`%c${this.name}: ${message}`, this);
+        if (this.logger != null) {
+            this.logger.log(`%c${this.name}: ${message}`, this);
+        }
     }
     async giveCards(rule: Rule) {
         if (this.rank == 3) {

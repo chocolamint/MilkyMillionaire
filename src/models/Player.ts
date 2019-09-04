@@ -9,9 +9,9 @@ export default class Player extends Character {
 
     public waitingForNextGame: boolean;
     public isTrading: boolean;
-    private _resolveNextGame: () => void;
-    private _resolveTrading: (cards: Card[]) => void;
-    private _turn: Turn | null;
+    private _resolveNextGame?: () => void;
+    private _resolveTrading?: (cards: Card[]) => void;
+    private _turn: Turn | null = null;
 
     constructor(name: string) {
         super(name);
@@ -32,7 +32,7 @@ export default class Player extends Character {
         if (stagings.length == 0) {
             if (top == null) return true;
             const discardables = combination(this.cards, top.length)
-                .filter(xs => this._turn.canDiscard(xs));
+                .filter(xs => this._turn!.canDiscard(xs));
             return discardables.some(xs => xs.indexOf(card) != -1);
         } else {
             return (
@@ -71,7 +71,7 @@ export default class Player extends Character {
     async goToNextGame() {
         this.waitingForNextGame = false;
         await super.nextGame();
-        this._resolveNextGame();
+        this._resolveNextGame!();
     }
     async giveCards(rule: Rule) {
         this.isTrading = true;
@@ -97,6 +97,6 @@ export default class Player extends Character {
         }
         this.isTrading = false;
         await sleep(500);
-        this._resolveTrading(stagings);
+        this._resolveTrading!(stagings);
     }
 }

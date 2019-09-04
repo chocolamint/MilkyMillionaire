@@ -352,10 +352,10 @@ import Rule from "../models/Rule";
 @Component({ name: "Player", components: { card: CardComponent } })
 export default class PlayerComponent extends Vue {
   @Prop()
-  public player: Player;
+  public player!: Player;
 
   @Prop()
-  public rule: Rule;
+  public rule!: Rule;
 
   toggleCardStaging(card: Card) {
     card.isStaged = !card.isStaged;

@@ -13,7 +13,7 @@ export default class Croupier {
     async beginGame(characters: Character[], rule: Rule, stack: Stack, messenger: Messenger) {
 
         const cards = Card.allCards();
-        let lastDiscard: Character;
+        let lastDiscard: Character | null;
         let passCount: number = 0;
         const deal = (characters: Character[], cards: Card[]) => {
             let i = 0;
@@ -56,7 +56,7 @@ export default class Croupier {
             await messenger.show('ゲームスタート', 1000);
 
             let nextDealer = _.sample(characters);
-            console.log(`${nextDealer.name}の親ではじめます`);
+            console.log(`${nextDealer!.name}の親ではじめます`);
             let turnCount = 0;
             let isGameEnd = false;
             while (true) {
@@ -68,7 +68,7 @@ export default class Croupier {
                         await sleep(500);
                     }
                     if (nextDealer != null && character != nextDealer) continue;
-                    nextDealer = null;
+                    nextDealer = undefined;
                     if (character.isCleared) {
                         console.log(`${character.name}はあがっているので飛ばします`);
                         continue;

@@ -17,7 +17,7 @@ export default class Computer extends Character {
     async turnCore(turn: Turn) {
 
         const top = turn.stack.top();
-        let discardable: Card[];
+        let discardable: Card[] | undefined;
         if (top != null) {
             const fieldCardCount = top.length;
             const discardables = combination(this.cards, fieldCardCount).filter(x => turn.canDiscard(x));
@@ -36,7 +36,7 @@ export default class Computer extends Character {
                 }
             }
             // TODO: 弱いものほど捨てやすくしたい
-            discardable = strategicPass ? null : _.sample(discardables);
+            discardable = strategicPass ? undefined : _.sample(discardables);
 
         } else {
             const discardables = _.range(1, 5).flatMap(x => combination(this.cards, x))
@@ -46,7 +46,7 @@ export default class Computer extends Character {
             discardable = _.sample(discardables);
         }
 
-        if (discardable == null) {
+        if (discardable === undefined) {
             this.passing = true;
             await sleep(500);
             this.pass();

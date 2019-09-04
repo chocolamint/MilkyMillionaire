@@ -2,7 +2,11 @@
   <div class="main">
     <ul class="computers">
       <li v-for="computer in computers" :key="computer.name">
-        <computer :computer="computer.computer" :color="computer.color" :imageFileName="computer.imageFileName"></computer>
+        <computer
+          :computer="computer.computer"
+          :color="computer.color"
+          :imageFileName="computer.imageFileName"
+        ></computer>
       </li>
     </ul>
     <div class="field">
@@ -162,6 +166,7 @@ import CardComponent from "./Card.vue";
 import ComputerComponent from "./Computer.vue";
 import PlayerComponent from "./Player.vue";
 import CardSet from "../models/CardSet";
+import { concat } from "../models/Utils";
 
 class ComputerViewModel {
   constructor(
@@ -182,31 +187,22 @@ class PlayerViewModel {
   }
 })
 export default class AppComponent extends Vue {
-  messenger: Messenger;
-  croupier: Croupier;
-  computers: ComputerViewModel[];
-  player: PlayerViewModel;
-  stack: Stack;
-  rule: Rule;
+  private messenger = new Messenger();
+  private croupier = new Croupier();
+  private computers = [
+    new ComputerViewModel(new Computer("パクチー"), "#F189C8", "vegetable_pakuchi_coriander.png"),
+    new ComputerViewModel(new Computer("日本酒"), "#34BD67", "masu_nihonsyu.png"),
+    new ComputerViewModel(new Computer("餃子"), "#26C4F0", "food_gyouza_mise.png"),
+    new ComputerViewModel(new Computer("かまぼこ"), "#C97842", "kamaboko_red.png")
+  ];
+  private player = new PlayerViewModel(new Player("台湾まぜそば"), "#F1A15B");
+  stack = new Stack();
+  rule = new Rule();
 
   public constructor() {
     super();
-    this.messenger = new Messenger();
-    this.croupier = new Croupier();
-    this.computers = [
-      new ComputerViewModel(new Computer("パクチー"), "#F189C8", "vegetable_pakuchi_coriander.png"),
-      new ComputerViewModel(new Computer("日本酒"), "#34BD67", "masu_nihonsyu.png"),
-      new ComputerViewModel(new Computer("餃子"), "#26C4F0", "food_gyouza_mise.png"),
-      new ComputerViewModel(new Computer("かまぼこ"), "#C97842", "kamaboko_red.png")
-    ];
-    this.player = new PlayerViewModel(new Player("台湾まぜそば"), "#F1A15B");
-    this.stack = new Stack();
-    this.rule = new Rule();
 
-    const characters = [
-      ...this.computers.map(x => x.computer),
-      this.player.player
-    ];
+    const characters = concat(this.computers.map(x => x.computer), [this.player.player]);
     for (const character of characters) {
       character.logger = this;
     }
@@ -221,7 +217,7 @@ export default class AppComponent extends Vue {
   log<TSource>(message: string, source?: TSource) {
     if (source instanceof Character) {
       const color = source instanceof Computer
-        ? this.computers.find(x => x.computer == source).color
+        ? this.computers.find(x => x.computer == source)!.color
         : this.player.color;
       console.log(`%c${source.name}: ${message}`, `color:${color}`);
     } else {
