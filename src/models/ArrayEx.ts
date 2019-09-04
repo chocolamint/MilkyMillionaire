@@ -1,10 +1,5 @@
 export default class ArrayEx {
 
-    static random<T>(arr: T[]): T {
-        if (arr.length == 0) return void 0;
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
     static flatMap<T, S>(xs: T[], f: (elem: T) => S[]): S[] {
         return xs.map(f).reduce((a, b) => a.concat(b));
     }

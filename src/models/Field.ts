@@ -101,7 +101,7 @@ export default class Field {
 
             await this.messenger.show('ゲームスタート', 1000);
 
-            let nextDealer = ArrayEx.random(characters);
+            let nextDealer = _.sample(characters);
             console.log(`${nextDealer.name}の親ではじめます`);
             let turnCount = 0;
             let isGameEnd = false;
