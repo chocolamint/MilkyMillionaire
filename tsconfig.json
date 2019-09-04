@@ -4,6 +4,8 @@
     "target": "es5",
     "module": "es2015",
     "noImplicitAny": true,
+    "strict": true,
+    "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "lib": [
       "esnext",

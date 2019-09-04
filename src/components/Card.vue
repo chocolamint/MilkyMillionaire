@@ -55,15 +55,16 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import Card from "../models/Card";
+import { Card } from "../models/Card";
 
 @Component({ name: "Card" })
 export default class CardComponent extends Vue {
   
   @Prop()
-  public card: Card;
+  public card!: Card;
 
   get suitClass() {
+    if (this.card.isJoker) return "";
     const suitClasses: Record<string, string> = {
       "♥": "heart",
       "♦": "diamond",
@@ -74,6 +75,7 @@ export default class CardComponent extends Vue {
   }
 
   get rankClass() {
+    if (this.card.isJoker) return "";
     const rankClasses = [
       "ace",
       "two",
@@ -93,6 +95,7 @@ export default class CardComponent extends Vue {
   }
 
   get showCardRank() {
+    if (this.card.isJoker) return "";
     const rank = this.card.rank;
     switch (rank) {
       case 1:

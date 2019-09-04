@@ -11,8 +11,8 @@
       >パス</div>
       <div
         class="discard-button player-button"
-        :class="{'enabled':canDiscard}"
-        v-on:click="canDiscard ? discardStaging() : null"
+        :class="{'enabled':canDiscard()}"
+        v-on:click="canDiscard() ? discardStaging() : null"
         v-show="!player.waitingForNextGame"
       >カードを出す</div>
       <div
@@ -28,7 +28,7 @@
       :data-player-next-rank="player.nextRank"
     >{{ player.name }}</div>
     <div class="players-cards">
-      <div v-for="card in player.cards" :key="card.id" class="card-container">
+      <div v-for="card in rule.sort(player.cards, false)" :key="card.id" class="card-container">
         <card
           :card="card"
           :class="{ 'staging': card.isStaged, 'disable-stage': isCardGrayedOut(card) }"
@@ -343,59 +343,94 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { combination } from "../models/Utils";
-import Card from "../models/Card";
+import { combination, sleep } from "../models/Utils";
+import { Card } from "../models/Card";
 import Player from "../models/Player";
 import CardComponent from "./Card.vue";
+import Rule from "../models/Rule";
 
 @Component({ name: "Player", components: { card: CardComponent } })
 export default class PlayerComponent extends Vue {
   @Prop()
-  public player: Player;
+  public player!: Player;
+
+  @Prop()
+  public rule!: Rule;
 
   toggleCardStaging(card: Card) {
     card.isStaged = !card.isStaged;
   }
 
+  stagings() {
+    return this.player.cards.filter(x => x.isStaged);
+  }
+
   pass() {
+    this.stagings().forEach(x => x.isStaged = false);
     this.player.pass();
   }
 
-  discardStaging() {
-    if (this.player.isUnnecessaryCardSelecting()) {
-      this.player.giveStagings();
+  isUnnecessaryCardSelecting() {
+    return this.player.isTrading && this.player.rank >= 4;
+  }
+
+  async discardStaging() {
+    if (this.isUnnecessaryCardSelecting()) {
+      const stagings = this.stagings();
+      for (const card of stagings) {
+        card.isStaged = false;
+        this.player.trashCard(card);
+      }
+      this.player.isTrading = false;
+      await sleep(500);
+      this.player.give(stagings);
     } else {
-      this.player.discardStaging();
+      var stagings = this.stagings();
+      for (const card of stagings) {
+        card.isStaged = false;
+      }
+      this.player.discard(stagings);
     }
   }
 
-  get canDiscard() {
-    if (this.player.isUnnecessaryCardSelecting()) {
+  canDiscard() {
+    if (this.isUnnecessaryCardSelecting()) {
       const missingCount = this.player.rank - 3;
-      return this.player.stagings().length == missingCount;
+      return this.stagings().length == missingCount;
     } else {
-      return this.player.canDiscard();
+      if (this.player.currentTurn == null) return false;
+      return this.player.currentTurn.canDiscard(this.stagings());
     }
   }
-
   isCardGrayedOut(card: Card) {
-    if (this.player.isUnnecessaryCardSelecting()) {
+    if (this.isUnnecessaryCardSelecting()) {
       return !this.canStage(card);
     }
     return this.player.isMyTurn && !this.canStage(card);
   }
 
   canStage(card: Card) {
-    const stagings = this.player.stagings();
+    const stagings = this.stagings();
 
-    if (this.player.isUnnecessaryCardSelecting()) {
+    if (this.isUnnecessaryCardSelecting()) {
       const missingCount = this.player.rank - 3;
       return stagings.length < missingCount || stagings.indexOf(card) != -1;
     }
 
     if (!this.player.isMyTurn) return false;
 
-    return this.player.canStage(card);
+    const top = this.player.currentTurn!.stack.top();
+    if (stagings.length == 0) {
+      if (top == null) return true;
+      const discardables = combination(this.player.cards, top.length)
+        .filter(xs => this.player.currentTurn!.canDiscard(xs));
+      return discardables.some(xs => xs.indexOf(card) != -1);
+    } else {
+      return (
+        this.player.currentTurn!.canDiscard(stagings.concat(card)) ||
+        stagings.indexOf(card) != -1
+      );
+    }
   }
 
   get canPass() {

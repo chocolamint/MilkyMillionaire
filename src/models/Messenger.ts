@@ -1,7 +1,9 @@
+import { sleep } from "./Utils";
+
 export default class Messenger {
 
     public isShown: boolean;
-    public message: string;
+    public message: string = "";
 
     constructor() {
         this.isShown = false;
@@ -9,13 +11,8 @@ export default class Messenger {
     async show(message: string, ms: number): Promise<void> {
         this.message = message;
         this.isShown = true;
-        console.log('isShown = true');
-        return new Promise(resolve => {
-            setTimeout(() => {
-                this.isShown = false;
-                console.log('isShown = false');
-                resolve();
-            }, ms);
-        });
+        await sleep(ms);
+        this.isShown = false;
+        this.message = "";
     }
 }

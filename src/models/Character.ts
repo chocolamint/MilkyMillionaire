@@ -1,49 +1,62 @@
-import Card from "./Card";
-import { TurnResult } from "./TurnResult";
-import { sleep } from "./Utils";
+import { Card } from "./Card";
+import { TurnResult, Turn } from "./Turn";
+import { sleep, ILogger } from "./Utils";
 import Stack from "./Stack";
+import Deck from "./Deck";
+import Rule from "./Rule";
 
 export default class Character {
 
     public name: string;
-    public cards: Card[];
     public isMyTurn: boolean;
     public isCleared: boolean;
-    public color: string;
     public rank: number;
     public nextRank: number;
     public isGameEnd: boolean;
-    private _resolveTurn: (result: TurnResult) => void;
+    public logger?: ILogger;
+    private _deck = new Deck();
+    private _resolveTurn?: (result: TurnResult) => void;
 
-    constructor(name: string, color: string) {
+    constructor(name: string) {
         this.name = name;
-        this.cards = [];
         this.isMyTurn = false;
         this.isCleared = false;
-        this.color = color;
         this.rank = 3;
         this.nextRank = 3;
         this.isGameEnd = false;
     }
-    turn(stack: Stack, turnCount: number) {
+    get cards(): ReadonlyArray<Card> {
+        return this._deck.cards;
+    }
+    // TODO: 派生型がデッキにアクセスできないのが悪いと思う。継承をやめたい
+    get restCount(): number {
+        return this._deck.cards.length;
+    }
+    trashCard(card: Card) {
+        this._deck.remove(card);
+    }
+    deal(card: Card) {
+        this._deck.add(card);
+    }
+    turn(turn: Turn) {
         return new Promise<TurnResult>(resolve => {
             this.say(`私のターンです！`);
             this.isMyTurn = true;
             this._resolveTurn = resolve;
-            this.turnCore(stack, turnCount);
+            this.turnCore(turn);
         });
     }
-    turnCore(stack: Stack, turnCount: number) {
+    turnCore(turn: Turn) {
 
     }
     private turnEnd(result: TurnResult) {
         this.isMyTurn = false;
         this.say(`ターン終了です！`);
-        if (this.cards.length == 0) {
+        if (this._deck.isEmpty) {
             this.isCleared = true;
             this.say(`あがりです！`);
         }
-        this._resolveTurn(result);
+        this._resolveTurn!(result);
     }
     pass() {
         sleep(0);
@@ -51,12 +64,12 @@ export default class Character {
     }
     discard(cards: Card[]) {
         for (const card of cards) {
-            this.cards.splice(this.cards.indexOf(card), 1);
+            this._deck.remove(card);
         }
         this.turnEnd({ action: "discard", cards: cards });
     }
     endGame() {
-        this.cards.splice(0, this.cards.length);
+        this._deck.clear();
         this.isMyTurn = false;
         this.isCleared = false;
         this.isGameEnd = true;
@@ -67,32 +80,19 @@ export default class Character {
         return Promise.resolve();
     }
     say(message: string) {
-        console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
+        if (this.logger != null) {
+            this.logger.log(`%c${this.name}: ${message}`, this);
+        }
     }
-    giveCards() {
-        return new Promise<Card[]>(resolve => {
-            let cards: Card[];
-            switch (this.rank) {
-                case 1:
-                    cards = this.cards.splice(this.cards.length - 2, 2);
-                    break;
-                case 2:
-                    cards = this.cards.splice(this.cards.length - 1, 1);
-                    break;
-                case 3:
-                    cards = [];
-                    break;
-                case 4:
-                    cards = this.cards.splice(0, 1);
-                    break;
-                case 5:
-                    cards = this.cards.splice(0, 2);
-                    break;
-            }
-            if (cards.length) {
-                this.say(`${cards.join(',')}を差し出します`);
-            }
-            resolve(cards);
-        });
+    async giveCards(rule: Rule) {
+        if (this.rank == 3) {
+            return [];
+        } else {
+            const strong = this.rank > 3;
+            const count = Math.abs(this.rank - 3);
+            const cards = this._deck.pick(rule, strong, count);
+            this.say(`${cards.join(',')}を差し出します(Rank:${this.rank})`);
+            return cards;
+        }
     }
 }
