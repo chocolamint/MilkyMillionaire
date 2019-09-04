@@ -343,15 +343,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import ArrayEx from "../models/ArrayEx";
+import { combination } from "../models/Utils";
 import Card from "../models/Card";
 import Field from "../models/Field";
 import Player from "../models/Player";
 import CardComponent from "./Card.vue";
 
-@Component({ name: "Player", components:{ "card": CardComponent } })
+@Component({ name: "Player", components: { card: CardComponent } })
 export default class PlayerComponent extends Vue {
-  
   @Prop()
   public player: Player;
 
@@ -406,10 +405,9 @@ export default class PlayerComponent extends Vue {
     const top = this.field.top();
     if (stagings.length == 0) {
       if (top == null) return true;
-      const discardables = ArrayEx.combination(
-        this.player.cards,
-        top.length
-      ).filter(xs => this.field.canDiscard(xs));
+      const discardables = combination(this.player.cards, top.length).filter(
+        xs => this.field.canDiscard(xs)
+      );
       return discardables.some(xs => xs.indexOf(card) != -1);
     } else {
       return (

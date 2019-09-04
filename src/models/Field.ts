@@ -3,7 +3,6 @@ import Messenger from "./Messenger";
 import Computer from "./Computer";
 import Player from "./Player";
 import Character from "./Character";
-import ArrayEx from "./ArrayEx";
 import _ from "lodash";
 
 let discardId = 0;
