@@ -82,30 +82,15 @@ export default class Character {
     say(message: string) {
         this.logger.log(`%c${this.name}: ${message}`, this);
     }
-    giveCards(rule: Rule) {
-        return new Promise<Card[]>(resolve => {
-            let cards: Card[];
-            switch (this.rank) {
-                case 1:
-                    cards = this._deck.pick(rule, false, 2);
-                    break;
-                case 2:
-                    cards = this._deck.pick(rule, false, 1);
-                    break;
-                case 3:
-                    cards = [];
-                    break;
-                case 4:
-                    cards = this._deck.pick(rule, true, 1);
-                    break;
-                case 5:
-                    cards = this._deck.pick(rule, true, 2);
-                    break;
-            }
-            if (cards.length) {
-                this.say(`${cards.join(',')}を差し出します`);
-            }
-            resolve(cards);
-        });
+    async giveCards(rule: Rule) {
+        if (this.rank == 3) {
+            return [];
+        } else {
+            const strong = this.rank > 3;
+            const count = Math.abs(this.rank - 3);
+            const cards = this._deck.pick(rule, strong, count);
+            this.say(`${cards.join(',')}を差し出します(Rank:${this.rank})`);
+            return cards;
+        }
     }
 }

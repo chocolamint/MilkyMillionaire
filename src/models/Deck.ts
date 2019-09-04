@@ -22,7 +22,7 @@ export default class Deck {
         return this._cards.splice(index, 1)[0];
     }
     public pick(rule: Rule, strong: boolean, count: number) {
-        const sorted = rule.sort(this._cards, strong);
+        const sorted = rule.sort(this._cards, !strong);
         const cards = _.take(sorted, count)
             .map(x => this.remove(x))
             .filter(x => x != null);

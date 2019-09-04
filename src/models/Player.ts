@@ -2,7 +2,7 @@ import Card from "./Card";
 import Character from "./Character";
 import Rule from "./Rule";
 import Stack from "./Stack";
-import { combination } from "./Utils";
+import { combination, sleep } from "./Utils";
 import { Turn } from "./Turn";
 
 export default class Player extends Character {
@@ -73,34 +73,30 @@ export default class Player extends Character {
         await super.nextGame();
         this._resolveNextGame();
     }
-    giveCards(rule: Rule) {
-        return new Promise<Card[]>(resolve => {
-            this.isTrading = true;
-            if (this.rank <= 2) {
-                setTimeout(async () => {
-                    this.isTrading = false;
-                    const cards = await super.giveCards(rule);
-                    resolve(cards);
-                }, 2200);
-            }
-            if (this.rank == 3) {
-                this.isTrading = false;
-                resolve([]);
-            }
-            if (this.rank >= 4) {
+    async giveCards(rule: Rule) {
+        this.isTrading = true;
+        if (this.rank <= 2) {
+            await sleep(2200);
+            this.isTrading = false;
+            const cards = await super.giveCards(rule);
+            return cards;
+        } else if (this.rank == 3) {
+            this.isTrading = false;
+            return [];
+        } else {
+            return await new Promise<Card[]>(resolve => {
                 this._resolveTrading = resolve;
-            }
-        });
+            });
+        }
     }
-    giveStagings() {
+    async giveStagings() {
         const stagings = this.stagings();
         for (const card of stagings) {
             card.isStaged = false;
             this.trashCard(card);
         }
         this.isTrading = false;
-        setTimeout(() => {
-            this._resolveTrading(stagings);
-        }, 500);
+        await sleep(500);
+        this._resolveTrading(stagings);
     }
 }
