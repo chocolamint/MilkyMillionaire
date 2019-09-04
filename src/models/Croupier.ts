@@ -1,4 +1,4 @@
-import Card from "./Card";
+import { Card, allCards as getAllCards } from "./Card";
 import Messenger from "./Messenger";
 import Character from "./Character";
 import _ from "lodash";
@@ -12,7 +12,7 @@ export default class Croupier {
 
     async beginGame(characters: Character[], rule: Rule, stack: Stack, messenger: Messenger) {
 
-        const cards = Card.allCards();
+        const cards = getAllCards();
         let lastDiscard: Character | null;
         let passCount: number = 0;
         const deal = (characters: Character[], cards: Card[]) => {

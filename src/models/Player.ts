@@ -1,4 +1,4 @@
-import Card from "./Card";
+import { Card } from "./Card";
 import Character from "./Character";
 import Rule from "./Rule";
 import Stack from "./Stack";

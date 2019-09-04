@@ -1,4 +1,4 @@
-import Card from "./Card";
+import { Card } from "./Card";
 import Stack from "./Stack";
 import Rule from "./Rule";
 
@@ -14,7 +14,7 @@ type Discard = {
 };
 
 export class Turn {
-    
+
     public constructor(public stack: Stack, public rule: Rule, public turnCount: number) {
 
     }

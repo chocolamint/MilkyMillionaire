@@ -154,7 +154,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Card from "../models/Card";
+import { Card } from "../models/Card";
 import Character from "../models/Character";
 import Computer from "../models/Computer";
 import Croupier from "../models/Croupier";

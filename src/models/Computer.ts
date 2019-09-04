@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { combination, sleep } from "./Utils";
-import Card from "./Card";
+import { Card } from "./Card";
 import Character from "./Character";
 import Stack from "./Stack";
 import Rule from "./Rule";
@@ -27,7 +27,7 @@ export default class Computer extends Character {
                 // ターンが早くてかつ捨てないといけないカードのランクが高いほどパスしやすくする
                 const turnRatio = Math.max((- (turn.turnCount + 1) + 10) / 10, 0);
                 // TODO: 実際に捨てないといけないカードのランクの高さでパスしやすさを決めたいが、弱いものほど捨てやすいロジックになっていないと意味がないのでまたあとで
-                const fieldRank = top.filter(x => !x.isJoker)[0].rankLevel();
+                const fieldRank = turn.rule.rankLevel(top.filter(x => !x.isJoker)[0]);
                 const passRatio = turnRatio * (fieldRank * fieldRank / 169);
                 this.say(`${turn.turnCount + 1}ターン目で${fieldRank}という高さ…パスしたさは${Math.round(passRatio * 100)}%くらいかな...`)
                 if (Math.random() < passRatio) {

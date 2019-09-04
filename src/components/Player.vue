@@ -344,7 +344,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { combination } from "../models/Utils";
-import Card from "../models/Card";
+import { Card } from "../models/Card";
 import Player from "../models/Player";
 import CardComponent from "./Card.vue";
 import Rule from "../models/Rule";

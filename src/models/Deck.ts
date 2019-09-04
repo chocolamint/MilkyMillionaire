@@ -1,4 +1,4 @@
-import Card from "./Card";
+import { Card } from "./Card";
 import _ from "lodash";
 import Rule from "./Rule";
 import { filterNotNull } from "./Utils";

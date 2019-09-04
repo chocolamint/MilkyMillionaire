@@ -1,4 +1,4 @@
-import Card from "./Card";
+import { Card } from "./Card";
 import { TurnResult, Turn } from "./Turn";
 import { sleep, ILogger } from "./Utils";
 import Stack from "./Stack";
