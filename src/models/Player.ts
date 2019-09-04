@@ -11,7 +11,7 @@ export default class Player extends Character {
     public isTrading: boolean;
     private _resolveNextGame?: () => void;
     private _resolveTrading?: (cards: Card[]) => void;
-    private _turn: Turn | null = null;
+    public currentTurn: Turn | null = null;
 
     constructor(name: string) {
         super(name);
@@ -20,47 +20,8 @@ export default class Player extends Character {
     }
 
     turnCore(turn: Turn) {
-        this._turn = turn;
+        this.currentTurn = turn;
         super.turnCore(turn);
-    }
-    canStage(card: Card) {
-
-        if (this._turn == null) throw "Invalid call: Player#canStage.";
-
-        const stagings = this.stagings();
-        const top = this._turn.stack.top();
-        if (stagings.length == 0) {
-            if (top == null) return true;
-            const discardables = combination(this.cards, top.length)
-                .filter(xs => this._turn!.canDiscard(xs));
-            return discardables.some(xs => xs.indexOf(card) != -1);
-        } else {
-            return (
-                this._turn.canDiscard(stagings.concat(card)) ||
-                stagings.indexOf(card) != -1
-            );
-        }
-    }
-    canDiscard() {
-        if (this._turn == null) return false;
-        return this._turn.canDiscard(this.stagings());
-    }
-    isUnnecessaryCardSelecting() {
-        return this.isTrading && this.rank >= 4;
-    }
-    stagings() {
-        return this.cards.filter(x => x.isStaged);
-    }
-    discardStaging() {
-        var stagings = this.stagings();
-        for (const card of stagings) {
-            card.isStaged = false;
-        }
-        this.discard(stagings);
-    }
-    pass() {
-        this.stagings().forEach(x => x.isStaged = false);
-        super.pass();
     }
     nextGame() {
         return new Promise<void>(resolve => {
@@ -89,14 +50,8 @@ export default class Player extends Character {
             });
         }
     }
-    async giveStagings() {
-        const stagings = this.stagings();
-        for (const card of stagings) {
-            card.isStaged = false;
-            this.trashCard(card);
-        }
-        this.isTrading = false;
-        await sleep(500);
-        this._resolveTrading!(stagings);
+    async give(cards: Card[]) {
+        
+        this._resolveTrading!(cards);
     }
 }
