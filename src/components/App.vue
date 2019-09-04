@@ -8,18 +8,18 @@
     <div class="field">
       <transition-group name="card-discard" tag="div">
         <div
-          v-for="cards in field.cards"
-          :key="cards.id"
+          v-for="cardSet in stack.cards"
+          :key="cardSet.id"
           class="card-set"
-          :data-discarded-by="cards.discardedBy"
+          :data-discarded-by="whereFrom(cardSet)"
         >
-          <div v-for="card in cards" :key="card.id" class="card-container">
+          <div v-for="card in cardSet.cards" :key="card.id" class="card-container">
             <card :card="card"></card>
           </div>
         </div>
       </transition-group>
     </div>
-    <player :player="player" :field="field" class="player"></player>
+    <player :player="player" class="player"></player>
     <div class="message" v-if="messenger.isShown">
       <div class="message-text">{{ messenger.message }}</div>
     </div>
@@ -153,43 +153,52 @@ import { Component, Vue } from "vue-property-decorator";
 import Card from "../models/Card";
 import Character from "../models/Character";
 import Computer from "../models/Computer";
-import Field from "../models/Field";
+import Croupier from "../models/Croupier";
 import Messenger from "../models/Messenger";
 import Player from "../models/Player";
+import Rule from "../models/Rule";
+import Stack from "../models/Stack";
 import CardComponent from "./Card.vue";
 import ComputerComponent from "./Computer.vue";
 import PlayerComponent from "./Player.vue";
-
-const messenger = new Messenger();
-const field = new Field(messenger);
-const computers = [
-  new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png"),
-  new Computer("日本酒", "#34BD67", "masu_nihonsyu.png"),
-  new Computer("餃子", "#26C4F0", "food_gyouza_mise.png"),
-  new Computer("かまぼこ", "#C97842", "kamaboko_red.png")
-];
-const player = new Player("台湾まぜそば", "#F1A15B");
-
-const cards = Card.allCards();
-
-// TODO: 循環参照解決するまでの暫定措置
-(window as any).field = field;
-
-field.beginGame([...computers, player], cards);
+import CardSet from "../models/CardSet";
 
 @Component({
   components: {
-    "card": CardComponent,
-    "computer": ComputerComponent,
-    "player": PlayerComponent
-  },
-  data: () => ({
-    computers,
-    player,
-    cards,
-    field,
-    messenger
-  })
+    card: CardComponent,
+    computer: ComputerComponent,
+    player: PlayerComponent
+  }
 })
-export default class AppComponent extends Vue {}
+export default class AppComponent extends Vue {
+  
+  messenger: Messenger;
+  rule: Rule;
+  croupier: Croupier;
+  computers: Computer[];
+  player: Player;
+  stack: Stack;
+
+  public constructor() {
+    super();
+    this.messenger = new Messenger();
+    this.rule = new Rule();
+    this.croupier = new Croupier();
+    this.computers = [
+      new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png", this.rule),
+      new Computer("日本酒", "#34BD67", "masu_nihonsyu.png", this.rule),
+      new Computer("餃子", "#26C4F0", "food_gyouza_mise.png", this.rule),
+      new Computer("かまぼこ", "#C97842", "kamaboko_red.png", this.rule)
+    ];
+    this.player = new Player("台湾まぜそば", "#F1A15B", this.rule);
+
+    this.stack = new Stack();
+
+    this.croupier.beginGame([...this.computers, this.player], this.stack, this.messenger);
+  }
+
+  public whereFrom(cards: CardSet): number {
+    return this.computers.findIndex(x => x.name == cards.holder);
+  }
+}
 </script>

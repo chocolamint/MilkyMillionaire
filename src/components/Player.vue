@@ -345,7 +345,6 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { combination } from "../models/Utils";
 import Card from "../models/Card";
-import Field from "../models/Field";
 import Player from "../models/Player";
 import CardComponent from "./Card.vue";
 
@@ -353,9 +352,6 @@ import CardComponent from "./Card.vue";
 export default class PlayerComponent extends Vue {
   @Prop()
   public player: Player;
-
-  @Prop()
-  public field: Field;
 
   toggleCardStaging(card: Card) {
     card.isStaged = !card.isStaged;
@@ -366,7 +362,7 @@ export default class PlayerComponent extends Vue {
   }
 
   discardStaging() {
-    if (this.isUnnecessaryCardSelecting()) {
+    if (this.player.isUnnecessaryCardSelecting()) {
       this.player.giveStagings();
     } else {
       this.player.discardStaging();
@@ -374,19 +370,16 @@ export default class PlayerComponent extends Vue {
   }
 
   get canDiscard() {
-    if (this.isUnnecessaryCardSelecting()) {
+    if (this.player.isUnnecessaryCardSelecting()) {
       const missingCount = this.player.rank - 3;
       return this.player.stagings().length == missingCount;
+    } else {
+      return this.player.canDiscard();
     }
-    return this.field.canDiscard(this.player.stagings());
-  }
-
-  isUnnecessaryCardSelecting() {
-    return this.player.isTrading && this.player.rank >= 4;
   }
 
   isCardGrayedOut(card: Card) {
-    if (this.isUnnecessaryCardSelecting()) {
+    if (this.player.isUnnecessaryCardSelecting()) {
       return !this.canStage(card);
     }
     return this.player.isMyTurn && !this.canStage(card);
@@ -395,26 +388,14 @@ export default class PlayerComponent extends Vue {
   canStage(card: Card) {
     const stagings = this.player.stagings();
 
-    if (this.isUnnecessaryCardSelecting()) {
+    if (this.player.isUnnecessaryCardSelecting()) {
       const missingCount = this.player.rank - 3;
       return stagings.length < missingCount || stagings.indexOf(card) != -1;
     }
 
     if (!this.player.isMyTurn) return false;
 
-    const top = this.field.top();
-    if (stagings.length == 0) {
-      if (top == null) return true;
-      const discardables = combination(this.player.cards, top.length).filter(
-        xs => this.field.canDiscard(xs)
-      );
-      return discardables.some(xs => xs.indexOf(card) != -1);
-    } else {
-      return (
-        this.field.canDiscard(stagings.concat(card)) ||
-        stagings.indexOf(card) != -1
-      );
-    }
+    return this.player.canStage(card);
   }
 
   get canPass() {

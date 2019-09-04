@@ -1,7 +1,7 @@
 import Card from "./Card";
-
-// TODO 酷い循環参照
-declare var field: any;
+import { TurnResult } from "./TurnResult";
+import { sleep } from "./Utils";
+import Stack from "./Stack";
 
 export default class Character {
 
@@ -13,7 +13,7 @@ export default class Character {
     public rank: number;
     public nextRank: number;
     public isGameEnd: boolean;
-    private _resolveTurn: () => void;
+    private _resolveTurn: (result: TurnResult) => void;
 
     constructor(name: string, color: string) {
         this.name = name;
@@ -25,34 +25,35 @@ export default class Character {
         this.nextRank = 3;
         this.isGameEnd = false;
     }
-    turn(turnCount: number) {
-        return new Promise(resolve => {
+    turn(stack: Stack, turnCount: number) {
+        return new Promise<TurnResult>(resolve => {
             this.say(`私のターンです！`);
             this.isMyTurn = true;
             this._resolveTurn = resolve;
-            this.turnCore(turnCount);
+            this.turnCore(stack, turnCount);
         });
     }
-    turnCore(turnCount: number) {
+    turnCore(stack: Stack, turnCount: number) {
 
     }
-    turnEnd() {
+    private turnEnd(result: TurnResult) {
         this.isMyTurn = false;
         this.say(`ターン終了です！`);
         if (this.cards.length == 0) {
             this.isCleared = true;
             this.say(`あがりです！`);
         }
-        this._resolveTurn();
+        this._resolveTurn(result);
     }
     pass() {
-        field.pass(this);
+        sleep(0);
+        this.turnEnd({ action: "pass" });
     }
     discard(cards: Card[]) {
         for (const card of cards) {
             this.cards.splice(this.cards.indexOf(card), 1);
         }
-        field.discard(this, cards);
+        this.turnEnd({ action: "discard", cards: cards });
     }
     endGame() {
         this.cards.splice(0, this.cards.length);
@@ -63,6 +64,7 @@ export default class Character {
     nextGame() {
         this.rank = this.nextRank;
         this.isGameEnd = false;
+        return Promise.resolve();
     }
     say(message: string) {
         console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
