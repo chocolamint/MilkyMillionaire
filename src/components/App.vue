@@ -19,7 +19,7 @@
         </div>
       </transition-group>
     </div>
-    <player :player="player.player" class="player"></player>
+    <player :player="player.player" :rule="rule" class="player"></player>
     <div class="message" v-if="messenger.isShown">
       <div class="message-text">{{ messenger.message }}</div>
     </div>
@@ -187,6 +187,7 @@ export default class AppComponent extends Vue {
   computers: ComputerViewModel[];
   player: PlayerViewModel;
   stack: Stack;
+  rule: Rule;
 
   public constructor() {
     super();
@@ -200,6 +201,7 @@ export default class AppComponent extends Vue {
     ];
     this.player = new PlayerViewModel(new Player("台湾まぜそば"), "#F1A15B");
     this.stack = new Stack();
+    this.rule = new Rule();
 
     const characters = [
       ...this.computers.map(x => x.computer),
@@ -209,7 +211,7 @@ export default class AppComponent extends Vue {
       character.logger = this;
     }
 
-    this.croupier.beginGame(characters, this.stack, this.messenger);
+    this.croupier.beginGame(characters, this.rule, this.stack, this.messenger);
   }
 
   public whereFrom(cards: CardSet): number {

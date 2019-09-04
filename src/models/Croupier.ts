@@ -10,19 +10,15 @@ import { Turn } from "./Turn";
 
 export default class Croupier {
 
-    async beginGame(characters: Character[], stack: Stack, messenger: Messenger) {
+    async beginGame(characters: Character[], rule: Rule, stack: Stack, messenger: Messenger) {
 
         const cards = Card.allCards();
         let lastDiscard: Character;
         let passCount: number = 0;
-        const rule = new Rule();
         const deal = (characters: Character[], cards: Card[]) => {
             let i = 0;
             for (const card of _.shuffle(cards)) {
-                characters[i++ % 5].cards.push(card);
-            }
-            for (const character of characters) {
-                character.cards.sort(Card.compareSort);
+                characters[i++ % 5].deal(card);
             }
         };
         const pass = (character: Character) => {
@@ -39,13 +35,12 @@ export default class Croupier {
         const trade = async () => {
             const tradings: Record<number, Card[]> = {};
             for (const character of characters) {
-                tradings[character.rank] = await character.giveCards();
+                tradings[character.rank] = await character.giveCards(rule);
             }
             for (const character of characters) {
                 for (const card of tradings[6 - character.rank]) {
-                    character.cards.push(card);
+                    character.deal(card);
                 }
-                character.cards.sort(Card.compareSort);
             }
         };
         const doGame = async () => {

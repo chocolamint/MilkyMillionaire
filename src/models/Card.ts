@@ -15,27 +15,7 @@ export default class Card {
         this.isJoker = Boolean(isJoker);
         this.isStaged = false;
     }
-    static compareSort(a: Card, b: Card) {
-        const temp = Card.compareRank(a, b);
-        if (temp != 0) return temp;
-
-        const suitRanks: Record<string, number> = {
-            "♥": 0,
-            "♦": 1,
-            "♠": 2,
-            "♣": 3
-        };
-        return suitRanks[a.suit] - suitRanks[b.suit];
-    }
-    static compareRank(a: Card, b: Card) {
-        if (!(a instanceof Card)) throw 'Not a card.';
-        if (!(b instanceof Card)) throw 'Not a card.';
-
-        if (a.isJoker && b.isJoker) return 0;
-        if (a.isJoker) return 1;
-        if (b.isJoker) return -1;
-        return a.rankLevel() - b.rankLevel();
-    }
+    
     rankLevel() {
         if (this.isJoker) 13;
         const n = this.rank;

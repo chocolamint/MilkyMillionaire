@@ -28,7 +28,7 @@
       :data-player-next-rank="player.nextRank"
     >{{ player.name }}</div>
     <div class="players-cards">
-      <div v-for="card in player.cards" :key="card.id" class="card-container">
+      <div v-for="card in rule.sort(player.cards, false)" :key="card.id" class="card-container">
         <card
           :card="card"
           :class="{ 'staging': card.isStaged, 'disable-stage': isCardGrayedOut(card) }"
@@ -347,11 +347,15 @@ import { combination } from "../models/Utils";
 import Card from "../models/Card";
 import Player from "../models/Player";
 import CardComponent from "./Card.vue";
+import Rule from "../models/Rule";
 
 @Component({ name: "Player", components: { card: CardComponent } })
 export default class PlayerComponent extends Vue {
   @Prop()
   public player: Player;
+
+  @Prop()
+  public rule: Rule;
 
   toggleCardStaging(card: Card) {
     card.isStaged = !card.isStaged;

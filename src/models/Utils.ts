@@ -1,6 +1,6 @@
-export function combination<T>(xs: T[], k: number): T[][] {
+export function combination<T>(xs: ReadonlyArray<T>, k: number): T[][] {
 
-    const temp = (xs: T[], i: number, k: number): T[][] => {
+    const temp = (xs: ReadonlyArray<T>, i: number, k: number): T[][] => {
         if (k == 0) {
             return xs.slice(i).map(x => [x]);
         }

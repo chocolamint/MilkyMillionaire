@@ -12,7 +12,7 @@
     <div class="image" :style="{ borderColor: color, 'background-color': bgColor }">
       <img :src="imagePath" alt />
     </div>
-    <div class="cards" :data-card-count="computer.cards.length">
+    <div class="cards" :data-card-count="computer.restCount">
       <div v-for="card in computer.cards" :key="card.id" class="card"></div>
     </div>
   </div>

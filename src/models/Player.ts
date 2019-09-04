@@ -73,15 +73,13 @@ export default class Player extends Character {
         await super.nextGame();
         this._resolveNextGame();
     }
-    giveCards() {
+    giveCards(rule: Rule) {
         return new Promise<Card[]>(resolve => {
             this.isTrading = true;
             if (this.rank <= 2) {
-                setTimeout(() => {
+                setTimeout(async () => {
                     this.isTrading = false;
-                    const missingCount = 3 - this.rank;
-                    const cards = this.cards.splice(this.cards.length - missingCount, missingCount);
-                    this.say(`${cards.join(',')}を差し出します`);
+                    const cards = await super.giveCards(rule);
                     resolve(cards);
                 }, 2200);
             }
@@ -98,8 +96,7 @@ export default class Player extends Character {
         const stagings = this.stagings();
         for (const card of stagings) {
             card.isStaged = false;
-            const index = this.cards.indexOf(card);
-            this.cards.splice(index, 1);
+            this.trashCard(card);
         }
         this.isTrading = false;
         setTimeout(() => {
