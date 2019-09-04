@@ -27,7 +27,9 @@
     "webpack-cli": "^3.3.7"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.138",
     "babel-runtime": "^6.26.0",
+    "lodash": "^4.17.15",
     "vue-class-component": "^7.1.0",
     "vue-property-decorator": "^8.2.2"
   }

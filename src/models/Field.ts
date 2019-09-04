@@ -3,7 +3,7 @@ import Messenger from "./Messenger";
 import Computer from "./Computer";
 import Player from "./Player";
 import Character from "./Character";
-import ArrayEx from "./ArrayEx";
+import _ from "lodash";
 
 let discardId = 0;
 
@@ -62,7 +62,7 @@ export default class Field {
     }
     static deal(characters: Character[], cards: Card[]) {
         let i = 0;
-        for (const card of ArrayEx.shuffle(cards)) {
+        for (const card of _.shuffle(cards)) {
             characters[i++ % 5].cards.push(card);
         }
     }
@@ -100,7 +100,7 @@ export default class Field {
 
             await this.messenger.show('ゲームスタート', 1000);
 
-            let nextDealer = ArrayEx.random(characters);
+            let nextDealer = _.sample(characters);
             console.log(`${nextDealer.name}の親ではじめます`);
             let turnCount = 0;
             let isGameEnd = false;

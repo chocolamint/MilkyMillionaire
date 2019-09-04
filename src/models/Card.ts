@@ -1,4 +1,4 @@
-import ArrayEx from "./ArrayEx";
+import _ from "lodash";
 
 export default class Card {
 
@@ -43,8 +43,8 @@ export default class Card {
     }
     static allCards() {
         const suits = ["♥", "♦", "♠", "♣"];
-        const ranks = ArrayEx.range(1, 13);
-        const cards = ArrayEx.flatMap(ranks, rank =>
+        const ranks = _.range(1, 14);
+        const cards = ranks.flatMap(rank =>
             suits.map(suit => new Card(suit + "-" + rank, suit, rank))
         ).concat(
             new Card("joker1", null, null, true),
@@ -53,7 +53,7 @@ export default class Card {
 
         if (typeof document != 'undefined' && document && document.location && document.location.search) {
             if (~document.location.search.indexOf('debug')) {
-                return ArrayEx.shuffle(cards).slice(0, 15);
+                return _.shuffle(cards).slice(0, 15);
             }
         }
         return cards;
