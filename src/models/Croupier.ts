@@ -6,6 +6,7 @@ import { sleep } from "./Utils";
 import Stack from "./Stack";
 import CardSet from "./CardSet";
 import Rule from "./Rule";
+import { Turn } from "./Turn";
 
 export default class Croupier {
 
@@ -78,7 +79,7 @@ export default class Croupier {
                         continue;
                     }
 
-                    const result = await character.turn({ stack, rule, turnCount });
+                    const result = await character.turn(new Turn(stack, rule, turnCount));
                     if (result.action == "pass") {
                         pass(character);
                     } else {

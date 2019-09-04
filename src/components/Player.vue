@@ -11,8 +11,8 @@
       >パス</div>
       <div
         class="discard-button player-button"
-        :class="{'enabled':canDiscard}"
-        v-on:click="canDiscard ? discardStaging() : null"
+        :class="{'enabled':canDiscard()}"
+        v-on:click="canDiscard() ? discardStaging() : null"
         v-show="!player.waitingForNextGame"
       >カードを出す</div>
       <div
@@ -369,7 +369,7 @@ export default class PlayerComponent extends Vue {
     }
   }
 
-  get canDiscard() {
+  canDiscard() {
     if (this.player.isUnnecessaryCardSelecting()) {
       const missingCount = this.player.rank - 3;
       return this.player.stagings().length == missingCount;

@@ -3,7 +3,7 @@ import Character from "./Character";
 import Rule from "./Rule";
 import Stack from "./Stack";
 import { combination } from "./Utils";
-import { TurnInfo } from "./Turn";
+import { Turn } from "./Turn";
 
 export default class Player extends Character {
 
@@ -11,7 +11,7 @@ export default class Player extends Character {
     public isTrading: boolean;
     private _resolveNextGame: () => void;
     private _resolveTrading: (cards: Card[]) => void;
-    private _turn: TurnInfo;
+    private _turn: Turn | null;
 
     constructor(name: string) {
         super(name);
@@ -19,29 +19,31 @@ export default class Player extends Character {
         this.isTrading = false;
     }
 
-    turnCore(turn: TurnInfo) {
+    turnCore(turn: Turn) {
         this._turn = turn;
         super.turnCore(turn);
     }
     canStage(card: Card) {
+
+        if (this._turn == null) throw "Invalid call: Player#canStage.";
 
         const stagings = this.stagings();
         const top = this._turn.stack.top();
         if (stagings.length == 0) {
             if (top == null) return true;
             const discardables = combination(this.cards, top.length)
-                .filter(xs => this._turn.rule.canDiscard(this._turn.stack, xs));
+                .filter(xs => this._turn.canDiscard(xs));
             return discardables.some(xs => xs.indexOf(card) != -1);
         } else {
             return (
-                this._turn.rule.canDiscard(this._turn.stack, stagings.concat(card)) ||
+                this._turn.canDiscard(stagings.concat(card)) ||
                 stagings.indexOf(card) != -1
             );
         }
     }
     canDiscard() {
         if (this._turn == null) return false;
-        return this._turn.rule.canDiscard(this._turn.stack, this.stagings());
+        return this._turn.canDiscard(this.stagings());
     }
     isUnnecessaryCardSelecting() {
         return this.isTrading && this.rank >= 4;

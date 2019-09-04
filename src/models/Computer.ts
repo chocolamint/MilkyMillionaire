@@ -4,7 +4,7 @@ import Card from "./Card";
 import Character from "./Character";
 import Stack from "./Stack";
 import Rule from "./Rule";
-import { TurnInfo } from "./Turn";
+import { Turn } from "./Turn";
 
 export default class Computer extends Character {
 
@@ -14,13 +14,13 @@ export default class Computer extends Character {
         super(name);
         this.passing = false;
     }
-    async turnCore(turn: TurnInfo) {
+    async turnCore(turn: Turn) {
 
         const top = turn.stack.top();
         let discardable: Card[];
         if (top != null) {
             const fieldCardCount = top.length;
-            const discardables = combination(this.cards, fieldCardCount).filter(x => turn.rule.canDiscard(turn.stack, x));
+            const discardables = combination(this.cards, fieldCardCount).filter(x => turn.canDiscard(x));
             this.say(`捨てられるのは... ${discardables.length ? discardables.map(x => x.join('')).join(', ') : 'ないですね...'}`);
             let strategicPass = false;
             if (discardables.length != 0) {
@@ -40,7 +40,7 @@ export default class Computer extends Character {
 
         } else {
             const discardables = _.range(1, 5).flatMap(x => combination(this.cards, x))
-                .filter(x => turn.rule.canDiscard(turn.stack, x));
+                .filter(x => turn.canDiscard(x));
             this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
             // TODO: 弱いものほど捨てやすくしたい
             discardable = _.sample(discardables);
