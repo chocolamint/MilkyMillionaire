@@ -2,7 +2,7 @@
   <div class="main">
     <ul class="computers">
       <li v-for="computer in computers" :key="computer.name">
-        <computer :computer="computer"></computer>
+        <computer :computer="computer" :color="getColor(computer)"></computer>
       </li>
     </ul>
     <div class="field">
@@ -171,13 +171,13 @@ import CardSet from "../models/CardSet";
   }
 })
 export default class AppComponent extends Vue {
-  
   messenger: Messenger;
   rule: Rule;
   croupier: Croupier;
   computers: Computer[];
   player: Player;
   stack: Stack;
+  colors = ["#F189C8", "#34BD67", "#26C4F0", "#C97842", "#F1A15B"];
 
   public constructor() {
     super();
@@ -185,20 +185,39 @@ export default class AppComponent extends Vue {
     this.rule = new Rule();
     this.croupier = new Croupier();
     this.computers = [
-      new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png", this.rule),
-      new Computer("日本酒", "#34BD67", "masu_nihonsyu.png", this.rule),
-      new Computer("餃子", "#26C4F0", "food_gyouza_mise.png", this.rule),
-      new Computer("かまぼこ", "#C97842", "kamaboko_red.png", this.rule)
+      new Computer("パクチー", "vegetable_pakuchi_coriander.png", this.rule),
+      new Computer("日本酒", "masu_nihonsyu.png", this.rule),
+      new Computer("餃子", "food_gyouza_mise.png", this.rule),
+      new Computer("かまぼこ", "kamaboko_red.png", this.rule)
     ];
-    this.player = new Player("台湾まぜそば", "#F1A15B", this.rule);
-
+    this.player = new Player("台湾まぜそば", this.rule);
     this.stack = new Stack();
 
-    this.croupier.beginGame([...this.computers, this.player], this.stack, this.messenger);
+    const characters = [...this.computers, this.player];
+    for (const character of characters) {
+      character.logger = this;
+    }
+
+    this.croupier.beginGame(characters, this.stack, this.messenger);
   }
 
   public whereFrom(cards: CardSet): number {
     return this.computers.findIndex(x => x.name == cards.holder);
+  }
+
+  public getColor(character: Character) {
+    const index =
+      character instanceof Computer ? this.computers.indexOf(character) : 4;
+    return this.colors[index];
+  }
+
+  log<TSource>(message: string, source?: TSource) {
+    if (source instanceof Character) {
+      const color = this.getColor(source);
+      console.log(`%c${source.name}: ${message}`, `color:${color}`);
+    } else {
+      console.log(message);
+    }
   }
 }
 </script>

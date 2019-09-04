@@ -11,8 +11,8 @@ export default class Computer extends Character {
     public image: string;
     private _rule: Rule;
 
-    constructor(name: string, color: string, image: string, rule: Rule) {
-        super(name, color);
+    constructor(name: string, image: string, rule: Rule) {
+        super(name);
         this.passing = false;
         this.image = image;
         this._rule = rule;

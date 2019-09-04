@@ -19,3 +19,7 @@ export function combination<T>(xs: T[], k: number): T[][] {
 export function sleep(delayMilliseconds: number) {
     return new Promise<void>(resolve => setTimeout(resolve, delayMilliseconds));
 }
+
+export interface ILogger {
+    log<TSource>(message: string, source?: TSource): void;
+}

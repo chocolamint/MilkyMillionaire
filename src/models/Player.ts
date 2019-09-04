@@ -13,8 +13,8 @@ export default class Player extends Character {
     private _resolveTrading: (cards: Card[]) => void;
     private _stack: Stack;
 
-    constructor(name: string, color: string, rule: Rule) {
-        super(name, color);
+    constructor(name: string, rule: Rule) {
+        super(name);
         this.waitingForNextGame = false;
         this.isTrading = false;
         this.rule = rule;

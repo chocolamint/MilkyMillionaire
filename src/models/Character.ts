@@ -1,6 +1,6 @@
 import Card from "./Card";
 import { TurnResult } from "./TurnResult";
-import { sleep } from "./Utils";
+import { sleep, ILogger } from "./Utils";
 import Stack from "./Stack";
 
 export default class Character {
@@ -9,18 +9,17 @@ export default class Character {
     public cards: Card[];
     public isMyTurn: boolean;
     public isCleared: boolean;
-    public color: string;
     public rank: number;
     public nextRank: number;
     public isGameEnd: boolean;
+    public logger: ILogger;
     private _resolveTurn: (result: TurnResult) => void;
 
-    constructor(name: string, color: string) {
+    constructor(name: string) {
         this.name = name;
         this.cards = [];
         this.isMyTurn = false;
         this.isCleared = false;
-        this.color = color;
         this.rank = 3;
         this.nextRank = 3;
         this.isGameEnd = false;
@@ -67,7 +66,7 @@ export default class Character {
         return Promise.resolve();
     }
     say(message: string) {
-        console.log(`%c${this.name}: ${message}`, `color:${this.color}`);
+        this.logger.log(`%c${this.name}: ${message}`, this);
     }
     giveCards() {
         return new Promise<Card[]>(resolve => {
