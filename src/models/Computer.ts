@@ -1,10 +1,8 @@
-import { combination } from "./Utils";
+import _ from "lodash";
+import { combination, sleep } from "./Utils";
 import Card from "./Card";
 import Character from "./Character";
-import _ from "lodash";
-
-// TODO 酷い循環参照
-declare var field: any;
+import Field from "./Field";
 
 export default class Computer extends Character {
 
@@ -16,10 +14,10 @@ export default class Computer extends Character {
         this.passing = false;
         this.image = image;
     }
-    turnCore(turnCount: number) {
+    async turnCore(field: Field, turnCount: number) {
 
-        const top: Card[] | null = field.top();
-        let discardable;
+        const top = field.top();
+        let discardable: Card[];
         if (top != null) {
             const fieldCardCount = top.length;
             const discardables = combination(this.cards, fieldCardCount).filter(x => field.canDiscard(x));
@@ -50,14 +48,11 @@ export default class Computer extends Character {
 
         if (discardable == null) {
             this.passing = true;
+            await sleep(500);
             this.pass();
-        } else {
-            this.discard(discardable);
-        }
-
-        setTimeout(() => {
             this.passing = false;
-            this.turnEnd();
-        }, 500);
+        } else {
+            await this.discard(discardable);
+        }
     }
 }

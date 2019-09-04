@@ -15,3 +15,7 @@ export function combination<T>(xs: T[], k: number): T[][] {
     };
     return temp(xs, 0, k - 1);
 }
+
+export function sleep(delayMilliseconds: number) {
+    return new Promise<void>(resolve => setTimeout(resolve, delayMilliseconds));
+}

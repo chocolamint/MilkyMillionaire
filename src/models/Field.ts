@@ -4,6 +4,7 @@ import Computer from "./Computer";
 import Player from "./Player";
 import Character from "./Character";
 import _ from "lodash";
+import { sleep } from "./Utils";
 
 let discardId = 0;
 
@@ -22,11 +23,11 @@ export default class Field {
         this._lastDiscard = null;
         this.messenger = messenger;
     }
-    pass(character: Character) {
+    private pass(character: Character) {
 
         console.log(`${character.name}がパスしました`);
     }
-    discard(character: Character, cards: Card[]) {
+    private discard(character: Character, cards: Card[]) {
 
         console.log(`${character.name}が${cards.map(x => x.toString()).join(',')}を捨てました`);
 
@@ -73,8 +74,6 @@ export default class Field {
 
         const doGame = async () => {
 
-            const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
             const ranking = [];
 
             Field.deal(characters, cards);
@@ -110,7 +109,7 @@ export default class Field {
                         console.log(`最後にカードを捨てた${this._lastDiscard.name}の番が回ってきたので次の親になります`);
                         this.cards.splice(0, this.cards.length);
                         this._lastDiscard = null;
-                        await delay(500);
+                        await sleep(500);
                     }
                     if (nextDealer != null && character != nextDealer) continue;
                     nextDealer = null;
@@ -119,7 +118,13 @@ export default class Field {
                         continue;
                     }
 
-                    await character.turn(turnCount);
+                    const result = await character.turn(this, turnCount);
+                    if (result.action == "pass") {
+                        this.pass(character);
+                    } else {
+                        this.discard(character, result.cards);
+                        await sleep(500);
+                    }
 
                     if (character.isCleared) {
                         ranking.unshift(character);

@@ -22,14 +22,10 @@ export default class Player extends Character {
             card.isStaged = false;
         }
         this.discard(stagings);
-        setTimeout(() => {
-            this.turnEnd();
-        }, 500);
     }
     pass() {
         this.stagings().forEach(x => x.isStaged = false);
         super.pass();
-        this.turnEnd();
     }
     waitForNextGame() {
         return new Promise(resolve => {

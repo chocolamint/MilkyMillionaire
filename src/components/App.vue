@@ -172,9 +172,6 @@ const player = new Player("台湾まぜそば", "#F1A15B");
 
 const cards = Card.allCards();
 
-// TODO: 循環参照解決するまでの暫定措置
-(window as any).field = field;
-
 field.beginGame([...computers, player], cards);
 
 @Component({
