@@ -1,8 +1,8 @@
 <template>
   <div class="main">
     <ul class="computers">
-      <li v-for="(computer, index) in computers" :key="computer.name">
-        <computer :computer="computer" :color="colors[index]" :imageFileName="images[index]"></computer>
+      <li v-for="computer in computers" :key="computer.name">
+        <computer :computer="computer.computer" :color="computer.color" :imageFileName="computer.imageFileName"></computer>
       </li>
     </ul>
     <div class="field">
@@ -19,7 +19,7 @@
         </div>
       </transition-group>
     </div>
-    <player :player="player" class="player"></player>
+    <player :player="player.player" class="player"></player>
     <div class="message" v-if="messenger.isShown">
       <div class="message-text">{{ messenger.message }}</div>
     </div>
@@ -163,6 +163,17 @@ import ComputerComponent from "./Computer.vue";
 import PlayerComponent from "./Player.vue";
 import CardSet from "../models/CardSet";
 
+class ComputerViewModel {
+  constructor(
+    public computer: Computer,
+    public color: string,
+    public imageFileName: string
+  ) { }
+}
+class PlayerViewModel {
+  constructor(public player: Player, public color: string) { }
+}
+
 @Component({
   components: {
     card: CardComponent,
@@ -173,31 +184,27 @@ import CardSet from "../models/CardSet";
 export default class AppComponent extends Vue {
   messenger: Messenger;
   croupier: Croupier;
-  computers: Computer[];
-  player: Player;
+  computers: ComputerViewModel[];
+  player: PlayerViewModel;
   stack: Stack;
-  colors = ["#F189C8", "#34BD67", "#26C4F0", "#C97842"];
-  images = [
-    "vegetable_pakuchi_coriander.png",
-    "masu_nihonsyu.png",
-    "food_gyouza_mise.png",
-    "kamaboko_red.png"
-  ];
 
   public constructor() {
     super();
     this.messenger = new Messenger();
     this.croupier = new Croupier();
     this.computers = [
-      new Computer("パクチー"),
-      new Computer("日本酒"),
-      new Computer("餃子"),
-      new Computer("かまぼこ")
+      new ComputerViewModel(new Computer("パクチー"), "#F189C8", "vegetable_pakuchi_coriander.png"),
+      new ComputerViewModel(new Computer("日本酒"), "#34BD67", "masu_nihonsyu.png"),
+      new ComputerViewModel(new Computer("餃子"), "#26C4F0", "food_gyouza_mise.png"),
+      new ComputerViewModel(new Computer("かまぼこ"), "#C97842", "kamaboko_red.png")
     ];
-    this.player = new Player("台湾まぜそば");
+    this.player = new PlayerViewModel(new Player("台湾まぜそば"), "#F1A15B");
     this.stack = new Stack();
 
-    const characters = [...this.computers, this.player];
+    const characters = [
+      ...this.computers.map(x => x.computer),
+      this.player.player
+    ];
     for (const character of characters) {
       character.logger = this;
     }
@@ -206,15 +213,14 @@ export default class AppComponent extends Vue {
   }
 
   public whereFrom(cards: CardSet): number {
-    return this.computers.findIndex(x => x.name == cards.holder);
+    return this.computers.findIndex(x => x.computer.name == cards.holder);
   }
 
   log<TSource>(message: string, source?: TSource) {
     if (source instanceof Character) {
-      const color =
-        source instanceof Computer
-          ? this.colors[this.computers.indexOf(source)]
-          : "#F1A15B";
+      const color = source instanceof Computer
+        ? this.computers.find(x => x.computer == source).color
+        : this.player.color;
       console.log(`%c${source.name}: ${message}`, `color:${color}`);
     } else {
       console.log(message);
