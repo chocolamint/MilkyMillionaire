@@ -4,6 +4,7 @@ import Character from "./Character";
 import _ from "lodash";
 import { sleep } from "./Utils";
 import Stack from "./Stack";
+import CardSet from "./CardSet";
 
 export default class Croupier {
 
@@ -27,7 +28,7 @@ export default class Croupier {
 
             lastDiscard = character;
             passCount = 0;
-            stack.push(cards, characters.indexOf(character));
+            stack.push(new CardSet(cards, character.name));
         };
         const doGame = async () => {
 

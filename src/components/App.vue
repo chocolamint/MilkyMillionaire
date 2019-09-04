@@ -8,12 +8,12 @@
     <div class="field">
       <transition-group name="card-discard" tag="div">
         <div
-          v-for="cards in stack.cards"
-          :key="cards.id"
+          v-for="cardSet in stack.cards"
+          :key="cardSet.id"
           class="card-set"
-          :data-discarded-by="cards.discardedBy"
+          :data-discarded-by="whereFrom(cardSet)"
         >
-          <div v-for="card in cards" :key="card.id" class="card-container">
+          <div v-for="card in cardSet.cards" :key="card.id" class="card-container">
             <card :card="card"></card>
           </div>
         </div>
@@ -161,34 +161,44 @@ import Stack from "../models/Stack";
 import CardComponent from "./Card.vue";
 import ComputerComponent from "./Computer.vue";
 import PlayerComponent from "./Player.vue";
-
-const messenger = new Messenger();
-const rule = new Rule();
-const croupier = new Croupier();
-const computers = [
-  new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png", rule),
-  new Computer("日本酒", "#34BD67", "masu_nihonsyu.png", rule),
-  new Computer("餃子", "#26C4F0", "food_gyouza_mise.png", rule),
-  new Computer("かまぼこ", "#C97842", "kamaboko_red.png", rule)
-];
-const player = new Player("台湾まぜそば", "#F1A15B", rule);
-
-const stack = new Stack();
-
-croupier.beginGame([...computers, player], stack, messenger);
+import CardSet from "../models/CardSet";
 
 @Component({
   components: {
     card: CardComponent,
     computer: ComputerComponent,
     player: PlayerComponent
-  },
-  data: () => ({
-    computers,
-    player,
-    stack,
-    messenger
-  })
+  }
 })
-export default class AppComponent extends Vue {}
+export default class AppComponent extends Vue {
+  
+  messenger: Messenger;
+  rule: Rule;
+  croupier: Croupier;
+  computers: Computer[];
+  player: Player;
+  stack: Stack;
+
+  public constructor() {
+    super();
+    this.messenger = new Messenger();
+    this.rule = new Rule();
+    this.croupier = new Croupier();
+    this.computers = [
+      new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png", this.rule),
+      new Computer("日本酒", "#34BD67", "masu_nihonsyu.png", this.rule),
+      new Computer("餃子", "#26C4F0", "food_gyouza_mise.png", this.rule),
+      new Computer("かまぼこ", "#C97842", "kamaboko_red.png", this.rule)
+    ];
+    this.player = new Player("台湾まぜそば", "#F1A15B", this.rule);
+
+    this.stack = new Stack();
+
+    this.croupier.beginGame([...this.computers, this.player], this.stack, this.messenger);
+  }
+
+  public whereFrom(cards: CardSet): number {
+    return this.computers.findIndex(x => x.name == cards.holder);
+  }
+}
 </script>
