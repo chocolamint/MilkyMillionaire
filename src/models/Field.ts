@@ -1,7 +1,5 @@
 import Card from "./Card";
 import Messenger from "./Messenger";
-import Computer from "./Computer";
-import Player from "./Player";
 import Character from "./Character";
 import _ from "lodash";
 import { sleep } from "./Utils";
@@ -9,47 +7,32 @@ import Stack from "./Stack";
 
 export default class Field {
 
-    private _computers: Computer[];
-    private _player: Player;
-    private _passCount: number;
-    private _lastDiscard: Character;
-    public messenger: Messenger;
-    public stack: Stack;
+    async beginGame(characters: Character[], cards: Card[], stack: Stack, messenger: Messenger) {
 
-    constructor(messenger: Messenger) {
-        this._passCount = 0;
-        this._lastDiscard = null;
-        this.messenger = messenger;
-        this.stack = new Stack();
-    }
-    private pass(character: Character) {
+        let lastDiscard: Character;
+        let passCount: number = 0;
+        const deal = (characters: Character[], cards: Card[]) => {
+            let i = 0;
+            for (const card of _.shuffle(cards)) {
+                characters[i++ % 5].cards.push(card);
+            }
+        };
+        const pass = (character: Character) => {
+            console.log(`${character.name}がパスしました`);
+        };
+        const discard = (character: Character, cards: Card[]) => {
 
-        console.log(`${character.name}がパスしました`);
-    }
-    private discard(character: Character, cards: Card[]) {
+            console.log(`${character.name}が${cards.map(x => x.toString()).join(',')}を捨てました`);
 
-        console.log(`${character.name}が${cards.map(x => x.toString()).join(',')}を捨てました`);
-
-        this._lastDiscard = character;
-        this._passCount = 0;
-        this.stack.push(cards, this._computers.indexOf(character as any));
-    }
-    static deal(characters: Character[], cards: Card[]) {
-        let i = 0;
-        for (const card of _.shuffle(cards)) {
-            characters[i++ % 5].cards.push(card);
-        }
-    }
-    async beginGame(characters: Character[], cards: Card[]) {
-
-        this._computers = characters.filter(x => x instanceof Computer) as Computer[];
-        this._player = characters.filter(x => x instanceof Player)[0] as Player;
-
+            lastDiscard = character;
+            passCount = 0;
+            stack.push(cards, characters.indexOf(character));
+        };
         const doGame = async () => {
 
             const ranking = [];
 
-            Field.deal(characters, cards);
+            deal(characters, cards);
 
             //let i = 0;
             for (const character of characters) {
@@ -70,7 +53,7 @@ export default class Field {
             }
             console.log('カードの交換を終了します');
 
-            await this.messenger.show('ゲームスタート', 1000);
+            await messenger.show('ゲームスタート', 1000);
 
             let nextDealer = _.sample(characters);
             console.log(`${nextDealer.name}の親ではじめます`);
@@ -78,10 +61,10 @@ export default class Field {
             let isGameEnd = false;
             while (true) {
                 for (const character of characters) {
-                    if (this._lastDiscard == character) {
-                        console.log(`最後にカードを捨てた${this._lastDiscard.name}の番が回ってきたので次の親になります`);
-                        this.stack.clear();
-                        this._lastDiscard = null;
+                    if (lastDiscard == character) {
+                        console.log(`最後にカードを捨てた${lastDiscard.name}の番が回ってきたので次の親になります`);
+                        stack.clear();
+                        lastDiscard = null;
                         await sleep(500);
                     }
                     if (nextDealer != null && character != nextDealer) continue;
@@ -91,11 +74,11 @@ export default class Field {
                         continue;
                     }
 
-                    const result = await character.turn(this.stack, turnCount);
+                    const result = await character.turn(stack, turnCount);
                     if (result.action == "pass") {
-                        this.pass(character);
+                        pass(character);
                     } else {
-                        this.discard(character, result.cards);
+                        discard(character, result.cards);
                         await sleep(500);
                     }
 
@@ -109,9 +92,9 @@ export default class Field {
                 if (isGameEnd) break;
                 turnCount++;
             }
-            this._lastDiscard = null;
-            this._passCount = 0;
-            this.stack.clear();
+            lastDiscard = null;
+            passCount = 0;
+            stack.clear();
 
             for (const character of characters) {
                 // 早くあがったキャラクターほど後ろに入っており、最後のキャラクターは入っていないため -1 が返る
@@ -120,15 +103,13 @@ export default class Field {
                 character.endGame();
             }
 
-            await this.messenger.show('ゲームセット', 1000);
+            await messenger.show('ゲームセット', 1000);
 
             console.log('結果を発表してプレーヤーの確認待ち');
-            await this._player.waitForNextGame();
-            console.log('次のゲームを開始します');
-
             for (const character of characters) {
-                character.nextGame();
+                await character.nextGame();
             }
+            console.log('次のゲームを開始します');
         };
 
         while (true) {

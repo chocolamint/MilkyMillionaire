@@ -8,7 +8,7 @@
     <div class="field">
       <transition-group name="card-discard" tag="div">
         <div
-          v-for="cards in field.stack.cards"
+          v-for="cards in stack.cards"
           :key="cards.id"
           class="card-set"
           :data-discarded-by="cards.discardedBy"
@@ -157,13 +157,14 @@ import Field from "../models/Field";
 import Messenger from "../models/Messenger";
 import Player from "../models/Player";
 import Rule from "../models/Rule";
+import Stack from "../models/Stack";
 import CardComponent from "./Card.vue";
 import ComputerComponent from "./Computer.vue";
 import PlayerComponent from "./Player.vue";
 
 const messenger = new Messenger();
 const rule = new Rule();
-const field = new Field(messenger);
+const field = new Field();
 const computers = [
   new Computer("パクチー", "#F189C8", "vegetable_pakuchi_coriander.png", rule),
   new Computer("日本酒", "#34BD67", "masu_nihonsyu.png", rule),
@@ -173,20 +174,22 @@ const computers = [
 const player = new Player("台湾まぜそば", "#F1A15B", rule);
 
 const cards = Card.allCards();
+const stack = new Stack();
 
-field.beginGame([...computers, player], cards);
+field.beginGame([...computers, player], cards, stack, messenger);
 
 @Component({
   components: {
-    "card": CardComponent,
-    "computer": ComputerComponent,
-    "player": PlayerComponent
+    card: CardComponent,
+    computer: ComputerComponent,
+    player: PlayerComponent
   },
   data: () => ({
     computers,
     player,
     cards,
     field,
+    stack,
     messenger
   })
 })

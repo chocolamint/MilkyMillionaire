@@ -65,6 +65,7 @@ export default class Character {
     nextGame() {
         this.rank = this.nextRank;
         this.isGameEnd = false;
+        return Promise.resolve();
     }
     say(message: string) {
         console.log(`%c${this.name}: ${message}`, `color:${this.color}`);

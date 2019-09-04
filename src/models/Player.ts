@@ -60,14 +60,15 @@ export default class Player extends Character {
         this.stagings().forEach(x => x.isStaged = false);
         super.pass();
     }
-    waitForNextGame() {
-        return new Promise(resolve => {
+    nextGame() {
+        return new Promise<void>(resolve => {
             this.waitingForNextGame = true;
             this._resolveNextGame = resolve;
         });
     }
-    goToNextGame() {
+    async goToNextGame() {
         this.waitingForNextGame = false;
+        await super.nextGame();
         this._resolveNextGame();
     }
     giveCards() {
