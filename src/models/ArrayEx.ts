@@ -1,9 +1,5 @@
 export default class ArrayEx {
 
-    static flatMap<T, S>(xs: T[], f: (elem: T) => S[]): S[] {
-        return xs.map(f).reduce((a, b) => a.concat(b));
-    }
-
     static combination<T>(xs: T[], k: number): T[][] {
 
         const temp = (xs: T[], i: number, k: number): T[][] => {

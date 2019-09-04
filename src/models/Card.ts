@@ -45,7 +45,7 @@ export default class Card {
     static allCards() {
         const suits = ["♥", "♦", "♠", "♣"];
         const ranks = _.range(1, 14);
-        const cards = ArrayEx.flatMap(ranks, rank =>
+        const cards = ranks.flatMap(rank =>
             suits.map(suit => new Card(suit + "-" + rank, suit, rank))
         ).concat(
             new Card("joker1", null, null, true),

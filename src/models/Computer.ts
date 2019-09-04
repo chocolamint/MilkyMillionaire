@@ -41,7 +41,7 @@ export default class Computer extends Character {
             discardable = strategicPass ? null : _.sample(discardables);
 
         } else {
-            const discardables = ArrayEx.flatMap(_.range(1, 5), x => ArrayEx.combination(this.cards, x))
+            const discardables = _.range(1, 5).flatMap(x => ArrayEx.combination(this.cards, x))
                 .filter(x => field.canDiscard(x));
             this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
             // TODO: 弱いものほど捨てやすくしたい
