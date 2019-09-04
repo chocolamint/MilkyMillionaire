@@ -54,7 +54,7 @@ export default class Card {
 
         if (typeof document != 'undefined' && document && document.location && document.location.search) {
             if (~document.location.search.indexOf('debug')) {
-                return ArrayEx.shuffle(cards).slice(0, 15);
+                return _.shuffle(cards).slice(0, 15);
             }
         }
         return cards;

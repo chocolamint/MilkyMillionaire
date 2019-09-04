@@ -1,21 +1,5 @@
 export default class ArrayEx {
 
-    static shuffle<T>(arr: T[]): T[] {
-        var i, j, temp;
-        arr = arr.slice();
-        i = arr.length;
-        if (i === 0) {
-            return arr;
-        }
-        while (--i) {
-            j = Math.floor(Math.random() * (i + 1));
-            temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-        return arr;
-    }
-
     static random<T>(arr: T[]): T {
         if (arr.length == 0) return void 0;
         return arr[Math.floor(Math.random() * arr.length)];
