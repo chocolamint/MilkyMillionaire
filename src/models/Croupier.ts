@@ -21,6 +21,9 @@ export default class Croupier {
             for (const card of _.shuffle(cards)) {
                 characters[i++ % 5].cards.push(card);
             }
+            for (const character of characters) {
+                character.cards.sort(Card.compareSort);
+            }
         };
         const pass = (character: Character) => {
             console.log(`${character.name}がパスしました`);
@@ -33,19 +36,7 @@ export default class Croupier {
             passCount = 0;
             stack.push(new CardSet(cards, character.name));
         };
-        const doGame = async () => {
-
-            const ranking = [];
-
-            deal(characters, cards);
-
-            //let i = 0;
-            for (const character of characters) {
-                character.cards.sort(Card.compareSort);
-                //character.rank = ++i;
-            }
-
-            console.log('カードの交換を開始します');
+        const trade = async () => {
             const tradings: Record<number, Card[]> = {};
             for (const character of characters) {
                 tradings[character.rank] = await character.giveCards();
@@ -56,6 +47,15 @@ export default class Croupier {
                 }
                 character.cards.sort(Card.compareSort);
             }
+        };
+        const doGame = async () => {
+
+            const ranking = [];
+
+            deal(characters, cards);
+
+            console.log('カードの交換を開始します');
+            await trade();
             console.log('カードの交換を終了します');
 
             await messenger.show('ゲームスタート', 1000);
