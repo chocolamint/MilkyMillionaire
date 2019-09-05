@@ -30,7 +30,7 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .computers {
   display: flex;
   flex-wrap: nowrap;
@@ -38,83 +38,92 @@
   margin: 0;
   padding: 0;
   width: 100%;
-}
-.computers:before {
-  content: "";
-  padding-top: 20%;
-  display: block;
-}
-.computers li {
-  width: 25%;
+
+  &:before {
+    content: "";
+    padding-top: 20%;
+    display: block;
+  }
+
+  li {
+    width: 25%;
+  }
 }
 .field {
   width: 100%;
   position: relative;
-}
-.field:before {
-  content: "";
-  padding-top: 40%;
-  display: block;
+
+  &:before {
+    content: "";
+    padding-top: 40%;
+    display: block;
+  }
+
+  .card-set {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -14vw;
+    left: -3vw;
+    right: 0;
+    bottom: 0;
+
+    &:nth-last-child(1),
+    &:nth-last-child(2) {
+      left: 0;
+      top: 0;
+    }
+
+    &:nth-last-child(2) {
+      top: -14vw;
+      left: -3vw;
+      animation: discarded-cards-2 1.3s lenear;
+
+      @keyframes discarded-cards-2 {
+        0% {
+          top: 0;
+          left: 0;
+        }
+        100% {
+          top: -14vw;
+          left: -3vw;
+        }
+      }
+
+      .card {
+        background: #c0c0c0;
+      }
+    }
+
+    .card-container {
+      width: calc(100% / 8 - 0.5vw);
+      margin: 0.5vw 0.5vw 0 0;
+      box-sizing: border-box;
+    }
+  }
 }
 @media screen and (min-device-height: 800px) {
   .field:before {
     padding-top: 60%;
   }
 }
-.field .card-set {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: -14vw;
-  left: -3vw;
-  right: 0;
-  bottom: 0;
-}
-.field .card-set .card-container {
-  width: calc(100% / 8 - 0.5vw);
-  margin: 0.5vw 0.5vw 0 0;
-  box-sizing: border-box;
-}
-.field .card-set:nth-last-child(1),
-.field .card-set:nth-last-child(2) {
-  left: 0;
-  top: 0;
-}
-.field .card-set:nth-last-child(2) {
-  top: -14vw;
-  left: -3vw;
-  animation: discarded-cards-2 1.3s lenear;
-}
-
-@keyframes discarded-cards-2 {
-  0% {
-    top: 0;
-    left: 0;
+.card-discard-enter {
+  &[data-discarded-by="0"] {
+    transform: translate(-30vw, -20vw);
   }
-  100% {
-    top: -14vw;
-    left: -3vw;
+  &[data-discarded-by="1"] {
+    transform: translate(-13vw, -20vw);
   }
-}
-
-.field .card-set:nth-last-child(2) .card {
-  background: #c0c0c0;
-}
-.card-discard-enter[data-discarded-by="0"] {
-  transform: translate(-30vw, -20vw);
-}
-.card-discard-enter[data-discarded-by="1"] {
-  transform: translate(-13vw, -20vw);
-}
-.card-discard-enter[data-discarded-by="2"] {
-  transform: translate(13vw, -20vw);
-}
-.card-discard-enter[data-discarded-by="3"] {
-  transform: translate(30vw, -20vw);
-}
-.card-discard-enter[data-discarded-by="-1"] {
-  transform: translate(0, 20vw);
+  &[data-discarded-by="2"] {
+    transform: translate(13vw, -20vw);
+  }
+  &[data-discarded-by="3"] {
+    transform: translate(30vw, -20vw);
+  }
+  &[data-discarded-by="-1"] {
+    transform: translate(0, 20vw);
+  }
 }
 .card-discard-enter-active {
   transition: transform 0.3s linear;
@@ -142,13 +151,14 @@
   justify-content: center;
   align-items: center;
   z-index: 100;
-}
-.message .message-text {
-  color: #ffffff;
-  font-size: 6vw;
-  font-weight: 900;
-  display: inline-block;
-  font-family: "M+ 1p black";
+
+  .message-text {
+    color: #ffffff;
+    font-size: 6vw;
+    font-weight: 900;
+    display: inline-block;
+    font-family: "M+ 1p black";
+  }
 }
 </style>
 
@@ -170,10 +180,10 @@ import _ from "lodash";
 import { Turn } from "../models/Turn";
 
 class ComputerViewModel {
-    constructor(public computer: Computer, public color: string, public imageFileName: string) { }
+  constructor(public computer: Computer, public color: string, public imageFileName: string) { }
 }
 class PlayerViewModel {
-    constructor(public player: Player, public color: string) { }
+  constructor(public player: Player, public color: string) { }
 }
 
 @Component({
