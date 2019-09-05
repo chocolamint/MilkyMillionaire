@@ -39,25 +39,26 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .player {
   position: relative;
-}
-.player.trading:before {
-  content: "交換するカードを選んでください";
-  border: 1vw #593800 solid;
-  padding: 5vw;
-  display: block;
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: 70%;
-  margin: auto;
-  top: -75%;
-  background: #fffaf0;
-  border-radius: 2vw;
-  font-weight: bold;
-  color: #593800;
+
+  &.trading:before {
+    content: "交換するカードを選んでください";
+    border: 1vw #593800 solid;
+    padding: 5vw;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 70%;
+    margin: auto;
+    top: -75%;
+    background: #fffaf0;
+    border-radius: 2vw;
+    font-weight: bold;
+    color: #593800;
+  }
 }
 
 @media screen and (min-device-height: 800px) {
@@ -65,147 +66,151 @@
     top: -100%;
   }
 }
-.cleared:before {
-  content: "あ";
-  position: absolute;
-  color: #ffffff;
-  font-family: "M+ 1p black";
-  font-weight: 900;
-  background: hsla(51, 94%, 49%, 0.911);
-  font-size: 10vw;
-  padding: 1vw;
-  z-index: 1;
-  border-radius: 1vw;
-  top: 106%;
-  left: 26vw;
-  display: inline-block;
-  width: 12vw;
-  height: 12vw;
-  line-height: 12vw;
-  vertical-align: middle;
-  text-align: center;
-  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
-  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
-}
-.cleared .players-cards:after {
-  content: "が";
-  position: absolute;
-  color: #ffffff;
-  font-family: "M+ 1p black";
-  font-weight: 900;
-  background: hsla(51, 94%, 49%, 0.911);
-  font-size: 10vw;
-  padding: 1vw;
-  z-index: 1;
-  border-radius: 1vw;
-  top: 134%;
-  left: 43vw;
-  display: inline-block;
-  width: 12vw;
-  height: 12vw;
-  line-height: 12vw;
-  vertical-align: middle;
-  text-align: center;
-  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
-  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
-}
-.cleared:after {
-  content: "り";
-  position: absolute;
-  color: #ffffff;
-  font-family: "M+ 1p black";
-  font-weight: 900;
-  background: hsla(51, 94%, 49%, 0.911);
-  font-size: 10vw;
-  padding: 1vw;
-  z-index: 1;
-  border-radius: 1vw;
-  top: 120%;
-  left: 60vw;
-  display: inline-block;
-  width: 12vw;
-  height: 12vw;
-  line-height: 12vw;
-  vertical-align: middle;
-  text-align: center;
-  box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
-  text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+
+.cleared {
+  &:before {
+    content: "あ";
+    position: absolute;
+    color: #ffffff;
+    font-family: "M+ 1p black";
+    font-weight: 900;
+    background: hsla(51, 94%, 49%, 0.911);
+    font-size: 10vw;
+    padding: 1vw;
+    z-index: 1;
+    border-radius: 1vw;
+    top: 106%;
+    left: 26vw;
+    display: inline-block;
+    width: 12vw;
+    height: 12vw;
+    line-height: 12vw;
+    vertical-align: middle;
+    text-align: center;
+    box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+    text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  }
+
+  .players-cards:after {
+    content: "が";
+    position: absolute;
+    color: #ffffff;
+    font-family: "M+ 1p black";
+    font-weight: 900;
+    background: hsla(51, 94%, 49%, 0.911);
+    font-size: 10vw;
+    padding: 1vw;
+    z-index: 1;
+    border-radius: 1vw;
+    top: 134%;
+    left: 43vw;
+    display: inline-block;
+    width: 12vw;
+    height: 12vw;
+    line-height: 12vw;
+    vertical-align: middle;
+    text-align: center;
+    box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+    text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  }
+  &:after {
+    content: "り";
+    position: absolute;
+    color: #ffffff;
+    font-family: "M+ 1p black";
+    font-weight: 900;
+    background: hsla(51, 94%, 49%, 0.911);
+    font-size: 10vw;
+    padding: 1vw;
+    z-index: 1;
+    border-radius: 1vw;
+    top: 120%;
+    left: 60vw;
+    display: inline-block;
+    width: 12vw;
+    height: 12vw;
+    line-height: 12vw;
+    vertical-align: middle;
+    text-align: center;
+    box-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+    text-shadow: hsla(51, 94%, 20%, 0.911) 0.4vw 0.4vw 0.4vw;
+  }
 }
 
 .player-buttons {
   display: flex;
   margin: 0 4vw;
-}
 
-.player-button {
-  background: rgba(32, 32, 32, 0.8);
-  border-width: 0.8vw;
-  margin: 1vw;
-  border-radius: 1.4vw;
-  text-align: center;
-  font-weight: bold;
-  padding: 2.4vw 0;
-  position: relative;
-  color: #909090;
-  font-size: 4.5vw;
-}
-.player-button.enabled {
-  color: #ffffff;
-}
+  .player-button {
+    background: rgba(32, 32, 32, 0.8);
+    border-width: 0.8vw;
+    margin: 1vw;
+    border-radius: 1.4vw;
+    text-align: center;
+    font-weight: bold;
+    padding: 2.4vw 0;
+    position: relative;
+    color: #909090;
+    font-size: 4.5vw;
 
-.pass-button {
-  flex-grow: 5;
-}
+    &.enabled {
+      color: #ffffff;
+    }
+  }
 
-.pass-button.enabled {
-  text-shadow: #06425a;
-}
+  .pass-button {
+    flex-grow: 5;
 
-.pass-button:before {
-  content: "× ";
-}
+    &:before {
+      content: "× ";
+    }
 
-.pass-button.enabled:after {
-  border-style: solid;
-  border-color: #ffffff;
-  box-shadow: #06425a 0 0 2vw, #06425a 0 0 2vw inset;
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: block;
-  border-radius: 1.4vw;
-}
+    &.enabled {
+      text-shadow: #06425a;
 
-.discard-button {
-  flex-grow: 8;
-}
-.next-game-button {
-  flex-grow: 8;
-}
+      &:after {
+        border-style: solid;
+        border-color: #ffffff;
+        box-shadow: #06425a 0 0 2vw, #06425a 0 0 2vw inset;
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        border-radius: 1.4vw;
+      }
+    }
+  }
 
-.discard-button:before {
-  content: "↑ ";
-}
-.next-game-button:after {
-  content: " →";
-}
+  .discard-button {
+    flex-grow: 8;
+    &:before {
+      content: "↑ ";
+    }
+  }
+  .next-game-button {
+    flex-grow: 8;
+    &:after {
+      content: " →";
+    }
+  }
 
-.discard-button.enabled:after,
-.next-game-button.enabled:before {
-  border-style: solid;
-  border-color: #ffffff;
-  box-shadow: #640970 0 0 2vw, #640970 0 0 2vw inset;
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: block;
-  border-radius: 1.4vw;
+  .discard-button.enabled:after,
+  .next-game-button.enabled:before {
+    border-style: solid;
+    border-color: #ffffff;
+    box-shadow: #640970 0 0 2vw, #640970 0 0 2vw inset;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    border-radius: 1.4vw;
+  }
 }
 
 .name {
@@ -216,48 +221,48 @@
   border-color: transparent;
   border-bottom-color: #909090;
   border-width: 5vw;
-}
 
-.name.turn {
-  border-bottom-color: #cc1160;
-}
+  &.turn {
+    border-bottom-color: #cc1160;
+  }
 
-.name[data-player-rank]:after {
-  font-weight: 900;
-  display: block;
-  width: 100%;
-  text-align: center;
-  font-size: 6vw;
-  margin: -4vw 0 0;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  text-indent: 0;
-  font-family: "M+ 1p black";
-  text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
-}
+  &[data-player-rank]:after {
+    font-weight: 900;
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 6vw;
+    margin: -4vw 0 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    text-indent: 0;
+    font-family: "M+ 1p black";
+    text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
+  }
 
-.name[data-player-rank="1"]:after {
-  content: "\1F4A9大貧民";
-  color: #530165;
-}
-.name[data-player-rank="2"]:after {
-  content: "\1F4B8貧民";
-  color: #08507a;
-}
-.name[data-player-rank="3"]:after {
-  content: "\1F4B0平民";
-  color: #1e4a05;
-}
-.name[data-player-rank="4"]:after {
-  content: "\1F4B4富豪";
-  color: #62360c;
-}
-.name[data-player-rank="5"]:after {
-  content: "\1F451大富豪";
-  color: #5e550c;
+  &[data-player-rank="1"]:after {
+    content: "\1F4A9大貧民";
+    color: #530165;
+  }
+  &[data-player-rank="2"]:after {
+    content: "\1F4B8貧民";
+    color: #08507a;
+  }
+  &[data-player-rank="3"]:after {
+    content: "\1F4B0平民";
+    color: #1e4a05;
+  }
+  &[data-player-rank="4"]:after {
+    content: "\1F4B4富豪";
+    color: #62360c;
+  }
+  &[data-player-rank="5"]:after {
+    content: "\1F451大富豪";
+    color: #5e550c;
+  }
 }
 
 .players-cards {
@@ -266,45 +271,46 @@
   margin: 1vw 4vw;
 }
 
-.game-end .players-cards:after {
-  font-weight: 900;
-  display: block;
-  width: 100%;
-  text-align: center;
-  font-size: 12vw;
-  position: absolute;
-  left: 0;
-  top: 120%;
-  right: 0;
-  bottom: 0;
-  text-indent: 0;
-  font-family: "M+ 1p black";
-  text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
-  white-space: pre;
-  line-height: 14vw;
-}
+.game-end {
+  .players-cards:after {
+    font-weight: 900;
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 12vw;
+    position: absolute;
+    left: 0;
+    top: 120%;
+    right: 0;
+    bottom: 0;
+    text-indent: 0;
+    font-family: "M+ 1p black";
+    text-shadow: 0.3vw 0.3vw #ffffff, 0vw 0.3vw #ffffff, 0.3vw 0vw #ffffff;
+    white-space: pre;
+    line-height: 14vw;
+  }
 
-.game-end [data-player-next-rank="1"] + .players-cards:after {
-  content: "\1F4A9\A大貧民";
-  color: #530165;
+  [data-player-next-rank="1"] + .players-cards:after {
+    content: "\1F4A9\A大貧民";
+    color: #530165;
+  }
+  [data-player-next-rank="2"] + .players-cards:after {
+    content: "\1F4B8\A貧民";
+    color: #08507a;
+  }
+  [data-player-next-rank="3"] + .players-cards:after {
+    content: "\1F4B0\A平民";
+    color: #1e4a05;
+  }
+  [data-player-next-rank="4"] + .players-cards:after {
+    content: "\1F4B4\A富豪";
+    color: #62360c;
+  }
+  [data-player-next-rank="5"] + .players-cards:after {
+    content: "\1F451\A大富豪";
+    color: #5e550c;
+  }
 }
-.game-end [data-player-next-rank="2"] + .players-cards:after {
-  content: "\1F4B8\A貧民";
-  color: #08507a;
-}
-.game-end [data-player-next-rank="3"] + .players-cards:after {
-  content: "\1F4B0\A平民";
-  color: #1e4a05;
-}
-.game-end [data-player-next-rank="4"] + .players-cards:after {
-  content: "\1F4B4\A富豪";
-  color: #62360c;
-}
-.game-end [data-player-next-rank="5"] + .players-cards:after {
-  content: "\1F451\A大富豪";
-  color: #5e550c;
-}
-
 .card-container {
   width: calc(100% / 8 - 0.5vw);
   margin: 0.5vw 0.5vw 0 0;

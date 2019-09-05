@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .card {
   border: solid 0.3vw #c0c0c0;
   border-radius: 1vw;
@@ -18,38 +18,44 @@
   position: relative;
   height: auto;
   box-sizing: border-box;
-}
-.card:before {
-  content: "";
-  display: block;
-  padding-top: 141.3%;
-}
-.card > div {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  font-size: 5vw;
-  line-height: 1.2em;
-  text-align: center;
-  box-sizing: border-box;
-  padding-top: 1vw;
-}
-.card.joker > div {
-  font-size: 3.5vw;
-  line-height: 2em;
-}
-.card.heart,
-.card.diamond {
-  color: red;
-}
-.card .suit {
-  font-family: "HiraKakuProN-W6" !important;
-  font-size: 90%;
-}
-.card .rank[data-rank="10"] {
-  letter-spacing: -0.4vw;
+
+  &:before {
+    content: "";
+    display: block;
+    padding-top: 141.3%;
+  }
+
+  & > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 5vw;
+    line-height: 1.2em;
+    text-align: center;
+    box-sizing: border-box;
+    padding-top: 1vw;
+  }
+
+  &.joker > div {
+    font-size: 3.5vw;
+    line-height: 2em;
+  }
+
+  &.heart,
+  &.diamond {
+    color: red;
+  }
+
+  .suit {
+    font-family: "HiraKakuProN-W6" !important;
+    font-size: 90%;
+  }
+  
+  .rank[data-rank="10"] {
+    letter-spacing: -0.4vw;
+  }
 }
 </style>
 
@@ -59,7 +65,7 @@ import { Card } from "../models/Card";
 
 @Component({ name: "Card" })
 export default class CardComponent extends Vue {
-  
+
   @Prop()
   public card!: Card;
 
