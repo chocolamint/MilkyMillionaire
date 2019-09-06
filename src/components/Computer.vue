@@ -10,7 +10,7 @@
       :data-player-next-rank="computer.nextRank"
     >{{ computer.name }}</div>
     <div class="image" :style="{ borderColor: color, 'background-color': bgColor }">
-      <img :src="imagePath" alt />
+      <img :src="require(`@/assets/images/${imageFileName}`)" alt />
     </div>
     <div class="cards" :data-card-count="computer.restCount">
       <div v-for="card in computer.cards" :key="card.id" class="card"></div>
@@ -299,10 +299,6 @@ export default class ComputerComponent extends Vue {
 
   @Prop()
   public imageFileName!: string;
-
-  public get imagePath() {
-    return `images/${this.imageFileName}`;
-  }
 
   public get bgColor() {
     const match = /#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})/.exec(

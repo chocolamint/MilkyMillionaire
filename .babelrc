@@ -1,4 +1,0 @@
-{
-  "presets": [["es2015", {"modules": false}], "stage-3"],
-  "plugins": ["syntax-async-functions", "transform-regenerator"]
-}
