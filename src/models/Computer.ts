@@ -21,7 +21,7 @@ export default class Computer extends Character {
         if (top != null) {
             const fieldCardCount = top.length;
             const discardables = combination(this.cards, fieldCardCount).filter(x => turn.canDiscard(x));
-            this.say(`捨てられるのは... ${discardables.length ? discardables.map(x => x.join('')).join(', ') : 'ないですね...'}`);
+            this.say(`捨てられるのは... ${discardables.length ? discardables.map(x => x.join("")).join(", ") : "ないですね..."}`);
             let strategicPass = false;
             if (discardables.length != 0) {
                 // ターンが早くてかつ捨てないといけないカードのランクが高いほどパスしやすくする

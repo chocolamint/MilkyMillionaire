@@ -72,7 +72,7 @@ export default class AppComponent extends Vue {
         };
         const discard = (character: Character, cards: Card[]) => {
 
-            console.log(`${character.name}が${cards.map(x => x.toString()).join(',')}を捨てました`);
+            console.log(`${character.name}が${cards.map(x => x.toString()).join(",")}を捨てました`);
 
             lastDiscard = character;
             passCount = 0;
@@ -95,11 +95,11 @@ export default class AppComponent extends Vue {
 
             deal(characters, cards);
 
-            console.log('カードの交換を開始します');
+            console.log("カードの交換を開始します");
             await trade();
-            console.log('カードの交換を終了します');
+            console.log("カードの交換を終了します");
 
-            await this.messenger.show('ゲームスタート', 1000);
+            await this.messenger.show("ゲームスタート", 1000);
 
             let nextDealer = _.sample(characters);
             console.log(`${nextDealer!.name}の親ではじめます`);
@@ -149,13 +149,13 @@ export default class AppComponent extends Vue {
                 character.endGame();
             }
 
-            await this.messenger.show('ゲームセット', 1000);
+            await this.messenger.show("ゲームセット", 1000);
 
-            console.log('結果を発表してプレーヤーの確認待ち');
+            console.log("結果を発表してプレーヤーの確認待ち");
             for (const character of characters) {
                 await character.nextGame();
             }
-            console.log('次のゲームを開始します');
+            console.log("次のゲームを開始します");
         };
 
         while (true) {
