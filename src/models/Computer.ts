@@ -14,7 +14,7 @@ export default class Computer extends Character {
         super(name);
         this.passing = false;
     }
-    async turnCore(turn: Turn) {
+    public async turnCore(turn: Turn) {
 
         const top = turn.stack.top();
         let discardable: Card[] | undefined;
@@ -41,7 +41,7 @@ export default class Computer extends Character {
         } else {
             const discardables = _.range(1, 5).flatMap(x => combination(this.cards, x))
                 .filter(x => turn.canDiscard(x));
-            this.say(`捨てられるのは... ${discardables.map(x => x.join('')).join(', ')}`);
+            this.say(`捨てられるのは... ${discardables.map(x => x.join("")).join(", ")}`);
             // TODO: 弱いものほど捨てやすくしたい
             discardable = _.sample(discardables);
         }

@@ -46,11 +46,11 @@ export default class AppComponent extends Vue {
         super();
     }
 
-    mounted() {
+    public mounted() {
         this.beginGame();
     }
 
-    async beginGame() {
+    public async beginGame() {
 
         const characters = concat(this.computers.map(x => x.computer), [this.player.player]);
 
@@ -167,7 +167,7 @@ export default class AppComponent extends Vue {
         return this.computers.findIndex(x => x.computer.name == cards.holder);
     }
 
-    log<TSource>(message: string, source?: TSource) {
+    public log<TSource>(message: string, source?: TSource) {
         if (source instanceof Character) {
             const color = source instanceof Computer
                 ? this.computers.find(x => x.computer == source)!.color
