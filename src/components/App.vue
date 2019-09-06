@@ -173,7 +173,7 @@ import Rule from "../models/Rule";
 import Stack from "../models/Stack";
 import CardComponent from "./Card/Card.vue";
 import ComputerComponent from "./Computer/Computer.vue";
-import PlayerComponent from "./Player.vue";
+import PlayerComponent from "./Player/Player.vue";
 import CardSet from "../models/CardSet";
 import { concat, sleep } from "../models/Utils";
 import _ from "lodash";
