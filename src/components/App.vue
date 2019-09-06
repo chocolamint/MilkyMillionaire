@@ -171,7 +171,7 @@ import Messenger from "../models/Messenger";
 import Player from "../models/Player";
 import Rule from "../models/Rule";
 import Stack from "../models/Stack";
-import CardComponent from "./Card.vue";
+import CardComponent from "./Card/Card.vue";
 import ComputerComponent from "./Computer.vue";
 import PlayerComponent from "./Player.vue";
 import CardSet from "../models/CardSet";

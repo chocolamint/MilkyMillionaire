@@ -352,7 +352,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { combination, sleep } from "../models/Utils";
 import { Card } from "../models/Card";
 import Player from "../models/Player";
-import CardComponent from "./Card.vue";
+import CardComponent from "./Card/Card.vue";
 import Rule from "../models/Rule";
 
 @Component({ name: "Player", components: { card: CardComponent } })
