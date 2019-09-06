@@ -49,15 +49,6 @@ export default class Character {
     public turnCore(turn: Turn) {
 
     }
-    private turnEnd(result: TurnResult) {
-        this.isMyTurn = false;
-        this.say(`ターン終了です！`);
-        if (this._deck.isEmpty) {
-            this.isCleared = true;
-            this.say(`あがりです！`);
-        }
-        this._resolveTurn!(result);
-    }
     public pass() {
         sleep(0);
         this.turnEnd({ action: "pass" });
@@ -94,5 +85,14 @@ export default class Character {
             this.say(`${cards.join(",")}を差し出します(Rank:${this.rank})`);
             return cards;
         }
+    }
+    private turnEnd(result: TurnResult) {
+        this.isMyTurn = false;
+        this.say(`ターン終了です！`);
+        if (this._deck.isEmpty) {
+            this.isCleared = true;
+            this.say(`あがりです！`);
+        }
+        this._resolveTurn!(result);
     }
 }

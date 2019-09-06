@@ -9,9 +9,9 @@ export default class Player extends Character {
 
     public waitingForNextGame: boolean;
     public isTrading: boolean;
+    public currentTurn: Turn | null = null;
     private _resolveNextGame?: () => void;
     private _resolveTrading?: (cards: Card[]) => void;
-    public currentTurn: Turn | null = null;
 
     constructor(name: string) {
         super(name);
