@@ -33,7 +33,11 @@ export class NormalCard {
     }
 
     public toString() {
-        const rankString = (this.rank == 1 ? "A" : this.rank == 11 ? "J" : this.rank == 12 ? "Q" : this.rank == 13 ? "K" : this.rank);
+        const rankString = this.rank == 1 ? "A" :
+            this.rank == 11 ? "J" :
+                this.rank == 12 ? "Q" :
+                    this.rank == 13 ? "K" :
+                        this.rank;
         return this.suit + rankString;
     }
 }
