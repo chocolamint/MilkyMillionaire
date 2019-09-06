@@ -19,6 +19,7 @@
     "max-classes-per-file": false,
     "no-console": false,
     "curly": false,
-    "triple-equals": false
+    "triple-equals": false,
+    "eofline": false
   }
 }
