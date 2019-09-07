@@ -9,7 +9,7 @@ import PlayerComponent from "@/components/Player/Player";
 
 describe("Player.ts", () => {
 
-    it("should be able to stage card only if can discard.", () => {
+    it("can stage stronger cards.", () => {
 
         const { player, deck } = situation({
             stack: [

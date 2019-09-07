@@ -6,9 +6,9 @@ import CardSet from "@/models/CardSet";
 
 describe("Rule.ts", () => {
 
-    describe("sort", () => {
+    describe("sort method", () => {
 
-        it("should be ordered by weakness.", () => {
+        it("order cards by weakness.", () => {
             const cards = [
                 new NormalCard("♥", 1),
                 new NormalCard("♠", 2),
@@ -31,7 +31,7 @@ describe("Rule.ts", () => {
             ]);
         });
 
-        it("should be ordered by strongness.", () => {
+        it("order cards by strongness.", () => {
             const cards = [
                 new NormalCard("♥", 1),
                 new NormalCard("♠", 2),
@@ -54,7 +54,7 @@ describe("Rule.ts", () => {
             ]);
         });
 
-        it("should be ordered by suit if rank is same.", () => {
+        it("order cards by suit if rank is same.", () => {
 
             const cards = [
                 new NormalCard("♠", 7),
@@ -88,11 +88,11 @@ describe("Rule.ts", () => {
         });
     });
 
-    describe("canDiscard", () => {
+    describe("canDiscard method", () => {
 
         const bind = (rule: Rule, stack: Stack) => (cards: Card[]) => rule.canDiscard(stack, cards);
 
-        it("should be able to discard only if stronger than top of stack.", () => {
+        it("returns true only if stronger than stack top.", () => {
 
             const stack = new Stack();
             stack.cards.push(new CardSet([new NormalCard("♠", 5)], "unknown"));
@@ -106,7 +106,7 @@ describe("Rule.ts", () => {
             expect(canDiscard([new NormalCard("♥", 6)])).to.equal(false);
         });
 
-        it("should be able to discard only if set size is same.", () => {
+        it("returns true only if card count is same.", () => {
 
             const stack = new Stack();
             stack.cards.push(new CardSet([new NormalCard("♠", 5), new NormalCard("♣", 5)], "unknown"));
@@ -119,27 +119,30 @@ describe("Rule.ts", () => {
             expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8)])).to.equal(true);
         });
 
-        it("should be Joker is almighty.", () => {
+        describe("Joker", () => {
 
-            const stack = new Stack();
-            stack.cards.push(new CardSet([new NormalCard("♠", 5), new NormalCard("♣", 5)], "unknown"));
-            stack.cards.push(new CardSet([new NormalCard("♥", 7), new NormalCard("♦", 7)], "unknown"));
-            const rule = new Rule();
-            const canDiscard = bind(rule, stack);
+            it("is almighty.", () => {
 
-            expect(canDiscard([new NormalCard("♠", 8), new Joker(true)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 7), new Joker(true)])).to.equal(false);
-        });
+                const stack = new Stack();
+                stack.cards.push(new CardSet([new NormalCard("♠", 5), new NormalCard("♣", 5)], "unknown"));
+                stack.cards.push(new CardSet([new NormalCard("♥", 7), new NormalCard("♦", 7)], "unknown"));
+                const rule = new Rule();
+                const canDiscard = bind(rule, stack);
 
-        it("should be Joker pair is stronger than 2 pair.", () => {
+                expect(canDiscard([new NormalCard("♠", 8), new Joker(true)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 7), new Joker(true)])).to.equal(false);
+            });
 
-            const stack = new Stack();
-            stack.cards.push(new CardSet([new NormalCard("♥", 2), new NormalCard("♦", 2)], "unknown"));
-            const rule = new Rule();
-            const canDiscard = bind(rule, stack);
+            it("is stronger than 2 pair.", () => {
 
-            expect(canDiscard([new Joker(true), new Joker(false)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 2), new Joker(true)])).to.equal(false);
+                const stack = new Stack();
+                stack.cards.push(new CardSet([new NormalCard("♥", 2), new NormalCard("♦", 2)], "unknown"));
+                const rule = new Rule();
+                const canDiscard = bind(rule, stack);
+
+                expect(canDiscard([new Joker(true), new Joker(false)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 2), new Joker(true)])).to.equal(false);
+            });
         });
     });
 });
