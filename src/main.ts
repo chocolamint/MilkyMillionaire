@@ -3,5 +3,5 @@ import AppComponent from "@/components/App/App.vue";
 
 new Vue({
   el: "#app",
-  render: h => h(AppComponent)
+  render: h => h(AppComponent),
 });

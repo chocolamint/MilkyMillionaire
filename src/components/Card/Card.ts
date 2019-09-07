@@ -13,7 +13,7 @@ export default class CardComponent extends Vue {
             "♥": "heart",
             "♦": "diamond",
             "♠": "spade",
-            "♣": "club"
+            "♣": "club",
         };
         return suitClasses[this.card.suit];
     }
@@ -33,7 +33,7 @@ export default class CardComponent extends Vue {
             "ten",
             "juck",
             "queen",
-            "king"
+            "king",
         ];
         return rankClasses[this.card.rank];
     }

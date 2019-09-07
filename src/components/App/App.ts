@@ -26,8 +26,8 @@ class PlayerViewModel {
     components: {
         card: CardComponent,
         computer: ComputerComponent,
-        player: PlayerComponent
-    }
+        player: PlayerComponent,
+    },
 })
 export default class AppComponent extends Vue {
 
@@ -35,7 +35,7 @@ export default class AppComponent extends Vue {
         new ComputerViewModel(new Computer("パクチー"), "#F189C8", "vegetable_pakuchi_coriander.png"),
         new ComputerViewModel(new Computer("日本酒"), "#34BD67", "masu_nihonsyu.png"),
         new ComputerViewModel(new Computer("餃子"), "#26C4F0", "food_gyouza_mise.png"),
-        new ComputerViewModel(new Computer("かまぼこ"), "#C97842", "kamaboko_red.png")
+        new ComputerViewModel(new Computer("かまぼこ"), "#C97842", "kamaboko_red.png"),
     ];
     private player = new PlayerViewModel(new Player("台湾まぜそば"), "#F1A15B");
     private messenger = new Messenger();
