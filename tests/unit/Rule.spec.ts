@@ -90,15 +90,14 @@ describe("Rule.ts", () => {
 
     describe("canDiscard method", () => {
 
-        const bind = (rule: Rule, stack: Stack) => (cards: Card[]) => rule.canDiscard(stack, cards);
-
         it("returns true only if stronger than stack top.", () => {
 
-            const stack = new Stack();
-            stack.cards.push(new CardSet([new NormalCard("♠", 5)], "unknown"));
-            stack.cards.push(new CardSet([new NormalCard("♥", 7)], "unknown"));
-            const rule = new Rule();
-            const canDiscard = bind(rule, stack);
+            const { canDiscard } = situation({
+                stack: [
+                    [new NormalCard("♥", 7)],
+                    [new NormalCard("♠", 5)],
+                ],
+            });
 
             expect(canDiscard([new NormalCard("♥", 8)])).to.equal(true);
             expect(canDiscard([new NormalCard("♠", 8)])).to.equal(true);
@@ -106,13 +105,15 @@ describe("Rule.ts", () => {
             expect(canDiscard([new NormalCard("♥", 6)])).to.equal(false);
         });
 
+
         it("returns true only if card count is same.", () => {
 
-            const stack = new Stack();
-            stack.cards.push(new CardSet([new NormalCard("♠", 5), new NormalCard("♣", 5)], "unknown"));
-            stack.cards.push(new CardSet([new NormalCard("♥", 7), new NormalCard("♦", 7)], "unknown"));
-            const rule = new Rule();
-            const canDiscard = bind(rule, stack);
+            const { canDiscard } = situation({
+                stack: [
+                    [new NormalCard("♥", 7), new NormalCard("♦", 7)],
+                    [new NormalCard("♠", 5), new NormalCard("♣", 5)],
+                ],
+            });
 
             expect(canDiscard([new NormalCard("♥", 8)])).to.equal(false);
             expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8), new NormalCard("♦", 8)])).to.equal(false);
@@ -121,11 +122,12 @@ describe("Rule.ts", () => {
 
         it("returns false if card rank is different.", () => {
 
-            const stack = new Stack();
-            stack.cards.push(new CardSet([new NormalCard("♠", 5), new NormalCard("♣", 5)], "unknown"));
-            stack.cards.push(new CardSet([new NormalCard("♥", 7), new NormalCard("♦", 7)], "unknown"));
-            const rule = new Rule();
-            const canDiscard = bind(rule, stack);
+            const { canDiscard } = situation({
+                stack: [
+                    [new NormalCard("♠", 5), new NormalCard("♣", 5)],
+                    [new NormalCard("♥", 7), new NormalCard("♦", 7)],
+                ],
+            });
 
             expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♠", 9)])).to.equal(false);
         });
@@ -134,26 +136,40 @@ describe("Rule.ts", () => {
 
             it("is almighty.", () => {
 
-                const stack = new Stack();
-                stack.cards.push(new CardSet([new NormalCard("♠", 5), new NormalCard("♣", 5)], "unknown"));
-                stack.cards.push(new CardSet([new NormalCard("♥", 7), new NormalCard("♦", 7)], "unknown"));
-                const rule = new Rule();
-                const canDiscard = bind(rule, stack);
+                const { canDiscard } = situation({
+                    stack: [
+                        [new NormalCard("♥", 7), new NormalCard("♦", 7)],
+                        [new NormalCard("♠", 5), new NormalCard("♣", 5)],
+                    ],
+                });
 
-                expect(canDiscard([new NormalCard("♠", 8), new Joker(true)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 7), new Joker(true)])).to.equal(false);
+                expect(canDiscard([new NormalCard("♠", 8), new Joker()])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 7), new Joker()])).to.equal(false);
             });
 
             it("is stronger than pair of 2.", () => {
 
-                const stack = new Stack();
-                stack.cards.push(new CardSet([new NormalCard("♥", 2), new NormalCard("♦", 2)], "unknown"));
-                const rule = new Rule();
-                const canDiscard = bind(rule, stack);
+                const { canDiscard } = situation({
+                    stack: [
+                        [new NormalCard("♥", 2), new NormalCard("♦", 2)],
+                    ],
+                });
 
-                expect(canDiscard([new Joker(true), new Joker(false)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 2), new Joker(true)])).to.equal(false);
+                expect(canDiscard([new Joker(), new Joker(false)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 2), new Joker()])).to.equal(false);
             });
         });
+
+        function situation(s: { stack: Card[][] }) {
+
+            const stack = new Stack();
+            for (const cards of s.stack) {
+                stack.cards.unshift(new CardSet(cards, "unknown"));
+            }
+            const rule = new Rule();
+            const canDiscard = (cards: Card[]) => rule.canDiscard(stack, cards);
+
+            return { canDiscard };
+        }
     });
 });
