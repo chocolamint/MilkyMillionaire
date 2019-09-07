@@ -9,6 +9,46 @@ import PlayerComponent from "@/components/Player/Player";
 
 describe("Player.ts", () => {
 
+    it("should be able to stage card only if can discard.", () => {
+
+        const { player, deck } = situation({
+            stack: [
+                [new NormalCard("♥", 7)],
+                [new NormalCard("♥", 5)],
+            ],
+            deck: [
+                new NormalCard("♠", 6), new NormalCard("♠", 7), new NormalCard("♠", 8),
+            ],
+        });
+
+        const actuals = deck.map(x => player.canStage(x));
+
+        expect(actuals).to.deep.equal([false, false, true]);
+    });
+
+    it("can stage card.", () => {
+
+        const { player, deck } = situation({
+            stack: [
+                [new NormalCard("♥", 7)],
+                [new NormalCard("♥", 5)],
+            ],
+            deck: [
+                new NormalCard("♠", 6), new NormalCard("♠", 7), new NormalCard("♠", 8),
+            ],
+        });
+
+        expect(deck[2].isStaged).to.equal(false);
+
+        player.toggleCardStaging(deck[2]);
+
+        expect(deck[2].isStaged).to.equal(true);
+
+        player.toggleCardStaging(deck[2]);
+
+        expect(deck[2].isStaged).to.equal(false);
+    });
+
     function situation(s: { stack: Card[][], deck: ReadonlyArray<Card> }) {
 
         const rule = new Rule();
@@ -31,21 +71,4 @@ describe("Player.ts", () => {
 
         return { player: component, deck: s.deck };
     }
-
-    it("should be able to stage card only if can discard.", () => {
-
-        const { player, deck } = situation({
-            stack: [
-                [new NormalCard("♥", 7)],
-                [new NormalCard("♥", 5)],
-            ],
-            deck: [
-                new NormalCard("♠", 6), new NormalCard("♠", 7), new NormalCard("♠", 8),
-            ],
-        });
-
-        const actuals = deck.map(x => player.canStage(x));
-
-        expect(actuals).to.deep.equal([false, false, true]);
-    });
 });
