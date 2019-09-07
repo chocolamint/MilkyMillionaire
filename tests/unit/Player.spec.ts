@@ -9,24 +9,7 @@ import PlayerComponent from "@/components/Player/Player";
 
 describe("Player.ts", () => {
 
-    it("can stage stronger cards.", () => {
-
-        const { player, deck } = situation({
-            stack: [
-                [new NormalCard("♥", 7)],
-                [new NormalCard("♥", 5)],
-            ],
-            deck: [
-                new NormalCard("♠", 6), new NormalCard("♠", 7), new NormalCard("♠", 8),
-            ],
-        });
-
-        const actuals = deck.map(x => player.canStage(x));
-
-        expect(actuals).to.deep.equal([false, false, true]);
-    });
-
-    it("can stage card.", () => {
+    it("should be able to stage card.", () => {
 
         const { player, deck } = situation({
             stack: [
@@ -49,7 +32,7 @@ describe("Player.ts", () => {
         expect(deck[2].isStaged).to.equal(false);
     });
 
-    it("can not stage already enough cards are staged.", () => {
+    it("should be able to stage only higher cards.", () => {
 
         const { player, deck } = situation({
             stack: [
@@ -57,19 +40,39 @@ describe("Player.ts", () => {
                 [new NormalCard("♥", 5)],
             ],
             deck: [
-                new NormalCard("♠", 6), new NormalCard("♠", 9), new NormalCard("♠", 8),
+                new NormalCard("♠", 6), new NormalCard("♠", 7), new NormalCard("♠", 8),
             ],
         });
 
-        expect(player.canStage(deck[2])).to.equal(true);
+        const actuals = deck.map(x => player.canStage(x));
 
-        player.toggleCardStaging(deck[1]);
+        expect(actuals).to.deep.equal([false, false, true]);
+    });
 
-        expect(player.canStage(deck[2])).to.equal(false);
+    describe("when enough cards are staging", () => {
+
+        it("should not be able to stage.", () => {
+
+            const { player, deck } = situation({
+                stack: [
+                    [new NormalCard("♥", 7)],
+                    [new NormalCard("♥", 5)],
+                ],
+                deck: [
+                    new NormalCard("♠", 6), new NormalCard("♠", 9), new NormalCard("♠", 8),
+                ],
+            });
+
+            expect(player.canStage(deck[2])).to.equal(true);
+
+            player.toggleCardStaging(deck[1]);
+
+            expect(player.canStage(deck[2])).to.equal(false);
+        });
     });
 
     // TODO can not であるべきに思えるが、UI の処理分岐の都合上で現状こうしてしまっている…
-    it("can stage already staged card.", () => {
+    it("should be able to stage already staged card.", () => {
 
         const { player, deck } = situation({
             stack: [
@@ -88,7 +91,7 @@ describe("Player.ts", () => {
         expect(player.canStage(deck[2])).to.equal(true);
     });
 
-    it("can stage card until stack top set count.", () => {
+    it("should be able to stage card until number of top cards.", () => {
 
         const { player, deck } = situation({
             stack: [

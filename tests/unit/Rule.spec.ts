@@ -8,7 +8,7 @@ describe("Rule.ts", () => {
 
     describe("sort method", () => {
 
-        it("order cards by weakness.", () => {
+        it("should sort ascending if `strong` is false.", () => {
             const cards = [
                 new NormalCard("♥", 1),
                 new NormalCard("♠", 2),
@@ -31,7 +31,7 @@ describe("Rule.ts", () => {
             ]);
         });
 
-        it("order cards by strongness.", () => {
+        it("should sort descending if `strong` is true.", () => {
             const cards = [
                 new NormalCard("♥", 1),
                 new NormalCard("♠", 2),
@@ -54,7 +54,7 @@ describe("Rule.ts", () => {
             ]);
         });
 
-        it("order cards by suit if rank is same.", () => {
+        it("sorts by suit if same rank.", () => {
 
             const cards = [
                 new NormalCard("♠", 7),
@@ -90,65 +90,72 @@ describe("Rule.ts", () => {
 
     describe("canDiscard method", () => {
 
-        it("returns true only if stronger than stack top.", () => {
+        describe("when top is ♥7", () => {
+            it("should return true only if higher than stack top.", () => {
 
-            const { canDiscard } = situation({
-                stack: [
-                    [new NormalCard("♥", 7)],
-                    [new NormalCard("♠", 5)],
-                ],
+                const { canDiscard } = situation({
+                    stack: [
+                        [new NormalCard("♥", 7)],
+                        [new NormalCard("♠", 5)],
+                    ],
+                });
+
+                expect(canDiscard([new NormalCard("♥", 8)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 8)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 7)])).to.equal(false);
+                expect(canDiscard([new NormalCard("♥", 6)])).to.equal(false);
             });
-
-            expect(canDiscard([new NormalCard("♥", 8)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 8)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 7)])).to.equal(false);
-            expect(canDiscard([new NormalCard("♥", 6)])).to.equal(false);
         });
 
+        describe("when top is (♥7, ♦7)", () => {
 
-        it("returns true only if card count is same.", () => {
+            it("should return true only if card count is same.", () => {
 
-            const { canDiscard } = situation({
-                stack: [
-                    [new NormalCard("♥", 7), new NormalCard("♦", 7)],
-                    [new NormalCard("♠", 5), new NormalCard("♣", 5)],
-                ],
+                const { canDiscard } = situation({
+                    stack: [
+                        [new NormalCard("♥", 7), new NormalCard("♦", 7)],
+                        [new NormalCard("♠", 5), new NormalCard("♣", 5)],
+                    ],
+                });
+
+                expect(canDiscard([new NormalCard("♥", 8)])).to.equal(false);
+                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8), new NormalCard("♦", 8)])).to.equal(false);
+                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8)])).to.equal(true);
             });
 
-            expect(canDiscard([new NormalCard("♥", 8)])).to.equal(false);
-            expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8), new NormalCard("♦", 8)])).to.equal(false);
-            expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8)])).to.equal(true);
+            it("should return false if card rank is different.", () => {
+
+                const { canDiscard } = situation({
+                    stack: [
+                        [new NormalCard("♥", 7), new NormalCard("♦", 7)],
+                        [new NormalCard("♠", 5), new NormalCard("♣", 5)],
+                    ],
+                });
+
+                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♠", 9)])).to.equal(false);
+            });
         });
 
-        it("returns false if card rank is different.", () => {
+        describe("when leader", () => {
 
-            const { canDiscard } = situation({
-                stack: [
-                    [new NormalCard("♠", 5), new NormalCard("♣", 5)],
-                    [new NormalCard("♥", 7), new NormalCard("♦", 7)],
-                ],
+            it("should return true.", () => {
+
+                const { canDiscard } = situation({
+                    stack: [],
+                });
+
+                expect(canDiscard([new NormalCard("♠", 3)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3), new NormalCard("♦", 3)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 2)])).to.equal(true);
+                expect(canDiscard([new Joker()])).to.equal(true);
             });
-
-            expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♠", 9)])).to.equal(false);
-        });
-
-        it("always returns true when stack is empty.", () => {
-
-            const { canDiscard } = situation({
-                stack: [],
-            });
-
-            expect(canDiscard([new NormalCard("♠", 3)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3), new NormalCard("♦", 3)])).to.equal(true);
-            expect(canDiscard([new NormalCard("♠", 2)])).to.equal(true);
-            expect(canDiscard([new Joker()])).to.equal(true);
         });
 
         describe("Joker", () => {
 
-            it("is almighty.", () => {
+            it("should be almighty.", () => {
 
                 const { canDiscard } = situation({
                     stack: [
@@ -161,7 +168,7 @@ describe("Rule.ts", () => {
                 expect(canDiscard([new NormalCard("♠", 7), new Joker()])).to.equal(false);
             });
 
-            it("is stronger than pair of 2.", () => {
+            it("should be higher than pair of 2.", () => {
 
                 const { canDiscard } = situation({
                     stack: [
