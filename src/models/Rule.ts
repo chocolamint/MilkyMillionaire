@@ -1,24 +1,16 @@
 import Stack from "./Stack";
 import { Card, NormalCard } from "./Card";
+import _ from "lodash";
+
+const suitRanks: Record<string, number> = {
+    "♥": 0,
+    "♦": 1,
+    "♠": 2,
+    "♣": 3,
+};
 
 export default class Rule {
 
-    public compareCard(a: Card, b: Card) {
-        if (a.isJoker && b.isJoker) return 0;
-        if (a.isJoker) return 1;
-        if (b.isJoker) return -1;
-
-        const temp = this.compareRank(a, b);
-        if (temp != 0) return temp;
-
-        const suitRanks: Record<string, number> = {
-            "♥": 0,
-            "♦": 1,
-            "♠": 2,
-            "♣": 3,
-        };
-        return suitRanks[a.suit!] - suitRanks[b.suit!];
-    }
     public compareRank(a: Card, b: Card) {
         if (a.isJoker && b.isJoker) return 0;
         if (a.isJoker) return 1;
@@ -31,9 +23,10 @@ export default class Rule {
         return (n == 2 ? 12 : n == 1 ? 11 : n - 3);
     }
     public sort(cards: Card[], strong: boolean) {
-        const temp = [...cards];
-        temp.sort((a, b) => this.compareRank(a, b) * (strong ? -1 : 1));
-        return temp;
+        return _.orderBy(cards, [
+            x => this.rankLevel(x),
+            x => x.isJoker ? 0 : suitRanks[x.suit],
+        ], [strong ? "desc" : "asc", "asc"]);
     }
     public canDiscard(stack: Stack, cards: Card[]) {
         if (cards.length == 0) return false;
