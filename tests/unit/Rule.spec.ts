@@ -21,7 +21,7 @@ describe("Rule.ts", () => {
 
             const sorted = rule.sort(cards, false);
 
-            expect(sorted).to.eql([
+            expect(sorted).to.deep.equal([
                 new NormalCard("♠", 3),
                 new NormalCard("♦", 10),
                 new NormalCard("♣", 13),
@@ -44,7 +44,7 @@ describe("Rule.ts", () => {
 
             const sorted = rule.sort(cards, true);
 
-            expect(sorted).to.eql([
+            expect(sorted).to.deep.equal([
                 new Joker(true),
                 new NormalCard("♠", 2),
                 new NormalCard("♥", 1),
@@ -69,7 +69,7 @@ describe("Rule.ts", () => {
             const sortedAsc = rule.sort(cards, false);
             const sortedDesc = rule.sort(cards, true);
 
-            expect(sortedAsc).to.eql([
+            expect(sortedAsc).to.deep.equal([
                 new NormalCard("♠", 6),
                 new NormalCard("♥", 7),
                 new NormalCard("♦", 7),
@@ -77,7 +77,7 @@ describe("Rule.ts", () => {
                 new NormalCard("♣", 7),
                 new NormalCard("♥", 8),
             ]);
-            expect(sortedDesc).to.eql([
+            expect(sortedDesc).to.deep.equal([
                 new NormalCard("♥", 8),
                 new NormalCard("♥", 7),
                 new NormalCard("♦", 7),
