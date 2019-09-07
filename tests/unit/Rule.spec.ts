@@ -119,6 +119,17 @@ describe("Rule.ts", () => {
             expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8)])).to.equal(true);
         });
 
+        it("returns false if card rank is different.", () => {
+
+            const stack = new Stack();
+            stack.cards.push(new CardSet([new NormalCard("♠", 5), new NormalCard("♣", 5)], "unknown"));
+            stack.cards.push(new CardSet([new NormalCard("♥", 7), new NormalCard("♦", 7)], "unknown"));
+            const rule = new Rule();
+            const canDiscard = bind(rule, stack);
+
+            expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♠", 9)])).to.equal(false);
+        });
+
         describe("Joker", () => {
 
             it("is almighty.", () => {
