@@ -49,6 +49,66 @@ describe("Player.ts", () => {
         expect(deck[2].isStaged).to.equal(false);
     });
 
+    it("can not stage already enough cards are staged.", () => {
+
+        const { player, deck } = situation({
+            stack: [
+                [new NormalCard("♥", 7)],
+                [new NormalCard("♥", 5)],
+            ],
+            deck: [
+                new NormalCard("♠", 6), new NormalCard("♠", 9), new NormalCard("♠", 8),
+            ],
+        });
+
+        expect(player.canStage(deck[2])).to.equal(true);
+
+        player.toggleCardStaging(deck[1]);
+
+        expect(player.canStage(deck[2])).to.equal(false);
+    });
+
+    // TODO can not であるべきに思えるが、UI の処理分岐の都合上で現状こうしてしまっている…
+    it("can stage already staged card.", () => {
+
+        const { player, deck } = situation({
+            stack: [
+                [new NormalCard("♥", 7)],
+                [new NormalCard("♥", 5)],
+            ],
+            deck: [
+                new NormalCard("♠", 6), new NormalCard("♠", 7), new NormalCard("♠", 8),
+            ],
+        });
+
+        expect(player.canStage(deck[2])).to.equal(true);
+
+        player.toggleCardStaging(deck[2]);
+
+        expect(player.canStage(deck[2])).to.equal(true);
+    });
+
+    it("can stage card until stack top set count.", () => {
+
+        const { player, deck } = situation({
+            stack: [
+                [new NormalCard("♥", 7), new NormalCard("♥", 7)],
+            ],
+            deck: [
+                new NormalCard("♠", 8), new NormalCard("♠", 8), new NormalCard("♠", 8),
+            ],
+        });
+
+        player.toggleCardStaging(deck[0]);
+
+        expect(player.canStage(deck[1])).to.equal(true);
+        expect(player.canStage(deck[2])).to.equal(true);
+
+        player.toggleCardStaging(deck[1]);
+
+        expect(player.canStage(deck[2])).to.equal(false);
+    });
+
     function situation(s: { stack: Card[][], deck: ReadonlyArray<Card> }) {
 
         const rule = new Rule();
