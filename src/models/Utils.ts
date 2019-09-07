@@ -16,11 +16,11 @@ export function combination<T>(xs: ReadonlyArray<T>, k: number): T[][] {
     return temp(xs, 0, k - 1);
 }
 
-export function concat<T, S>(x: T[], y: S[]): (T | S)[] {
-    return (x as (T | S)[]).concat(y);
+export function concat<T, S>(x: T[], y: S[]): Array<T | S> {
+    return (x as Array<T | S>).concat(y);
 }
 
-export function filterNotNull<T>(xs: (T | null)[]): T[] {
+export function filterNotNull<T>(xs: Array<T | null>): T[] {
     return xs.filter(x => x !== null) as T[];
 }
 

@@ -41,7 +41,7 @@ export default class PlayerComponent extends Vue {
             await sleep(500);
             this.player.give(stagings);
         } else {
-            var stagings = this.stagings();
+            const stagings = this.stagings();
             for (const card of stagings) {
                 card.isStaged = false;
             }

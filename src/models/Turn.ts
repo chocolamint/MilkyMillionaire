@@ -4,14 +4,14 @@ import Rule from "./Rule";
 
 export type TurnResult = Pass | Discard;
 
-type Pass = {
-    action: "pass"
-};
+interface Pass {
+    action: "pass";
+}
 
-type Discard = {
-    action: "discard",
-    cards: Card[]
-};
+interface Discard {
+    action: "discard";
+    cards: Card[];
+}
 
 export class Turn {
 
@@ -22,4 +22,4 @@ export class Turn {
     public canDiscard(cards: Card[]) {
         return this.rule.canDiscard(this.stack, cards);
     }
-};
+}

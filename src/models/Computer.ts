@@ -29,7 +29,7 @@ export default class Computer extends Character {
                 // TODO: 実際に捨てないといけないカードのランクの高さでパスしやすさを決めたいが、弱いものほど捨てやすいロジックになっていないと意味がないのでまたあとで
                 const fieldRank = turn.rule.rankLevel(top.filter(x => !x.isJoker)[0]);
                 const passRatio = turnRatio * (fieldRank * fieldRank / 169);
-                this.say(`${turn.turnCount + 1}ターン目で${fieldRank}という高さ…パスしたさは${Math.round(passRatio * 100)}%くらいかな...`)
+                this.say(`${turn.turnCount + 1}ターン目で${fieldRank}という高さ…パスしたさは${Math.round(passRatio * 100)}%くらいかな...`);
                 if (Math.random() < passRatio) {
                     strategicPass = true;
                     this.say(`戦略的パスします`);

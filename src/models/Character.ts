@@ -46,6 +46,7 @@ export default class Character {
             this.turnCore(turn);
         });
     }
+    // tslint:disable-next-line:no-empty
     public turnCore(turn: Turn) {
 
     }
@@ -57,7 +58,7 @@ export default class Character {
         for (const card of cards) {
             this.deck.remove(card);
         }
-        this.turnEnd({ action: "discard", cards: cards });
+        this.turnEnd({ action: "discard", cards });
     }
     public endGame() {
         this.deck.clear();
