@@ -80,11 +80,11 @@ export default class PlayerComponent extends Vue {
             if (top == null) return true;
             const discardables = combination(this.player.cards, top.length)
                 .filter(xs => this.player.currentTurn!.canDiscard(xs));
-            return discardables.some(xs => xs.indexOf(card) != -1);
+            return discardables.some(xs => xs.includes(card));
         } else {
             return (
                 this.player.currentTurn!.canDiscard(stagings.concat(card)) ||
-                stagings.indexOf(card) != -1
+                stagings.includes(card)
             );
         }
     }

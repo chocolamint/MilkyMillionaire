@@ -48,7 +48,7 @@ export class Joker {
     public isJoker: true = true;
     public isStaged = false;
 
-    public constructor(public isPrimary: boolean) {
+    public constructor(public isPrimary: boolean = true) {
         this.id = `Joker-${isPrimary ? 1 : 2}`;
     }
 
