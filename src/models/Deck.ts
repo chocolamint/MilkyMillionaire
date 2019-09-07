@@ -6,6 +6,7 @@ import { filterNotNull } from "./Utils";
 
 export default class Deck {
 
+    // tslint:disable-next-line:variable-name
     private _cards: Card[] = [];
 
     public get cards(): ReadonlyArray<Card> {

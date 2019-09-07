@@ -14,8 +14,8 @@ export default class Character {
     public nextRank: number;
     public isGameEnd: boolean;
     public logger?: ILogger;
-    private _deck = new Deck();
-    private _resolveTurn?: (result: TurnResult) => void;
+    private deck = new Deck();
+    private resolveTurn?: (result: TurnResult) => void;
 
     constructor(name: string) {
         this.name = name;
@@ -26,23 +26,23 @@ export default class Character {
         this.isGameEnd = false;
     }
     public get cards(): ReadonlyArray<Card> {
-        return this._deck.cards;
+        return this.deck.cards;
     }
     // TODO: 派生型がデッキにアクセスできないのが悪いと思う。継承をやめたい
     public get restCount(): number {
-        return this._deck.cards.length;
+        return this.deck.cards.length;
     }
     public trashCard(card: Card) {
-        this._deck.remove(card);
+        this.deck.remove(card);
     }
     public deal(card: Card) {
-        this._deck.add(card);
+        this.deck.add(card);
     }
     public turn(turn: Turn) {
         return new Promise<TurnResult>(resolve => {
             this.say(`私のターンです！`);
             this.isMyTurn = true;
-            this._resolveTurn = resolve;
+            this.resolveTurn = resolve;
             this.turnCore(turn);
         });
     }
@@ -55,12 +55,12 @@ export default class Character {
     }
     public discard(cards: Card[]) {
         for (const card of cards) {
-            this._deck.remove(card);
+            this.deck.remove(card);
         }
         this.turnEnd({ action: "discard", cards: cards });
     }
     public endGame() {
-        this._deck.clear();
+        this.deck.clear();
         this.isMyTurn = false;
         this.isCleared = false;
         this.isGameEnd = true;
@@ -81,7 +81,7 @@ export default class Character {
         } else {
             const strong = this.rank > 3;
             const count = Math.abs(this.rank - 3);
-            const cards = this._deck.pick(rule, strong, count);
+            const cards = this.deck.pick(rule, strong, count);
             this.say(`${cards.join(",")}を差し出します(Rank:${this.rank})`);
             return cards;
         }
@@ -89,10 +89,10 @@ export default class Character {
     private turnEnd(result: TurnResult) {
         this.isMyTurn = false;
         this.say(`ターン終了です！`);
-        if (this._deck.isEmpty) {
+        if (this.deck.isEmpty) {
             this.isCleared = true;
             this.say(`あがりです！`);
         }
-        this._resolveTurn!(result);
+        this.resolveTurn!(result);
     }
 }
