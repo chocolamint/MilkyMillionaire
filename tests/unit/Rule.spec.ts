@@ -133,7 +133,7 @@ describe("Rule.ts", () => {
                 expect(canDiscard([new NormalCard("♠", 7), new Joker(true)])).to.equal(false);
             });
 
-            it("is stronger than 2 pair.", () => {
+            it("is stronger than pair of 2.", () => {
 
                 const stack = new Stack();
                 stack.cards.push(new CardSet([new NormalCard("♥", 2), new NormalCard("♦", 2)], "unknown"));
