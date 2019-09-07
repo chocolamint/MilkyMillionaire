@@ -4,7 +4,6 @@ import { NormalCard, Card, Joker } from "@/models/Card";
 import { Turn } from "@/models/Turn";
 import Stack from "@/models/Stack";
 import CardSet from "@/models/CardSet";
-import { expect } from "chai";
 import PlayerComponent from "@/components/Player/Player";
 
 describe("Player.ts", () => {
@@ -23,15 +22,15 @@ describe("Player.ts", () => {
                 ],
             });
 
-            expect(deck[2].isStaged).to.equal(false);
+            expect(deck[2].isStaged).toBe(false);
 
             player.toggleCardStaging(deck[2]);
 
-            expect(deck[2].isStaged).to.equal(true);
+            expect(deck[2].isStaged).toBe(true);
 
             player.toggleCardStaging(deck[2]);
 
-            expect(deck[2].isStaged).to.equal(false);
+            expect(deck[2].isStaged).toBe(false);
         });
 
         it("should be able to stage only higher cards.", () => {
@@ -48,7 +47,7 @@ describe("Player.ts", () => {
 
             const actuals = deck.map(x => player.canStage(x));
 
-            expect(actuals).to.deep.equal([false, false, true]);
+            expect(actuals).toEqual([false, false, true]);
         });
 
         // TODO can not であるべきに思えるが、UI の処理分岐の都合上で現状こうしてしまっている…
@@ -64,11 +63,11 @@ describe("Player.ts", () => {
                 ],
             });
 
-            expect(player.canStage(deck[2])).to.equal(true);
+            expect(player.canStage(deck[2])).toBe(true);
 
             player.toggleCardStaging(deck[2]);
 
-            expect(player.canStage(deck[2])).to.equal(true);
+            expect(player.canStage(deck[2])).toBe(true);
         });
 
         it("should not be able to stage if another card is staged .", () => {
@@ -83,13 +82,13 @@ describe("Player.ts", () => {
                 ],
             });
 
-            expect(player.canStage(deck[1])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(true);
+            expect(player.canStage(deck[1])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(true);
 
             player.toggleCardStaging(deck[1]);
 
-            expect(player.canStage(deck[1])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(false);
+            expect(player.canStage(deck[1])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(false);
         });
     });
 
@@ -108,12 +107,12 @@ describe("Player.ts", () => {
 
             player.toggleCardStaging(deck[0]);
 
-            expect(player.canStage(deck[1])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(true);
+            expect(player.canStage(deck[1])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(true);
 
             player.toggleCardStaging(deck[1]);
 
-            expect(player.canStage(deck[2])).to.equal(false);
+            expect(player.canStage(deck[2])).toBe(false);
         });
 
         it("should not be able to stage stupid card.", () => {
@@ -127,9 +126,9 @@ describe("Player.ts", () => {
                 ],
             });
 
-            expect(player.canStage(deck[0])).to.equal(true);
-            expect(player.canStage(deck[1])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(false);
+            expect(player.canStage(deck[0])).toBe(true);
+            expect(player.canStage(deck[1])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(false);
         });
 
         it("should be able to stage same rank card if another card is staged.", () => {
@@ -143,13 +142,13 @@ describe("Player.ts", () => {
                 ],
             });
 
-            expect(player.canStage(deck[1])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(true);
+            expect(player.canStage(deck[1])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(true);
 
             player.toggleCardStaging(deck[0]);
 
-            expect(player.canStage(deck[1])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(false);
+            expect(player.canStage(deck[1])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(false);
         });
     });
 
@@ -164,16 +163,16 @@ describe("Player.ts", () => {
                 ],
             });
 
-            expect(player.canStage(deck[0])).to.equal(true);
-            expect(player.canStage(deck[1])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(true);
-            expect(player.canStage(deck[3])).to.equal(true);
-            expect(player.canStage(deck[4])).to.equal(true);
+            expect(player.canStage(deck[0])).toBe(true);
+            expect(player.canStage(deck[1])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(true);
+            expect(player.canStage(deck[3])).toBe(true);
+            expect(player.canStage(deck[4])).toBe(true);
 
             player.toggleCardStaging(deck[1]);
 
-            expect(player.canStage(deck[0])).to.equal(true);
-            expect(player.canStage(deck[2])).to.equal(false);
+            expect(player.canStage(deck[0])).toBe(true);
+            expect(player.canStage(deck[2])).toBe(false);
         });
     });
 

@@ -1,6 +1,5 @@
 import { NormalCard, Joker, Card } from "@/models/Card";
 import Rule from "@/models/Rule";
-import { expect } from "chai";
 import Stack from "@/models/Stack";
 import CardSet from "@/models/CardSet";
 
@@ -21,7 +20,7 @@ describe("Rule.ts", () => {
 
             const sorted = rule.sort(cards, false);
 
-            expect(sorted).to.deep.equal([
+            expect(sorted).toEqual([
                 new NormalCard("♠", 3),
                 new NormalCard("♦", 10),
                 new NormalCard("♣", 13),
@@ -44,7 +43,7 @@ describe("Rule.ts", () => {
 
             const sorted = rule.sort(cards, true);
 
-            expect(sorted).to.deep.equal([
+            expect(sorted).toEqual([
                 new Joker(true),
                 new NormalCard("♠", 2),
                 new NormalCard("♥", 1),
@@ -69,7 +68,7 @@ describe("Rule.ts", () => {
             const sortedAsc = rule.sort(cards, false);
             const sortedDesc = rule.sort(cards, true);
 
-            expect(sortedAsc).to.deep.equal([
+            expect(sortedAsc).toEqual([
                 new NormalCard("♠", 6),
                 new NormalCard("♥", 7),
                 new NormalCard("♦", 7),
@@ -77,7 +76,7 @@ describe("Rule.ts", () => {
                 new NormalCard("♣", 7),
                 new NormalCard("♥", 8),
             ]);
-            expect(sortedDesc).to.deep.equal([
+            expect(sortedDesc).toEqual([
                 new NormalCard("♥", 8),
                 new NormalCard("♥", 7),
                 new NormalCard("♦", 7),
@@ -100,10 +99,10 @@ describe("Rule.ts", () => {
                     ],
                 });
 
-                expect(canDiscard([new NormalCard("♥", 8)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 8)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 7)])).to.equal(false);
-                expect(canDiscard([new NormalCard("♥", 6)])).to.equal(false);
+                expect(canDiscard([new NormalCard("♥", 8)])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 8)])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 7)])).toBe(false);
+                expect(canDiscard([new NormalCard("♥", 6)])).toBe(false);
             });
         });
 
@@ -118,9 +117,9 @@ describe("Rule.ts", () => {
                     ],
                 });
 
-                expect(canDiscard([new NormalCard("♥", 8)])).to.equal(false);
-                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8), new NormalCard("♦", 8)])).to.equal(false);
-                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8)])).to.equal(true);
+                expect(canDiscard([new NormalCard("♥", 8)])).toBe(false);
+                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8), new NormalCard("♦", 8)])).toBe(false);
+                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♣", 8)])).toBe(true);
             });
 
             it("should return false if card rank is different.", () => {
@@ -132,7 +131,7 @@ describe("Rule.ts", () => {
                     ],
                 });
 
-                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♠", 9)])).to.equal(false);
+                expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♠", 9)])).toBe(false);
             });
         });
 
@@ -144,12 +143,12 @@ describe("Rule.ts", () => {
                     stack: [],
                 });
 
-                expect(canDiscard([new NormalCard("♠", 3)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3), new NormalCard("♦", 3)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 2)])).to.equal(true);
-                expect(canDiscard([new Joker()])).to.equal(true);
+                expect(canDiscard([new NormalCard("♠", 3)])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3)])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3)])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3), new NormalCard("♦", 3)])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 2)])).toBe(true);
+                expect(canDiscard([new Joker()])).toBe(true);
             });
         });
 
@@ -164,8 +163,8 @@ describe("Rule.ts", () => {
                     ],
                 });
 
-                expect(canDiscard([new NormalCard("♠", 8), new Joker()])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 7), new Joker()])).to.equal(false);
+                expect(canDiscard([new NormalCard("♠", 8), new Joker()])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 7), new Joker()])).toBe(false);
             });
 
             it("should be higher than pair of 2.", () => {
@@ -176,8 +175,8 @@ describe("Rule.ts", () => {
                     ],
                 });
 
-                expect(canDiscard([new Joker(), new Joker(false)])).to.equal(true);
-                expect(canDiscard([new NormalCard("♠", 2), new Joker()])).to.equal(false);
+                expect(canDiscard([new Joker(), new Joker(false)])).toBe(true);
+                expect(canDiscard([new NormalCard("♠", 2), new Joker()])).toBe(false);
             });
         });
 
