@@ -8,7 +8,7 @@ export default class Messenger {
     constructor() {
         this.isShown = false;
     }
-    async show(message: string, ms: number): Promise<void> {
+    public async show(message: string, ms: number): Promise<void> {
         this.message = message;
         this.isShown = true;
         await sleep(ms);

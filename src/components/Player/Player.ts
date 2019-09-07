@@ -13,24 +13,24 @@ export default class PlayerComponent extends Vue {
     @Prop()
     public rule!: Rule;
 
-    toggleCardStaging(card: Card) {
+    public toggleCardStaging(card: Card) {
         card.isStaged = !card.isStaged;
     }
 
-    stagings() {
+    public stagings() {
         return this.player.cards.filter(x => x.isStaged);
     }
 
-    pass() {
+    public pass() {
         this.stagings().forEach(x => x.isStaged = false);
         this.player.pass();
     }
 
-    isUnnecessaryCardSelecting() {
+    public isUnnecessaryCardSelecting() {
         return this.player.isTrading && this.player.rank >= 4;
     }
 
-    async discardStaging() {
+    public async discardStaging() {
         if (this.isUnnecessaryCardSelecting()) {
             const stagings = this.stagings();
             for (const card of stagings) {
@@ -41,7 +41,7 @@ export default class PlayerComponent extends Vue {
             await sleep(500);
             this.player.give(stagings);
         } else {
-            var stagings = this.stagings();
+            const stagings = this.stagings();
             for (const card of stagings) {
                 card.isStaged = false;
             }
@@ -49,7 +49,7 @@ export default class PlayerComponent extends Vue {
         }
     }
 
-    canDiscard() {
+    public canDiscard() {
         if (this.isUnnecessaryCardSelecting()) {
             const missingCount = this.player.rank - 3;
             return this.stagings().length == missingCount;
@@ -58,14 +58,14 @@ export default class PlayerComponent extends Vue {
             return this.player.currentTurn.canDiscard(this.stagings());
         }
     }
-    isCardGrayedOut(card: Card) {
+    public isCardGrayedOut(card: Card) {
         if (this.isUnnecessaryCardSelecting()) {
             return !this.canStage(card);
         }
         return this.player.isMyTurn && !this.canStage(card);
     }
 
-    canStage(card: Card) {
+    public canStage(card: Card) {
         const stagings = this.stagings();
 
         if (this.isUnnecessaryCardSelecting()) {
@@ -89,11 +89,11 @@ export default class PlayerComponent extends Vue {
         }
     }
 
-    get canPass() {
+    public get canPass() {
         return this.player.isMyTurn;
     }
 
-    goToNextGame() {
+    public goToNextGame() {
         this.player.goToNextGame();
     }
 }

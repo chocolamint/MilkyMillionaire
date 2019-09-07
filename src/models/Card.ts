@@ -5,12 +5,12 @@ export function allCards(): Card[] {
     const suits: Suit[] = ["♥", "♦", "♠", "♣"];
     const ranks: Rank[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
     const normalCards = ranks.flatMap(
-        rank => suits.map(suit => new NormalCard(suit, rank))
+        rank => suits.map(suit => new NormalCard(suit, rank)),
     );
     const cards = concat(normalCards, [new Joker(true), new Joker(false)]);
 
-    if (typeof document != 'undefined' && document && document.location && document.location.search) {
-        if (~document.location.search.indexOf('debug')) {
+    if (typeof document != "undefined" && document && document.location && document.location.search) {
+        if (document.location.search.includes("debug")) {
             return _.shuffle(cards).slice(0, 15);
         }
     }
@@ -32,8 +32,12 @@ export class NormalCard {
         this.id = suit + rank;
     }
 
-    toString() {
-        const rankString = (this.rank == 1 ? 'A' : this.rank == 11 ? 'J' : this.rank == 12 ? 'Q' : this.rank == 13 ? 'K' : this.rank);
+    public toString() {
+        const rankString = this.rank == 1 ? "A" :
+            this.rank == 11 ? "J" :
+                this.rank == 12 ? "Q" :
+                    this.rank == 13 ? "K" :
+                        this.rank;
         return this.suit + rankString;
     }
 }
@@ -48,7 +52,7 @@ export class Joker {
         this.id = `Joker-${isPrimary ? 1 : 2}`;
     }
 
-    toString() {
+    public toString() {
         return this.id;
     }
 }

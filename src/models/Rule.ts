@@ -15,7 +15,7 @@ export default class Rule {
             "♥": 0,
             "♦": 1,
             "♠": 2,
-            "♣": 3
+            "♣": 3,
         };
         return suitRanks[a.suit!] - suitRanks[b.suit!];
     }

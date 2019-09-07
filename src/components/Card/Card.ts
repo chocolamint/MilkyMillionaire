@@ -7,18 +7,18 @@ export default class CardComponent extends Vue {
     @Prop()
     public card!: Card;
 
-    get suitClass() {
+    public get suitClass() {
         if (this.card.isJoker) return "";
         const suitClasses: Record<string, string> = {
             "♥": "heart",
             "♦": "diamond",
             "♠": "spade",
-            "♣": "club"
+            "♣": "club",
         };
         return suitClasses[this.card.suit];
     }
 
-    get rankClass() {
+    public get rankClass() {
         if (this.card.isJoker) return "";
         const rankClasses = [
             "ace",
@@ -33,7 +33,7 @@ export default class CardComponent extends Vue {
             "ten",
             "juck",
             "queen",
-            "king"
+            "king",
         ];
         return rankClasses[this.card.rank];
     }

@@ -9,9 +9,9 @@ export default class Player extends Character {
 
     public waitingForNextGame: boolean;
     public isTrading: boolean;
-    private _resolveNextGame?: () => void;
-    private _resolveTrading?: (cards: Card[]) => void;
     public currentTurn: Turn | null = null;
+    private resolveNextGame?: () => void;
+    private resolveTrading?: (cards: Card[]) => void;
 
     constructor(name: string) {
         super(name);
@@ -19,22 +19,22 @@ export default class Player extends Character {
         this.isTrading = false;
     }
 
-    turnCore(turn: Turn) {
+    public turnCore(turn: Turn) {
         this.currentTurn = turn;
         super.turnCore(turn);
     }
-    nextGame() {
+    public nextGame() {
         return new Promise<void>(resolve => {
             this.waitingForNextGame = true;
-            this._resolveNextGame = resolve;
+            this.resolveNextGame = resolve;
         });
     }
-    async goToNextGame() {
+    public async goToNextGame() {
         this.waitingForNextGame = false;
         await super.nextGame();
-        this._resolveNextGame!();
+        this.resolveNextGame!();
     }
-    async giveCards(rule: Rule) {
+    public async giveCards(rule: Rule) {
         this.isTrading = true;
         if (this.rank <= 2) {
             await sleep(2200);
@@ -46,12 +46,12 @@ export default class Player extends Character {
             return [];
         } else {
             return await new Promise<Card[]>(resolve => {
-                this._resolveTrading = resolve;
+                this.resolveTrading = resolve;
             });
         }
     }
-    async give(cards: Card[]) {
-        
-        this._resolveTrading!(cards);
+    public async give(cards: Card[]) {
+
+        this.resolveTrading!(cards);
     }
 }

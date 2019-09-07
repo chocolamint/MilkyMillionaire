@@ -26,8 +26,8 @@ class PlayerViewModel {
     components: {
         card: CardComponent,
         computer: ComputerComponent,
-        player: PlayerComponent
-    }
+        player: PlayerComponent,
+    },
 })
 export default class AppComponent extends Vue {
 
@@ -35,7 +35,7 @@ export default class AppComponent extends Vue {
         new ComputerViewModel(new Computer("パクチー"), "#F189C8", "vegetable_pakuchi_coriander.png"),
         new ComputerViewModel(new Computer("日本酒"), "#34BD67", "masu_nihonsyu.png"),
         new ComputerViewModel(new Computer("餃子"), "#26C4F0", "food_gyouza_mise.png"),
-        new ComputerViewModel(new Computer("かまぼこ"), "#C97842", "kamaboko_red.png")
+        new ComputerViewModel(new Computer("かまぼこ"), "#C97842", "kamaboko_red.png"),
     ];
     private player = new PlayerViewModel(new Player("台湾まぜそば"), "#F1A15B");
     private messenger = new Messenger();
@@ -46,11 +46,11 @@ export default class AppComponent extends Vue {
         super();
     }
 
-    mounted() {
+    public mounted() {
         this.beginGame();
     }
 
-    async beginGame() {
+    public async beginGame() {
 
         const characters = concat(this.computers.map(x => x.computer), [this.player.player]);
 
@@ -72,7 +72,7 @@ export default class AppComponent extends Vue {
         };
         const discard = (character: Character, cards: Card[]) => {
 
-            console.log(`${character.name}が${cards.map(x => x.toString()).join(',')}を捨てました`);
+            console.log(`${character.name}が${cards.map(x => x.toString()).join(",")}を捨てました`);
 
             lastDiscard = character;
             passCount = 0;
@@ -95,11 +95,11 @@ export default class AppComponent extends Vue {
 
             deal(characters, cards);
 
-            console.log('カードの交換を開始します');
+            console.log("カードの交換を開始します");
             await trade();
-            console.log('カードの交換を終了します');
+            console.log("カードの交換を終了します");
 
-            await this.messenger.show('ゲームスタート', 1000);
+            await this.messenger.show("ゲームスタート", 1000);
 
             let nextDealer = _.sample(characters);
             console.log(`${nextDealer!.name}の親ではじめます`);
@@ -149,13 +149,13 @@ export default class AppComponent extends Vue {
                 character.endGame();
             }
 
-            await this.messenger.show('ゲームセット', 1000);
+            await this.messenger.show("ゲームセット", 1000);
 
-            console.log('結果を発表してプレーヤーの確認待ち');
+            console.log("結果を発表してプレーヤーの確認待ち");
             for (const character of characters) {
                 await character.nextGame();
             }
-            console.log('次のゲームを開始します');
+            console.log("次のゲームを開始します");
         };
 
         while (true) {
@@ -167,7 +167,7 @@ export default class AppComponent extends Vue {
         return this.computers.findIndex(x => x.computer.name == cards.holder);
     }
 
-    log<TSource>(message: string, source?: TSource) {
+    public log<TSource>(message: string, source?: TSource) {
         if (source instanceof Character) {
             const color = source instanceof Computer
                 ? this.computers.find(x => x.computer == source)!.color

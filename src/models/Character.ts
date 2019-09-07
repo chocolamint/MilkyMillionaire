@@ -14,8 +14,8 @@ export default class Character {
     public nextRank: number;
     public isGameEnd: boolean;
     public logger?: ILogger;
-    private _deck = new Deck();
-    private _resolveTurn?: (result: TurnResult) => void;
+    private deck = new Deck();
+    private resolveTurn?: (result: TurnResult) => void;
 
     constructor(name: string) {
         this.name = name;
@@ -25,74 +25,75 @@ export default class Character {
         this.nextRank = 3;
         this.isGameEnd = false;
     }
-    get cards(): ReadonlyArray<Card> {
-        return this._deck.cards;
+    public get cards(): ReadonlyArray<Card> {
+        return this.deck.cards;
     }
     // TODO: 派生型がデッキにアクセスできないのが悪いと思う。継承をやめたい
-    get restCount(): number {
-        return this._deck.cards.length;
+    public get restCount(): number {
+        return this.deck.cards.length;
     }
-    trashCard(card: Card) {
-        this._deck.remove(card);
+    public trashCard(card: Card) {
+        this.deck.remove(card);
     }
-    deal(card: Card) {
-        this._deck.add(card);
+    public deal(card: Card) {
+        this.deck.add(card);
     }
-    turn(turn: Turn) {
+    public turn(turn: Turn) {
         return new Promise<TurnResult>(resolve => {
             this.say(`私のターンです！`);
             this.isMyTurn = true;
-            this._resolveTurn = resolve;
+            this.resolveTurn = resolve;
             this.turnCore(turn);
         });
     }
-    turnCore(turn: Turn) {
+    // tslint:disable-next-line:no-empty
+    public turnCore(turn: Turn) {
 
     }
-    private turnEnd(result: TurnResult) {
-        this.isMyTurn = false;
-        this.say(`ターン終了です！`);
-        if (this._deck.isEmpty) {
-            this.isCleared = true;
-            this.say(`あがりです！`);
-        }
-        this._resolveTurn!(result);
-    }
-    pass() {
+    public pass() {
         sleep(0);
         this.turnEnd({ action: "pass" });
     }
-    discard(cards: Card[]) {
+    public discard(cards: Card[]) {
         for (const card of cards) {
-            this._deck.remove(card);
+            this.deck.remove(card);
         }
-        this.turnEnd({ action: "discard", cards: cards });
+        this.turnEnd({ action: "discard", cards });
     }
-    endGame() {
-        this._deck.clear();
+    public endGame() {
+        this.deck.clear();
         this.isMyTurn = false;
         this.isCleared = false;
         this.isGameEnd = true;
     }
-    nextGame() {
+    public nextGame() {
         this.rank = this.nextRank;
         this.isGameEnd = false;
         return Promise.resolve();
     }
-    say(message: string) {
+    public say(message: string) {
         if (this.logger != null) {
             this.logger.log(`%c${this.name}: ${message}`, this);
         }
     }
-    async giveCards(rule: Rule) {
+    public async giveCards(rule: Rule) {
         if (this.rank == 3) {
             return [];
         } else {
             const strong = this.rank > 3;
             const count = Math.abs(this.rank - 3);
-            const cards = this._deck.pick(rule, strong, count);
-            this.say(`${cards.join(',')}を差し出します(Rank:${this.rank})`);
+            const cards = this.deck.pick(rule, strong, count);
+            this.say(`${cards.join(",")}を差し出します(Rank:${this.rank})`);
             return cards;
         }
+    }
+    private turnEnd(result: TurnResult) {
+        this.isMyTurn = false;
+        this.say(`ターン終了です！`);
+        if (this.deck.isEmpty) {
+            this.isCleared = true;
+            this.say(`あがりです！`);
+        }
+        this.resolveTurn!(result);
     }
 }
