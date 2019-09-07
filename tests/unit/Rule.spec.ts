@@ -132,6 +132,20 @@ describe("Rule.ts", () => {
             expect(canDiscard([new NormalCard("♠", 8), new NormalCard("♠", 9)])).to.equal(false);
         });
 
+        it("always returns true when stack is empty.", () => {
+
+            const { canDiscard } = situation({
+                stack: [],
+            });
+
+            expect(canDiscard([new NormalCard("♠", 3)])).to.equal(true);
+            expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3)])).to.equal(true);
+            expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3)])).to.equal(true);
+            expect(canDiscard([new NormalCard("♠", 3), new NormalCard("♣", 3), new NormalCard("♥", 3), new NormalCard("♦", 3)])).to.equal(true);
+            expect(canDiscard([new NormalCard("♠", 2)])).to.equal(true);
+            expect(canDiscard([new Joker()])).to.equal(true);
+        });
+
         describe("Joker", () => {
 
             it("is almighty.", () => {
